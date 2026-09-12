@@ -1,0 +1,21 @@
+/* 색은 5개 고정: 022B3A / 1F7A8C / BFDBF7 / E1E5F2 / FFFFFF */
+:root {
+  --ink: #022b3a;
+  --teal: #1f7a8c;
+  --sky: #bfdbf7;
+  --lav: #e1e5f2;
+  --white: #ffffff;
+
+  --text: var(--ink);
+  --text-dim: #55707d;
+  --line: #d9e3f0;
+  --surface: #f6f8fc;
+  --tile-line: #04191f;   /* 타일 외곽선 */
+
+  --r: 6px;
+  --r-sm: 4px;
+  --maxw: 940px;
+  --reel-h: 58px;
+  --font: system-ui, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  --mono: ui-monospace, Consolas, "Courier New", monospace;
+}
