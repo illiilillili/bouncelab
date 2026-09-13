@@ -23,15 +23,7 @@ window.BL = window.BL || {};
   }
 
   function row(f) {
-    if (f.secret) {
-      return el('span', { class: 'item item--mask', 'aria-hidden': 'true' }, [
-        el('span', { class: 'item__icon' }, BL.icons.get('mask')),
-        el('span', { class: 'item__main' }, [
-          el('span', { class: 'item__name', text: '???' }),
-          el('span', { class: 'item__desc', text: '???' })
-        ])
-      ]);
-    }
+
     return el('a', { class: 'item', href: '#/f/' + f.id }, [
       el('span', { class: 'item__icon' }, BL.icons.get(f.id)),
       el('span', { class: 'item__main' }, [
@@ -59,7 +51,7 @@ window.BL = window.BL || {};
       el('div', { class: 'list' }, BL.features.map(row))
     ]));
 
-    root.appendChild(el('p', { class: 'note', text: '맵 룰렛 말고는 아직 만들 계획이 없습니다. 나중에 하나씩 열 예정.' }));
+    root.appendChild(el('p', { class: 'note', text: '맵 룰렛과 랜덤 색상 추천, 둘만 있습니다.' }));
     window.scrollTo(0, 0);
   }
 

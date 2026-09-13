@@ -1,6 +1,7 @@
 window.BL = window.BL || {};
 
-/* 랜덤 색상 추천 — H·S·V 인덱스(0~39)를 뽑아 색과 게임 타일 모양으로 보여준다. */
+/* 랜덤 색상 추천 — H·S·V 인덱스(0~39)를 뽑아 색과 게임 타일 모양으로 보여준다.
+   조건은 체크박스 3개로만 켜고 끈다 (설명 문구는 두지 않는다). */
 (function (BL) {
   var el = BL.dom.el;
   var color = BL.color;
@@ -15,32 +16,6 @@ window.BL = window.BL || {};
   /* 화면을 열면 처음 보이는 예시 색 (H21 S30 V30 = 밝은 청록) */
   var EXAMPLE = { h: 21, s: 30, v: 30 };
 
-  function comma(n) {
-    return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  }
-
-  /* 켜진 조건 이름 (안내 문구 · 스크린리더 알림에 같이 쓴다) */
-  function partsOf(opt) {
-    var parts = [];
-    if (opt.pastel) parts.push('파스텔 색');
-    if (opt.vivid) parts.push('쨍한 색');
-    if (opt.avoidDull) parts.push('칙칙하지 않은 색');
-    return parts;
-  }
-
-    function pct(index) {
-    return (index * 100 / 39).toFixed(1) + '%';
-  }
-
-  /* 켜진 조건의 실제 기준 (숫자는 color.js 규칙에서 그대로 가져와서 어긋나지 않게 한다) */
-  function condText(opt) {
-    var d = color.dullRule, pa = color.pastelRule, vi = color.vividRule;
-    var c = [];
-    if (opt.vivid) c.push('채도 ' + pct(vi.sMin) + ' 이상 + 밝기 ' + pct(vi.vMin) + ' 이상');
-    if (opt.pastel) c.push('채도 ' + pct(pa.sMin) + '~' + pct(pa.sMax) + ' + 밝기 ' + pct(pa.vMin) + ' 이상');
-    if (opt.avoidDull) c.push('채도 ' + pct(d.sMin) + ' 이상 + 밝기 ' + pct(d.vMin) + ' 이상 (뿌연 색 제외)');
-    return c.length ? ' (기준: ' + c.join(' / ') + ')' : '';
-  }
   function channelRow(label) {
     var value = el('span', { class: 'pick__value', text: '-' });
     var num = el('span', { class: 'pick__num', text: '' });
@@ -62,6 +37,10 @@ window.BL = window.BL || {};
     ]);
   }
 
+  function checkLabel(chk, text) {
+    return el('label', { class: 'chk' }, [chk, el('span', { text: text })]);
+  }
+
   BL.views = BL.views || {};
 
   BL.views.colors = {
@@ -72,25 +51,22 @@ window.BL = window.BL || {};
         vivid: storage.get(K.vivid, false) === true
       };
       var cur = EXAMPLE;
-      var swapped = false;   /* 방금 파스텔 ↔ 쨍한 겹침을 정리했는지 */
 
       var swatch = el('div', { class: 'swatch', 'aria-hidden': 'true' });
       var tiles = [tile('solid'), tile('corner'), tile('hollow')];
       var rows = { h: channelRow('H'), s: channelRow('S'), v: channelRow('V') };
       var hexEl = el('p', { class: 'swatch__hex', text: '-' });
       var rgbEl = el('p', { class: 'swatch__rgb', text: 'RGB -' });
-      var note = el('p', { class: 'hint', id: 'color-note' });
       var live = el('p', { class: 'sr-only', role: 'status', 'aria-live': 'polite' });
-      var chkDull = el('input', { type: 'checkbox', 'aria-describedby': 'color-note', onChange: function () { onToggle('dull'); } });
-      var chkPastel = el('input', { type: 'checkbox', 'aria-describedby': 'color-note', onChange: function () { onToggle('pastel'); } });
-      var chkVivid = el('input', { type: 'checkbox', 'aria-describedby': 'color-note', onChange: function () { onToggle('vivid'); } });
+      var chkDull = el('input', { type: 'checkbox', onChange: function () { onToggle('dull'); } });
+      var chkPastel = el('input', { type: 'checkbox', onChange: function () { onToggle('pastel'); } });
+      var chkVivid = el('input', { type: 'checkbox', onChange: function () { onToggle('vivid'); } });
       var rollBtn = el('button', { class: 'btn btn--main', type: 'button', onClick: pick, text: '색 뽑기' });
 
       function apply(idx) {
         var hsv = color.hsvOf(idx.h, idx.s, idx.v);
         var rgb = color.rgbOf(idx.h, idx.s, idx.v);
         var hex = color.hexOf(idx.h, idx.s, idx.v);
-        var parts = partsOf(opt);
 
         cur = idx;
         swatch.style.background = hex;
@@ -103,33 +79,11 @@ window.BL = window.BL || {};
         rows.v.num.textContent = '(' + hsv.v.toFixed(2) + '%)';
         hexEl.textContent = hex;
         rgbEl.textContent = 'RGB ' + rgb.join(', ');
-        live.textContent = hex + ' / H ' + idx.h + ' S ' + idx.s + ' V ' + idx.v +
-          (parts.length ? ' (' + parts.join(' + ') + ')' : '');
+        live.textContent = hex + ' / H ' + idx.h + ' S ' + idx.s + ' V ' + idx.v;
       }
 
       function pick() {
         apply(color.randomIndices(opt));
-      }
-
-      function syncNote() {
-        var all = comma(color.comboCount());
-        var n = color.comboCount(opt);
-        var parts = partsOf(opt);
-        var line;
-
-        if (!parts.length) {
-          line = 'H·S·V 40단계 전체 ' + all + '가지에서 뽑습니다.';
-        } else if (parts.length === 1 && opt.avoidDull) {
-          line = '칙칙한 색(회색빛 · 어두운 색 · 뿌연 색)을 뺀 ' + comma(n) + ' / ' + all + '가지에서만 뽑습니다.';
-        } else {
-          line = parts.join(' · ') + '만 ' + comma(n) + ' / ' + all + '가지에서 뽑습니다.' +
-            (n < 2000 ? ' 조건이 겹쳐서 아주 좁습니다.' : '');
-        }
-        line += condText(opt);
-        if (swapped) {
-          line += ' 파스텔 색과 쨍한 색은 반대 방향이라 함께 켤 수 없어서, 방금 켠 쪽만 켜 뒀습니다.';
-        }
-        note.textContent = line;
       }
 
       function onToggle(src) {
@@ -137,10 +91,8 @@ window.BL = window.BL || {};
         opt.pastel = chkPastel.checked === true;
         opt.vivid = chkVivid.checked === true;
 
-        /* 파스텔(S 43.6% 이하)과 쨍한 색(S 66.7% 이상)은 겹치는 색이 없다 : 방금 켠 쪽만 남긴다 */
-        swapped = false;
+        /* 파스텔(S 43.6% 이하)과 쨍한 색(S 71.8% 이상)은 겹치는 색이 없다 : 방금 켠 쪽만 남긴다 */
         if (opt.pastel && opt.vivid) {
-          swapped = true;
           if (src === 'vivid') {
             opt.pastel = false;
             chkPastel.checked = false;
@@ -153,7 +105,6 @@ window.BL = window.BL || {};
         storage.set(K.avoidDull, opt.avoidDull);
         storage.set(K.pastel, opt.pastel);
         storage.set(K.vivid, opt.vivid);
-        syncNote();
         /* 켠 순간 지금 색이 조건 밖이면 바로 다시 뽑아서 바뀌는 걸 보여준다 */
         if (!color.allows(opt, cur.h, cur.s, cur.v)) pick();
       }
@@ -169,14 +120,12 @@ window.BL = window.BL || {};
       root.appendChild(rgbEl);
       root.appendChild(el('div', { class: 'roll-row' }, [
         rollBtn,
-        el('label', { class: 'chk' }, [chkDull, el('span', { text: '칙칙한 색 제외' })]),
-        el('label', { class: 'chk' }, [chkPastel, el('span', { text: '파스텔 색만' })]),
-        el('label', { class: 'chk' }, [chkVivid, el('span', { text: '쨍한 색만' })])
+        checkLabel(chkDull, '칙칙한 색 제외'),
+        checkLabel(chkPastel, '파스텔 색만'),
+        checkLabel(chkVivid, '쨍한 색만')
       ]));
-      root.appendChild(note);
       root.appendChild(live);
 
-      syncNote();
       apply(EXAMPLE);
       /* 저장된 설정 때문에 예시 색이 조건 밖이면 바로 뽑아 준다 */
       if (!color.allows(opt, EXAMPLE.h, EXAMPLE.s, EXAMPLE.v)) pick();

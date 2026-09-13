@@ -1,11 +1,9 @@
 window.BL = window.BL || {};
 
-/* 아이콘. 직접 그린 24px 선화라서 색은 currentColor 를 따라간다.
-   mask 는 아직 안 연 기능(???) 자리에 쓴다. */
+/* 아이콘. 직접 그린 24px 선화라서 색은 currentColor 를 따라간다. */
 (function (BL) {
   var PATH = {
     roulette: '<circle cx="12" cy="12" r="7.6"/><circle cx="12" cy="12" r="2.1"/><path d="M12 4.4v3.1M18.8 8.4l-2.6 1.6M16.2 17.7l-1.7-2.2M7.4 17.5l1.6-2M5.2 8.2l2.6 1.7"/>',
-    mask: '<rect x="4.4" y="4.4" width="15.2" height="15.2" rx="3.2" stroke-dasharray="3.2 3.2"/><path d="M9.7 9.9a2.35 2.35 0 1 1 3.3 2.15c-.75.32-1.05.85-1.05 1.6"/><circle cx="12" cy="16.6" r="0.95"/>',
     colors: '<path d="M12 4.4c3.1 4.1 5.1 6.4 5.1 9.2a5.1 5.1 0 0 1-10.2 0c0-2.8 2-5.1 5.1-9.2z"/><path d="M9.6 14.6a2.6 2.6 0 0 0 2.4 2.6"/>',
     missions: '<path d="M7.2 20.2V4.2"/><path d="M7.2 5.1h8.6l-2.1 3 2.1 3H7.2"/>',
     picker: '<rect x="4.4" y="4.4" width="15.2" height="15.2" rx="2.6"/><circle cx="9" cy="9" r="1.15"/><circle cx="12" cy="12" r="1.15"/><circle cx="15" cy="15" r="1.15"/>',
