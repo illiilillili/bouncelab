@@ -42,7 +42,6 @@ window.BL = window.BL || {};
     clear(root);
 
     root.appendChild(el('section', { class: 'hero' }, [
-      el('span', { class: 'hero__badge', text: '바운스볼 도구 모음' }),
       el('h1', { text: BL.site.nameKo }),
       el('p', { text: '바운스볼 하면서 쓰려고 만든 도구. 설치 없이 브라우저에서 바로 돌아갑니다.' })
     ]));
@@ -52,7 +51,6 @@ window.BL = window.BL || {};
       el('div', { class: 'list' }, BL.features.map(row))
     ]));
 
-    root.appendChild(el('p', { class: 'note', text: '맵 룰렛·랜덤 컨트롤 룰렛·랜덤 색상 추천, 셋입니다.' }));
     window.scrollTo(0, 0);
   }
 

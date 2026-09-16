@@ -5,19 +5,17 @@
   --sky: #bfdbf7;
   --lav: #e1e5f2;
 
-  /* 브랜드 포인트 (리디자인: 인디고 · 바이올렛) */
+  /* 브랜드 포인트 (인디고) */
   --brand: #4f46e5;
-  --brand-2: #7c3aed;
   --brand-ink: #3730a3;
   --brand-soft: #eef2ff;
   --brand-line: #c7d2fe;
-  --grad: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-  --shadow: 0 1px 2px rgba(15, 23, 42, .05), 0 6px 18px rgba(15, 23, 42, .06);
-  --shadow-hover: 0 14px 32px rgba(79, 70, 229, .18);
+  --shadow: 0 1px 2px rgba(15, 23, 42, .05);
+  --shadow-hover: 0 4px 14px rgba(15, 23, 42, .10);
   --white: #ffffff;
 
   --text: var(--ink);
-  --text-dim: #55707d;
+  --text-dim: #4a5b66;
   --line: #d9e3f0;
   --surface: #f6f8fc;
   --tile-line: #04191f;   /* 타일 외곽선 */
