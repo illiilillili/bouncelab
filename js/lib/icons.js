@@ -4,7 +4,11 @@ window.BL = window.BL || {};
 (function (BL) {
   var PATH = {
     roulette: '<circle cx="12" cy="12" r="7.6"/><circle cx="12" cy="12" r="2.1"/><path d="M12 4.4v3.1M18.8 8.4l-2.6 1.6M16.2 17.7l-1.7-2.2M7.4 17.5l1.6-2M5.2 8.2l2.6 1.7"/>',
+    controls: '<rect x="3.6" y="6.4" width="16.8" height="11.2" rx="3.2"/><path d="M8.4 12h2.4M9.6 10.8v2.4"/><circle cx="14.6" cy="11.4" r="0.95"/><circle cx="16.4" cy="13.2" r="0.95"/>',
     colors: '<path d="M12 4.4c3.1 4.1 5.1 6.4 5.1 9.2a5.1 5.1 0 0 1-10.2 0c0-2.8 2-5.1 5.1-9.2z"/><path d="M9.6 14.6a2.6 2.6 0 0 0 2.4 2.6"/>',
+    dice: '<rect x="4.2" y="4.2" width="15.6" height="15.6" rx="3.4"/><circle cx="9" cy="9" r="1.15" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.15" fill="currentColor" stroke="none"/><circle cx="15" cy="15" r="1.15" fill="currentColor" stroke="none"/>',
+    rotate: '<path d="M19.4 12a7.4 7.4 0 1 1-2.2-5.3"/><path d="M19.8 4.6v4.2h-4.2"/>',
+    copy: '<rect x="9" y="9" width="10.6" height="10.6" rx="2.2"/><path d="M15.4 9V6.8a2.2 2.2 0 0 0-2.2-2.2H6.8A2.2 2.2 0 0 0 4.6 6.8v6.4a2.2 2.2 0 0 0 2.2 2.2H9"/>',
     missions: '<path d="M7.2 20.2V4.2"/><path d="M7.2 5.1h8.6l-2.1 3 2.1 3H7.2"/>',
     picker: '<rect x="4.4" y="4.4" width="15.2" height="15.2" rx="2.6"/><circle cx="9" cy="9" r="1.15"/><circle cx="12" cy="12" r="1.15"/><circle cx="15" cy="15" r="1.15"/>',
     objects: '<rect x="3.6" y="10.2" width="8.8" height="8.8" rx="1.1"/><rect x="11.6" y="4.6" width="8.8" height="8.8" rx="1.1"/>',

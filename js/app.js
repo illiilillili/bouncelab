@@ -51,7 +51,7 @@ window.BL = window.BL || {};
       el('div', { class: 'list' }, BL.features.map(row))
     ]));
 
-    root.appendChild(el('p', { class: 'note', text: '맵 룰렛과 랜덤 색상 추천, 둘만 있습니다.' }));
+    root.appendChild(el('p', { class: 'note', text: '맵 룰렛·랜덤 컨트롤 룰렛·랜덤 색상 추천, 셋입니다.' }));
     window.scrollTo(0, 0);
   }
 

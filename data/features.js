@@ -8,6 +8,9 @@ window.BL.features = [
   { id: 'roulette', name: '맵 룰렛',
     desc: '무작위로 맵 하나 뽑기. 난이도·해시태그 필터', status: 'ready' },
 
+  { id: 'controls', name: '랜덤 컨트롤 룰렛',
+    desc: '바운스볼 도감 컨트롤 631개 중 하나 뽑기. 난이도·태그·재료와 움짤', status: 'ready' },
+
   { id: 'colors', name: '랜덤 색상 추천',
     desc: 'HSV 40단계로 색 뽑기. HEX·RGB 표시', status: 'ready' }
 ];

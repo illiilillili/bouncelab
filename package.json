@@ -5,6 +5,8 @@
   "description": "바운스볼 도구 모음 (맵 룰렛, 랜덤 색상 추천, 기록 관리)",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "sync:controls": "node scripts/sync-controls.js",
+    "check": "node scripts/check-deploy.js"
   }
 }

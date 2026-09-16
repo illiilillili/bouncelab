@@ -152,6 +152,31 @@ a { color: inherit; text-decoration: none; }
   color: var(--text-dim); cursor: pointer; user-select: none; white-space: nowrap; }
 .chk input { width: 15px; height: 15px; margin: 0; accent-color: var(--teal); cursor: pointer; }
 .chk:hover { color: var(--teal); }
+/* 랜덤 컨트롤 룰렛 */
+.ctrl { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 16px; }
+.ctrl__main { flex: 1; min-width: 240px; }
+.shot { flex: 0 0 auto; width: 300px; max-width: 100%; min-height: 150px; border: 1px solid var(--line);
+  border-radius: var(--r); background: var(--surface); display: flex; align-items: center;
+  justify-content: center; overflow: hidden; }
+.shot__img { display: block; width: 100%; height: auto; }
+.shot--empty { border-style: dashed; border-color: var(--sky); }
+.shot__ini { font-size: 44px; font-weight: 800; color: var(--teal); opacity: .55; }
+.diffrow { display: flex; align-items: center; gap: 8px; margin: 10px 0 12px; }
+.diffbar { display: inline-flex; gap: 3px; }
+.diffbar i { width: 13px; height: 13px; border-radius: 3px; background: var(--lav); }
+.diffbar i.on { background: var(--teal); }
+.diffnum { font-family: var(--mono); font-size: 15px; font-weight: 600; }
+.diffof { font-size: 12px; color: var(--text-dim); }
+.ctrl__rows { display: flex; gap: 8px; margin-top: 6px; font-size: 13px; }
+.ctrl__label { flex: 0 0 34px; color: var(--text-dim); font-weight: 700; }
+.ctrl__chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.ctrlchip { color: inherit; font: inherit; }
+.ctrl__none { color: var(--text-dim); font-size: 12px; }
+.ctrl__tip { flex: 1; min-width: 0; }
+.ph { display: flex; align-items: center; gap: 8px; margin: 0; }
+.ph svg { width: 18px; height: 18px; flex: none; opacity: .8; }
+.btn { display: inline-flex; align-items: center; gap: 6px; }
+.btn svg { width: 16px; height: 16px; flex: none; }
 /* 푸터 */
 .foot { max-width: var(--maxw); margin: 0 auto; padding: 18px clamp(14px, 4vw, 28px) 40px;
   border-top: 1px solid var(--line); font-size: 12.5px; color: var(--text-dim); }
@@ -165,6 +190,8 @@ a { color: inherit; text-decoration: none; }
   .count { margin-left: 0; }
   .reel__by { min-width: 64px; }
   .map-table th:first-child, .map-table td:first-child { width: 88px; }
+  .ctrl { gap: 12px; }
+  .shot { width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
