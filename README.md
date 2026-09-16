@@ -15,6 +15,7 @@
 - 밖에서 접속하게 하려면: ngrok http 3000
 - 컨트롤 목록 갱신: npm run sync:controls (도감 시트 → data/controls.js)
 - 배포 전 점검: npm run check (파일 이름 대소문자 · 절대경로 · 데이터 상태)
+- 바뀐 내용 저장(커밋+푸시): npm run save   (또는 npm run save -- "메시지")
 
 ## 배포 (다른 기기에서 쓰기)
 
@@ -51,6 +52,7 @@
       scripts/control-gifs.json  컨트롤 이름 → 드라이브 GIF 파일ID
       scripts/control-tips.json  컨트롤 이름 → 설명(팁)
       scripts/check-deploy.js    배포 전 점검 (npm run check)
+      scripts/save.js            커밋+푸시 한 번에 (npm run save)
       js/app.js             해시 라우팅 · 화면 렌더
       server.js             정적 서버 (의존성 없음)
       package.json
