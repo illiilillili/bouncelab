@@ -42,6 +42,7 @@ window.BL = window.BL || {};
     clear(root);
 
     root.appendChild(el('section', { class: 'hero' }, [
+      el('span', { class: 'hero__badge', text: '바운스볼 도구 모음' }),
       el('h1', { text: BL.site.nameKo }),
       el('p', { text: '바운스볼 하면서 쓰려고 만든 도구. 설치 없이 브라우저에서 바로 돌아갑니다.' })
     ]));
@@ -81,6 +82,7 @@ window.BL = window.BL || {};
   }
 
   BL.dom.qsa('[data-version]').forEach(function (n) { n.textContent = 'v' + BL.site.version; });
+  if (BL.site.repo) BL.dom.qsa('[data-repo]').forEach(function (n) { n.setAttribute('href', BL.site.repo); });
   window.addEventListener('hashchange', render);
   render();
 })(window.BL);

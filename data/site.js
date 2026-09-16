@@ -5,6 +5,7 @@ window.BL.site = {
   nameKo: '바운스랩',
   nameEn: 'BounceLab',
   version: '0.1.0',
+  repo: 'https://github.com/illiilillili/bouncelab',
   storagePrefix: 'bl:',
 
   /* 문의하기 (맵 삭제·오타 제보)

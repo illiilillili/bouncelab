@@ -3,9 +3,9 @@ window.BL = window.BL || {};
 /* 아이콘. 직접 그린 24px 선화라서 색은 currentColor 를 따라간다. */
 (function (BL) {
   var PATH = {
-    roulette: '<circle cx="12" cy="12" r="7.6"/><circle cx="12" cy="12" r="2.1"/><path d="M12 4.4v3.1M18.8 8.4l-2.6 1.6M16.2 17.7l-1.7-2.2M7.4 17.5l1.6-2M5.2 8.2l2.6 1.7"/>',
-    controls: '<rect x="3.6" y="6.4" width="16.8" height="11.2" rx="3.2"/><path d="M8.4 12h2.4M9.6 10.8v2.4"/><circle cx="14.6" cy="11.4" r="0.95"/><circle cx="16.4" cy="13.2" r="0.95"/>',
-    colors: '<path d="M12 4.4c3.1 4.1 5.1 6.4 5.1 9.2a5.1 5.1 0 0 1-10.2 0c0-2.8 2-5.1 5.1-9.2z"/><path d="M9.6 14.6a2.6 2.6 0 0 0 2.4 2.6"/>',
+    roulette: '<rect x="2" y="10" width="12" height="12" rx="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01M10 14h.01M15 6h.01M18 9h.01"/>',
+    controls: '<path d="M6 11h4M8 9v3.9"/><path d="M15 12h.01M18 10h.01"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/>',
+    colors: '<circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>',
     dice: '<rect x="4.2" y="4.2" width="15.6" height="15.6" rx="3.4"/><circle cx="9" cy="9" r="1.15" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.15" fill="currentColor" stroke="none"/><circle cx="15" cy="15" r="1.15" fill="currentColor" stroke="none"/>',
     rotate: '<path d="M19.4 12a7.4 7.4 0 1 1-2.2-5.3"/><path d="M19.8 4.6v4.2h-4.2"/>',
     copy: '<rect x="9" y="9" width="10.6" height="10.6" rx="2.2"/><path d="M15.4 9V6.8a2.2 2.2 0 0 0-2.2-2.2H6.8A2.2 2.2 0 0 0 4.6 6.8v6.4a2.2 2.2 0 0 0 2.2 2.2H9"/>',
