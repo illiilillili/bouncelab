@@ -5,7 +5,24 @@
 const { execSync } = require('child_process');
 const path = require('path');
 
+const fs = require('fs');
 const ROOT = path.join(__dirname, '..');
+
+/* ── 1) 캐시 무효화 ──────────────────────────────
+ * GitHub Pages 는 max-age=600(10분)으로 파일을 보내서, 새로 배포해도
+ * 브라우저가 예전 CSS/JS 를 계속 쓴다. 주소에 ?v=시각 을 붙이면 매번 새 주소가 되어
+ * 배포 후 일반 새로고침만으로 최신 파일을 받는다. */
+const STAMP = String(Date.now());
+let stamped = 0;
+['index.html', 'block-preview.html', 'control-gif-preview.html'].forEach(function (file) {
+  const p = path.join(ROOT, file);
+  if (!fs.existsSync(p)) return;
+  const before = fs.readFileSync(p, 'utf8');
+  const after = before.replace(/((?:href|src)="(?:css|js|data)\/[^"?]+)(?:\?v=\d+)?(")/g, '$1?v=' + STAMP + '$2');
+  if (after !== before) { fs.writeFileSync(p, after, 'utf8'); stamped++; }
+});
+console.log('캐시 무효화 ?v=' + STAMP + ' (파일 ' + stamped + '개)');
+
 
 function git(cmd) {
   return execSync('git ' + cmd, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();

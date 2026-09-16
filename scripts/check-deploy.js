@@ -13,10 +13,10 @@ function t(label, got, want) {
   out.push((ok ? 'OK   ' : 'FAIL ') + label + '  got=' + got + '  want=' + want);
 }
 
-/* 파일 이름 대소문자까지 정확히 같은지 (리눅스 호스팅은 대소문자를 구분한다) */
+/* 파일 이름 대소문자까지 정확히 같은지 (?v=123 같은 캐시 무효화 값은 떼고 본다) */
 function exact(rel) {
   let cur = PROJ;
-  const parts = rel.split('/');
+  const parts = String(rel).split('?')[0].split('/');
   for (let i = 0; i < parts.length; i++) {
     if (!fs.existsSync(cur)) return false;
     if (fs.readdirSync(cur).indexOf(parts[i]) < 0) return false;
