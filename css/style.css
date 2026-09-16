@@ -55,7 +55,21 @@ a { color: inherit; text-decoration: none; }
 .item__name { display: block; font-size: 16.5px; font-weight: 700; letter-spacing: -.015em; }
 .item__desc { display: block; margin-top: 4px; font-size: 14px; color: var(--text-dim); }
 .item__meta { display: flex; align-items: center; gap: 7px; margin-top: auto; padding-top: 8px; font-size: 12.5px; color: var(--text-dim); }
-.item__go { margin-left: auto; color: var(--brand); font-size: 13px; font-weight: 700; }
+.item__go {
+  margin-left: auto; color: var(--brand); font-size: 14px; font-weight: 700;
+  opacity: 0; transform: translateX(-4px); transition: opacity .15s ease, transform .15s ease;
+}
+.item:hover .item__go, .item:focus-visible .item__go { opacity: 1; transform: none; }
+
+/* 대표 카드(첫 번째)만 크게 : 1 + 2 배치로 리듬을 준다 */
+.item--lead { grid-column: 1 / -1; flex-direction: row; align-items: center; gap: 16px; padding: 20px 22px;
+  background: var(--brand-soft); border-color: var(--brand-line); }
+.item--lead .item__icon svg { width: 30px; height: 30px; }
+.item--lead .item__main { flex: 1; }
+.item--lead .item__name { font-size: 19px; }
+.item--lead .item__desc { font-size: 14.5px; max-width: 60ch; }
+.item--lead .item__meta { margin-top: 0; padding-top: 0; }
+.item--lead .item__go { font-size: 15px; }
 
 .tag { padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; white-space: nowrap; }
 .tag--soon { background: var(--lav); color: var(--ink); }
@@ -112,10 +126,16 @@ a { color: inherit; text-decoration: none; }
 .f__row { display: flex; align-items: center; gap: 6px; }
 .dash { color: var(--text-dim); font-style: normal; }
 select {
-  padding: 6px 9px; border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--white);
-  font: inherit; font-size: 13.5px; color: var(--ink); transition: border-color .16s ease;
+  appearance: none; -webkit-appearance: none;
+  padding: 6px 30px 6px 10px; border: 1px solid var(--line); border-radius: var(--r-sm);
+  background-color: var(--white); background-repeat: no-repeat;
+  background-position: right 8px center; background-size: 14px 14px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234a5b66' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  font: inherit; font-size: 13.5px; color: var(--ink); cursor: pointer;
+  transition: border-color .16s ease, box-shadow .16s ease;
 }
-select:hover { border-color: var(--brand-line); }
+select:hover { border-color: var(--brand); }
+select:focus-visible { border-color: var(--brand); outline: none; box-shadow: 0 0 0 3px var(--brand-soft); }
 .count { margin-left: auto; color: var(--text-dim); font-size: 13px; }
 .tags { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
 .tags__row { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -149,6 +169,10 @@ select:hover { border-color: var(--brand-line); }
 .result__name { margin: 0 0 4px; font-size: clamp(20px, 3.2vw, 26px); font-weight: 800; letter-spacing: -.025em; }
 .result__meta { margin: 8px 0 0; font-size: 13px; color: var(--text-dim); }
 .result__btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.result__top { display: flex; align-items: center; gap: 14px; }
+.result__head { min-width: 0; }
+.mtile { flex: 0 0 auto; width: 62px; height: 62px; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); overflow: hidden; }
+.mtile svg { display: block; width: 100%; height: 100%; }
 .hint { margin: 12px 0 0; font-size: 13px; color: var(--text-dim); }
 .ph { display: flex; align-items: center; gap: 8px; margin: 0; }
 .ph svg { width: 18px; height: 18px; flex: none; opacity: .85; }
@@ -225,6 +249,8 @@ select:hover { border-color: var(--brand-line); }
 @media (max-width: 620px) {
   .brand__en { display: none; }
   .foot__links { margin-left: 0; }
+  .item--lead { flex-direction: column; align-items: flex-start; gap: 10px; padding: 18px; }
+  .item--lead .item__meta { padding-top: 6px; }
   .count { margin-left: 0; }
   .tags { margin-top: 10px; }
   .reel__by { min-width: 62px; }

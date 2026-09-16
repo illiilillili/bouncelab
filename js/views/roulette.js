@@ -17,6 +17,29 @@ window.BL = window.BL || {};
     return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   }
 
+  /* 맵 이름에서 뽑은 색으로 블럭 타일을 그린다 (맵 그림 데이터가 없어서 만든 도형) */
+  function hash(text) {
+    var s = String(text), h = 7;
+    for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 100003;
+    return h;
+  }
+
+  function mapTile(m) {
+    var h = hash(m.by + '|' + m.name);
+    var ink = ['#1f7a8c', '#022b3a'][h % 2];
+    var cells = '';
+    for (var i = 0; i < 16; i++) {
+      var on = ((h >> ((i + h) % 12)) & 1) === 1;
+      cells += '<rect x="' + (i % 4) * 6 + '" y="' + Math.floor(i / 4) * 6 +
+        '" width="5" height="5" rx="1" fill="' + (on ? ink : '#e6ecf5') + '"/>';
+    }
+    var box = document.createElement('span');
+    box.className = 'mtile';
+    box.setAttribute('aria-hidden', 'true');
+    box.innerHTML = '<svg viewBox="0 0 23 23">' + cells + '</svg>';
+    return box;
+  }
+
   function optionList(placeholder, values, current) {
     return [el('option', { value: '', text: placeholder })].concat(values.map(function (v) {
       return el('option', { value: v, text: v, selected: v === current });
@@ -186,8 +209,13 @@ window.BL = window.BL || {};
       function showResult(m) {
         resultEl.className = 'result';
         clear(resultEl);
-        resultEl.appendChild(el('p', { class: 'result__name', text: m.name }));
-        resultEl.appendChild(el('p', { class: 'result__meta', text: '제작자 ' + m.by + ' · 난이도 ' + m.diff }));
+        resultEl.appendChild(el('div', { class: 'result__top' }, [
+          mapTile(m),
+          el('div', { class: 'result__head' }, [
+            el('p', { class: 'result__name', text: m.name }),
+            el('p', { class: 'result__meta', text: '제작자 ' + m.by + ' · 난이도 ' + m.diff })
+          ])
+        ]));
         resultEl.appendChild(el('div', { class: 'result__btns' }, [
           el('button', { class: 'btn btn--main', type: 'button', onClick: spin, text: '다시 뽑기' }),
           el('button', { class: 'btn', type: 'button', onClick: function () { copy(m); }, text: '복사' })

@@ -22,9 +22,9 @@ window.BL = window.BL || {};
     return HOME;
   }
 
-  function row(f) {
+  function row(f, lead) {
 
-    return el('a', { class: 'item', href: '#/f/' + f.id }, [
+    return el('a', { class: 'item' + (lead ? ' item--lead' : ''), href: '#/f/' + f.id }, [
       el('span', { class: 'item__icon' }, BL.icons.get(f.id)),
       el('span', { class: 'item__main' }, [
         el('span', { class: 'item__name', text: f.name }),
@@ -48,7 +48,7 @@ window.BL = window.BL || {};
 
     root.appendChild(el('section', { class: 'list-wrap' }, [
       el('h2', { class: 'list-title', text: '기능' }),
-      el('div', { class: 'list' }, BL.features.map(row))
+      el('div', { class: 'list' }, BL.features.map(function (f, i) { return row(f, i === 0); }))
     ]));
 
     window.scrollTo(0, 0);
