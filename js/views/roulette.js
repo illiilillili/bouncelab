@@ -251,33 +251,41 @@ window.BL = window.BL || {};
 
       var detailsEl = el('details', { class: 'details', onToggle: function () { if (detailsEl.open) renderTable(); } }, [
         el('summary', {}, ['전체 맵 목록 ', tableCount]),
-        el('table', { class: 'map-table' }, [
-          el('thead', {}, [el('tr', {}, [el('th', { text: '제작자' }), el('th', { text: '맵 제목' }), el('th', { text: '난이도' })])]),
-          tableBody
+        el('div', { class: 'details__body' }, [
+          el('table', { class: 'map-table' }, [
+            el('thead', {}, [el('tr', {}, [el('th', { text: '제작자' }), el('th', { text: '맵 제목' }), el('th', { text: '난이도' })])]),
+            tableBody
+          ])
         ])
       ]);
 
       resultEl.appendChild(el('p', { text: '맵 뽑기를 눌러주세요.' }));
 
-      root.appendChild(el('div', { class: 'filters' }, [
-        el('div', { class: 'f' }, [
-          el('span', { text: '난이도' }),
-          el('span', { class: 'f__row' }, [minSel, el('em', { class: 'dash', text: '~' }), maxSel])
+      /* 좁은 화면 : 위에서 아래로 한 줄 / 넓은 화면 : 왼쪽(고르기) + 오른쪽 옆칸(결과) */
+      root.appendChild(el('div', { class: 'tool' }, [
+        el('div', { class: 'tool__main' }, [
+          el('div', { class: 'filters' }, [
+            el('div', { class: 'f' }, [
+              el('span', { class: 'f__label', text: '난이도' }),
+              el('span', { class: 'f__row' }, [minSel, el('em', { class: 'dash', text: '~' }), maxSel])
+            ]),
+            el('div', { class: 'f' }, [el('span', { class: 'f__label', text: '해시태그' }), tagWrap]),
+            el('span', { class: 'count' }, countEl)
+          ]),
+          el('div', { class: 'reel' }, track),
+          el('div', { class: 'roll-row' }, spinBtn),
+          emptyMsg
         ]),
-        el('div', { class: 'f' }, [el('span', { text: '해시태그' }), tagWrap]),
-        el('span', { class: 'count' }, countEl)
+        el('div', { class: 'tool__side' }, [resultEl, msgEl]),
+        el('div', { class: 'tool__foot' }, [
+          detailsEl,
+          BL.contact.row(function () {
+            var m = state.winner;
+            return m ? ['맵 제목: ' + m.name, '제작자: ' + m.by, '난이도: ' + m.diff] : [];
+          }),
+          live
+        ])
       ]));
-      root.appendChild(el('div', { class: 'reel' }, track));
-      root.appendChild(el('div', { class: 'roll-row' }, spinBtn));
-      root.appendChild(emptyMsg);
-      root.appendChild(resultEl);
-      root.appendChild(msgEl);
-      root.appendChild(detailsEl);
-      root.appendChild(BL.contact.row(function () {
-        var m = state.winner;
-        return m ? ['맵 제목: ' + m.name, '제작자: ' + m.by, '난이도: ' + m.diff] : [];
-      }));
-      root.appendChild(live);
 
       renderTags();
       refresh();

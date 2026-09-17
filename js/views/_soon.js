@@ -7,7 +7,7 @@ window.BL = window.BL || {};
   function make(f) {
     return {
       render: function (root) {
-        var icon = BL.icons.get(f.id);
+        var icon = BL.icons.art(f.id) || BL.icons.get(f.id);
         root.appendChild(el('div', { class: 'box' }, [
           icon ? el('span', { class: 'box__icon' }, icon) : null,
           el('h2', { text: f.name }),

@@ -24,7 +24,9 @@
   --r-sm: 6px;
   --r-lg: 12px;
   --maxw: 1080px;
-  --reel-h: 58px;
+  --side-w: 360px;        /* 넓은 화면에서 오른쪽 옆칸(결과·값) 너비 */
+  --top-h: 48px;          /* 상단바 높이 — 옆칸이 붙는(sticky) 자리를 계산할 때 씀 */
+  --reel-h: 58px;         /* 슬롯 한 줄 높이 — js/views/*.js 의 ITEM_H(58) 와 같아야 함 */
   --font: system-ui, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
   --mono: ui-monospace, Consolas, "Courier New", monospace;
 }

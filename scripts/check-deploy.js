@@ -47,8 +47,9 @@ const SITE_FILES = [
   'css/style.css', 'css/tokens.css',
   'data/site.js', 'data/features.js', 'data/maps.js', 'data/controls.js',
   'js/app.js', 'js/lib/dom.js', 'js/lib/icons.js', 'js/lib/storage.js', 'js/lib/rng.js',
-  'js/lib/query.js', 'js/lib/color.js', 'js/lib/contact.js',
-  'js/views/_soon.js', 'js/views/roulette.js', 'js/views/controls.js', 'js/views/colors.js'
+  'js/lib/query.js', 'js/lib/color.js', 'js/lib/contact.js', 'js/lib/objects.js',
+  'js/views/_soon.js', 'js/views/roulette.js', 'js/views/controls.js', 'js/views/colors.js',
+  'js/views/rating.js'
 ];
 const stuck = [];
 SITE_FILES.forEach(function (f) {
@@ -61,7 +62,7 @@ t('서버주소·절대경로 없음', stuck.join(', ') || '없음', '없음');
 /* 3) 배포에 꼭 있어야 하는 파일 */
 const NEED = ['index.html', 'css/tokens.css', 'css/style.css', 'data/site.js', 'data/features.js',
   'data/maps.js', 'data/controls.js', 'js/app.js', 'js/views/roulette.js', 'js/views/controls.js',
-  'js/views/colors.js', 'js/lib/icons.js'];
+  'js/views/colors.js', 'js/views/rating.js', 'js/lib/icons.js', 'js/lib/objects.js'];
 const gone = NEED.filter(function (f) { return !fs.existsSync(path.join(PROJ, f)); });
 t('필요한 파일 있음', gone.join(', ') || '없음', '없음');
 
@@ -86,6 +87,19 @@ const caps = [];
   });
 })(PROJ, '');
 t('대문자 파일명 없음', caps.join(', ') || '없음', '없음');
+
+/* 6) 기능 그림·오브젝트 그림이 실제로 있는지 (대소문자까지)
+ *    그림 경로는 화면 파일이 아니라 icons.js · objects.js 안에 적혀 있어서 따로 본다 */
+const IMG_JS = ['js/lib/icons.js', 'js/lib/objects.js'];
+const imgRefs = [];
+IMG_JS.forEach(function (f) {
+  const s = fs.readFileSync(path.join(PROJ, f), 'utf8');
+  [...s.matchAll(/'(img\/[^']+)'/g)].forEach(function (m) { imgRefs.push([f, m[1]]); });
+});
+const noImg = imgRefs.filter(function (r) { return !exact(r[1]); })
+  .map(function (r) { return r[0] + ' → ' + r[1]; });
+t('그림 파일 있음', noImg.join(', ') || '없음', '없음');
+out.push('  확인한 그림 ' + imgRefs.length + '개');
 
 t('fails', fails, 0);
 console.log(out.join('\n'));

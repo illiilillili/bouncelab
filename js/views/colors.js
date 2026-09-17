@@ -113,18 +113,25 @@ window.BL = window.BL || {};
       chkPastel.checked = opt.pastel;
       chkVivid.checked = opt.vivid;
 
-      root.appendChild(swatch);
-      root.appendChild(el('div', { class: 'blkrow' }, tiles));
-      root.appendChild(el('div', { class: 'pick' }, [rows.h.row, rows.s.row, rows.v.row]));
-      root.appendChild(hexEl);
-      root.appendChild(rgbEl);
-      root.appendChild(el('div', { class: 'roll-row' }, [
-        rollBtn,
-        checkLabel(chkDull, '칙칙한 색 제외'),
-        checkLabel(chkPastel, '파스텔 색만'),
-        checkLabel(chkVivid, '쨍한 색만')
+      /* 좁은 화면 : 위에서 아래로 한 줄 / 넓은 화면 : 왼쪽(색) + 오른쪽 옆칸(값과 버튼) */
+      root.appendChild(el('div', { class: 'tool' }, [
+        el('div', { class: 'tool__main' }, [
+          swatch,
+          el('div', { class: 'blkrow' }, tiles)
+        ]),
+        el('div', { class: 'tool__side' }, [
+          el('div', { class: 'pick' }, [rows.h.row, rows.s.row, rows.v.row]),
+          hexEl,
+          rgbEl,
+          el('div', { class: 'roll-row' }, [
+            rollBtn,
+            checkLabel(chkDull, '칙칙한 색 제외'),
+            checkLabel(chkPastel, '파스텔 색만'),
+            checkLabel(chkVivid, '쨍한 색만')
+          ])
+        ]),
+        el('div', { class: 'tool__foot' }, [live])
       ]));
-      root.appendChild(live);
 
       apply(EXAMPLE);
       /* 저장된 설정 때문에 예시 색이 조건 밖이면 바로 뽑아 준다 */

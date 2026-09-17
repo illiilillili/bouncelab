@@ -1,6 +1,6 @@
 window.BL = window.BL || {};
 
-/* 해시 주소: #/ (메인) · #/f/<id> (기능) */
+/* 해시 주소: #/ (메인) · #/f/<id> (기능) · #/f/<id>/<안쪽 화면> (예: #/f/rating/star) */
 (function (BL) {
   var el = BL.dom.el;
   var clear = BL.dom.clear;
@@ -18,23 +18,41 @@ window.BL = window.BL || {};
 
   function parse() {
     var parts = String(location.hash || '').replace(/^#\/?/, '').split('/').filter(Boolean);
-    if (parts[0] === 'f' && parts[1] && feature(parts[1])) return parts[1];
-    return HOME;
+    if (parts[0] === 'f' && parts[1] && feature(parts[1])) {
+      return { id: parts[1], sub: parts[2] || '' };
+    }
+    return { id: HOME, sub: '' };
   }
 
-  function row(f, lead) {
+  /* 홈 카드에 쓰는 그림 — 기능 그림이 있으면 그걸, 없으면 선화를 쓴다 */
+  function icon(f) {
+    return BL.icons.art(f.id) || BL.icons.get(f.id);
+  }
 
-    return el('a', { class: 'item' + (lead ? ' item--lead' : ''), href: '#/f/' + f.id }, [
-      el('span', { class: 'item__icon' }, BL.icons.get(f.id)),
-      el('span', { class: 'item__main' }, [
-        el('span', { class: 'item__name', text: f.name }),
-        el('span', { class: 'item__desc', text: f.desc })
-      ]),
-      el('span', { class: 'item__meta' }, [
-        f.status === 'soon' ? el('span', { class: 'tag tag--soon', text: '준비 중' }) : null,
-        f.needsData ? el('span', { class: 'tag tag--need', text: '데이터 필요' }) : null,
-        el('span', { class: 'item__go', text: '→' })
-      ])
+  /* 카드 아래 수치 줄. '*631개* 컨트롤' 처럼 별표로 감싼 부분만 굵게 나온다 */
+  function stat(f) {
+    var text = typeof f.stat === 'function' ? f.stat() : f.stat;
+    if (!text) return null;
+    return el('span', { class: 'item__stat' }, String(text).split('*').map(function (s, i) {
+      if (!s) return null;
+      return i % 2 ? el('b', { text: s }) : s;
+    }));
+  }
+
+  function tags(f) {
+    var list = [];
+    if (f.status === 'soon') list.push(el('span', { class: 'tag tag--soon', text: '준비 중' }));
+    if (f.needsData) list.push(el('span', { class: 'tag tag--need', text: '데이터 필요' }));
+    return list.length ? el('span', { class: 'item__tags' }, list) : null;
+  }
+
+  function card(f) {
+    return el('a', { class: 'item item--' + f.id, href: '#/f/' + f.id }, [
+      el('span', { class: 'item__icon' }, icon(f)),
+      el('span', { class: 'item__name', text: f.name }),
+      el('span', { class: 'item__desc', text: f.desc }),
+      stat(f),
+      tags(f)
     ]);
   }
 
@@ -42,40 +60,41 @@ window.BL = window.BL || {};
     clear(root);
 
     root.appendChild(el('section', { class: 'hero' }, [
-      el('h1', { text: BL.site.nameKo }),
-      el('p', { text: '바운스볼 하면서 쓰려고 만든 도구. 설치 없이 브라우저에서 바로 돌아갑니다.' })
+      el('h1', { text: BL.site.nameKo })
     ]));
 
+    /* 카드 수에 맞춰 열이 자동으로 잡힌다 (좁은 화면 1열 → 넓으면 3열) */
     root.appendChild(el('section', { class: 'list-wrap' }, [
       el('h2', { class: 'list-title', text: '기능' }),
-      el('div', { class: 'list' }, BL.features.map(function (f, i) { return row(f, i === 0); }))
+      el('div', { class: 'list' }, (BL.features || []).map(card))
     ]));
 
     window.scrollTo(0, 0);
   }
 
-  function renderTool(root, id) {
+  function renderTool(root, id, sub) {
     var f = feature(id);
     clear(root);
     root.appendChild(el('div', { class: 'bar' }, [
       el('a', { class: 'bar__back', href: '#/', text: '← 홈' }),
-      el('h1', {}, [BL.icons.get(f.id), f.name])
+      el('h1', {}, [icon(f), f.name])
     ]));
     var body = el('div');
     root.appendChild(body);
-    BL.views[id].render(body);
-    document.title = f.name + ' · ' + BL.site.nameKo;
+    /* 화면이 제목을 돌려주면 그걸 쓴다 (안쪽 화면이 있는 기능 — 예: 오브젝트 평점) */
+    var title = BL.views[id].render(body, sub);
+    document.title = (title || f.name) + ' · ' + BL.site.nameKo;
     window.scrollTo(0, 0);
   }
 
   function render() {
-    var id = parse();
+    var r = parse();
     var root = document.getElementById('view');
-    if (id === HOME) {
+    if (r.id === HOME) {
       document.title = BL.site.nameKo + ' · ' + BL.site.nameEn;
       renderHome(root);
     } else {
-      renderTool(root, id);
+      renderTool(root, r.id, r.sub);
     }
   }
 

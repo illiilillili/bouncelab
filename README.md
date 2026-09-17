@@ -1,12 +1,15 @@
 # 바운스랩 (BounceLab)
 
-바운스볼 하면서 쓰려고 만든 도구 모음. 설치도 빌드도 없이 브라우저에서 바로 돌아갑니다.
-
 ## 지금 있는 것
 
 - **맵 룰렛** — 슬롯 롤링으로 맵 하나 뽑기. 난이도 범위·해시태그 필터, 결과 복사, 전체 맵 목록 보기
 - **랜덤 컨트롤 룰렛** — 바운스볼 도감 컨트롤 631개 중 하나 뽑기. 난이도 범위 필터, 태그·재료·설명(팁), 컨트롤 움짤(도감 DB 의 드라이브 GIF)
 - **랜덤 색상 추천** — 맵 에디터용 HSV 색 뽑기 (H·S·V 각 0~39 인덱스, HEX·RGB 표시)
+- **오브젝트 평점** — 별 · 공 오브젝트를 골라 별점(1~5) 매기기. 주소는 `#/f/rating`, 평점 매기는 창은 `#/f/rating/star` · `#/f/rating/ball`. 평점은 브라우저에만 저장
+
+홈 기능 카드는 `data/features.js` 하나로 그려집니다. 기능별 색은 `css/style.css` 의 `.item--<기능 id>` 에서,
+그림은 `js/lib/icons.js` 의 `art()` 가 `img/` 안의 파일을 그대로 씁니다 (`stat()` 은 카드 아래 수치 줄).
+그림을 바꾸려면 코드가 아니라 `img/` 안의 파일을 바꾸면 됩니다.
 
 ## 실행
 
@@ -40,20 +43,22 @@
       data/features.js      기능 목록 (화면과 주소가 여기서 나옴)
       data/maps.js          맵 목록 (제작자 · 제목 · 난이도)
       js/lib/dom.js         DOM 조각 만들기
-      js/lib/icons.js       아이콘 SVG
+      js/lib/icons.js       아이콘 SVG (선화 + 기능 그림)
+      js/lib/objects.js     오브젝트 평점 대상 (이름 · 그림)
       js/lib/storage.js     localStorage 래퍼
       js/lib/rng.js         뽑기 난수 (pick · shuffle)
       js/lib/query.js       난이도 랭크 · 필터 (순수 함수)
       js/views/_soon.js     준비 중 화면
       js/views/roulette.js  맵 룰렛 화면
       js/views/controls.js  랜덤 컨트롤 룰렛 화면
+      js/views/rating.js    오브젝트 평점 화면 (오브젝트 고르기 · 평점 매기는 창)
+      js/app.js             해시 라우팅 (#/ · #/f/<id> · #/f/<id>/<안쪽 화면>) · 화면 렌더
       data/controls.js      컨트롤 목록 (도감 시트에서 자동 생성)
       scripts/sync-controls.js   도감 시트 → data/controls.js
       scripts/control-gifs.json  컨트롤 이름 → 드라이브 GIF 파일ID
       scripts/control-tips.json  컨트롤 이름 → 설명(팁)
       scripts/check-deploy.js    배포 전 점검 (npm run check)
       scripts/save.js            커밋+푸시 한 번에 (npm run save)
-      js/app.js             해시 라우팅 · 화면 렌더
       server.js             정적 서버 (의존성 없음)
       package.json
 
@@ -86,6 +91,7 @@ H·S·V 모두 0~39 인덱스(40단계), 조합은 40 x 40 x 40 = 64,000 가지�
 
 - `bl:roulette.filters` — 난이도 범위와 고른 해시태그
 - `bl:controls.filters` — 컨트롤 룰렛 난이도 범위
+- `bl:rating.<오브젝트>` — 오브젝트 평점 (예: `bl:rating.star`, `bl:rating.ball`)
 
 ## 자료 출처
 

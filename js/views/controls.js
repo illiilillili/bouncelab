@@ -217,27 +217,34 @@ window.BL = window.BL || {};
 
       resultEl.appendChild(ph('컨트롤 뽑기를 눌러주세요.'));
 
-      root.appendChild(el('div', { class: 'filters' }, [
-        el('div', { class: 'f' }, [
-          el('span', { text: '난이도' }),
-          el('span', { class: 'f__row' }, [minSel, el('em', { class: 'dash', text: '~' }), maxSel])
+      /* 좁은 화면 : 위에서 아래로 한 줄 / 넓은 화면 : 왼쪽(고르기) + 오른쪽 옆칸(결과) */
+      root.appendChild(el('div', { class: 'tool' }, [
+        el('div', { class: 'tool__main' }, [
+          el('div', { class: 'filters' }, [
+            el('div', { class: 'f' }, [
+              el('span', { class: 'f__label', text: '난이도' }),
+              el('span', { class: 'f__row' }, [minSel, el('em', { class: 'dash', text: '~' }), maxSel])
+            ]),
+            el('span', { class: 'count' }, countEl)
+          ]),
+          el('div', { class: 'reel' }, track),
+          el('div', { class: 'roll-row' }, spinBtn),
+          emptyMsg
         ]),
-        el('span', { class: 'count' }, countEl)
+        el('div', { class: 'tool__side' }, [resultEl]),
+        el('div', { class: 'tool__foot' }, [
+          el('p', { class: 'hint', text: '도감 컨트롤 ' + all.length + '개 · 그림 ' + (meta.withImg || 0) + '개 · 자료 출처: 바운스볼 도감' }),
+          BL.contact.row(function () {
+            var c = state.winner;
+            if (!c) return [];
+            var lines = ['컨트롤: ' + c.name, '난이도: ' + c.diff];
+            if (c.tags.length) lines.push('태그: ' + c.tags.join(' '));
+            if (c.cell) lines.push('도감 위치: ' + c.cell);
+            return lines;
+          }),
+          live
+        ])
       ]));
-      root.appendChild(el('div', { class: 'reel' }, track));
-      root.appendChild(el('div', { class: 'roll-row' }, spinBtn));
-      root.appendChild(emptyMsg);
-      root.appendChild(resultEl);
-      root.appendChild(el('p', { class: 'hint', text: '도감 컨트롤 ' + all.length + '개 · 그림 ' + (meta.withImg || 0) + '개 · 자료 출처: 바운스볼 도감' }));
-      root.appendChild(BL.contact.row(function () {
-        var c = state.winner;
-        if (!c) return [];
-        var lines = ['컨트롤: ' + c.name, '난이도: ' + c.diff];
-        if (c.tags.length) lines.push('태그: ' + c.tags.join(' '));
-        if (c.cell) lines.push('도감 위치: ' + c.cell);
-        return lines;
-      }));
-      root.appendChild(live);
 
       refresh();
     }
