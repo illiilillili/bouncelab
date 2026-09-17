@@ -7,8 +7,9 @@
 - **랜덤 색상 추천** — 맵 에디터용 HSV 색 뽑기 (H·S·V 각 0~39 인덱스, HEX·RGB 표시)
 - **오브젝트 평점** — 별 · 공 오브젝트를 골라 별점(1~5) 매기기. 주소는 `#/f/rating`, 평점 매기는 창은 `#/f/rating/star` · `#/f/rating/ball`. 평점은 브라우저에만 저장
 
-홈 기능 카드는 `data/features.js` 하나로 그려집니다. 기능별 색은 `css/style.css` 의 `.item--<기능 id>` 에서,
-그림은 `js/lib/icons.js` 의 `art()` 가 `img/` 안의 파일을 그대로 씁니다 (`stat()` 은 카드 아래 수치 줄).
+홈 기능 카드는 `data/features.js` 하나로 그려집니다. 카드에는 **그림과 이름만** 나옵니다(설명·수치 줄 없음).
+기능별 색은 `css/style.css` 의 `.item--<기능 id>` 에서 그림 칩 바탕(`--chip`)과 hover 테두리(`--accent`)로 씁니다.
+그림은 `js/lib/icons.js` 의 `art()` 가 `img/` 안의 파일을 그대로 씁니다.
 그림을 바꾸려면 코드가 아니라 `img/` 안의 파일을 바꾸면 됩니다.
 
 ## 실행
@@ -40,10 +41,10 @@
       css/tokens.css        색 · 폰트 · 간격 변수
       css/style.css         레이아웃과 컴포넌트
       data/site.js          사이트 이름 · 버전
-      data/features.js      기능 목록 (화면과 주소가 여기서 나옴)
+      data/features.js      기능 목록 (이름 · 주소 · 홈 카드 그림)
       data/maps.js          맵 목록 (제작자 · 제목 · 난이도)
       js/lib/dom.js         DOM 조각 만들기
-      js/lib/icons.js       아이콘 SVG (선화 + 기능 그림)
+      js/lib/icons.js       선화 아이콘 + 기능 그림 파일 경로
       js/lib/objects.js     오브젝트 평점 대상 (이름 · 그림)
       js/lib/storage.js     localStorage 래퍼
       js/lib/rng.js         뽑기 난수 (pick · shuffle)

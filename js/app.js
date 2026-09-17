@@ -29,16 +29,6 @@ window.BL = window.BL || {};
     return BL.icons.art(f.id) || BL.icons.get(f.id);
   }
 
-  /* 카드 아래 수치 줄. '*631개* 컨트롤' 처럼 별표로 감싼 부분만 굵게 나온다 */
-  function stat(f) {
-    var text = typeof f.stat === 'function' ? f.stat() : f.stat;
-    if (!text) return null;
-    return el('span', { class: 'item__stat' }, String(text).split('*').map(function (s, i) {
-      if (!s) return null;
-      return i % 2 ? el('b', { text: s }) : s;
-    }));
-  }
-
   function tags(f) {
     var list = [];
     if (f.status === 'soon') list.push(el('span', { class: 'tag tag--soon', text: '준비 중' }));
@@ -46,12 +36,11 @@ window.BL = window.BL || {};
     return list.length ? el('span', { class: 'item__tags' }, list) : null;
   }
 
+  /* 카드 : 그림 + 이름만. 설명·수치 줄은 두지 않는다 */
   function card(f) {
     return el('a', { class: 'item item--' + f.id, href: '#/f/' + f.id }, [
       el('span', { class: 'item__icon' }, icon(f)),
       el('span', { class: 'item__name', text: f.name }),
-      el('span', { class: 'item__desc', text: f.desc }),
-      stat(f),
       tags(f)
     ]);
   }
@@ -63,7 +52,7 @@ window.BL = window.BL || {};
       el('h1', { text: BL.site.nameKo })
     ]));
 
-    /* 카드 수에 맞춰 열이 자동으로 잡힌다 (좁은 화면 1열 → 넓으면 3열) */
+    /* 카드 수에 맞춰 열이 자동으로 잡힌다 (좁은 화면 2열 → 넓으면 네 장이 한 줄) */
     root.appendChild(el('section', { class: 'list-wrap' }, [
       el('h2', { class: 'list-title', text: '기능' }),
       el('div', { class: 'list' }, (BL.features || []).map(card))
