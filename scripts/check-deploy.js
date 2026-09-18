@@ -48,6 +48,7 @@ const SITE_FILES = [
   'data/site.js', 'data/features.js', 'data/maps.js', 'data/controls.js',
   'js/app.js', 'js/lib/dom.js', 'js/lib/icons.js', 'js/lib/storage.js', 'js/lib/rng.js',
   'js/lib/query.js', 'js/lib/color.js', 'js/lib/contact.js', 'js/lib/objects.js',
+  'js/lib/supabase.js', 'js/lib/reviews.js',
   'js/views/_soon.js', 'js/views/roulette.js', 'js/views/controls.js', 'js/views/colors.js',
   'js/views/rating.js'
 ];
@@ -62,7 +63,8 @@ t('서버주소·절대경로 없음', stuck.join(', ') || '없음', '없음');
 /* 3) 배포에 꼭 있어야 하는 파일 */
 const NEED = ['index.html', 'css/tokens.css', 'css/style.css', 'data/site.js', 'data/features.js',
   'data/maps.js', 'data/controls.js', 'js/app.js', 'js/views/roulette.js', 'js/views/controls.js',
-  'js/views/colors.js', 'js/views/rating.js', 'js/lib/icons.js', 'js/lib/objects.js'];
+  'js/views/colors.js', 'js/views/rating.js', 'js/lib/icons.js', 'js/lib/objects.js',
+  'js/lib/reviews.js'];
 const gone = NEED.filter(function (f) { return !fs.existsSync(path.join(PROJ, f)); });
 t('필요한 파일 있음', gone.join(', ') || '없음', '없음');
 

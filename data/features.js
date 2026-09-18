@@ -21,8 +21,9 @@ window.BL.features = [
     desc: 'HSV 40단계로 색을 뽑고 HEX·RGB 값을 바로 확인합니다.',
     status: 'ready' },
 
-  /* 새 탭 — 별 · 공 오브젝트를 골라 별점을 매긴다 (js/views/rating.js) */
+  /* 오브젝트 리뷰 — 별 · 공에 별점과 리뷰를 남기고 모두의 리뷰를 본다
+     (js/views/rating.js · js/lib/reviews.js · Supabase) */
   { id: 'rating', name: '오브젝트 평점',
-    desc: '오브젝트(별·공)를 고르고 나만의 별점을 매깁니다.',
+    desc: '오브젝트(별·공)에 별점과 리뷰를 남기고, 다른 사람이 남긴 리뷰도 봅니다.',
     status: 'ready' }
 ];
