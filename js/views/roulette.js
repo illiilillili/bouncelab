@@ -61,21 +61,17 @@ window.BL = window.BL || {};
       }
 
       var diffs = query.diffOptions(maps);
-      var allTags = query.tagOptions(maps);
       var saved = storage.get(K.filters, {});
       var state = {
         min: typeof saved.min === 'string' ? saved.min : '',
         max: typeof saved.max === 'string' ? saved.max : '',
-        tags: saved.tags instanceof Array ? saved.tags : [],
         rolling: false,
         winner: null
       };
-      var tagChips = [];
 
       var minSel = el('select', { 'aria-label': '난이도 최저', onChange: function () { onRange('min', minSel.value); } }, optionList('전체', diffs, state.min));
       var maxSel = el('select', { 'aria-label': '난이도 최고', onChange: function () { onRange('max', maxSel.value); } }, optionList('전체', diffs, state.max));
       var countEl = el('span');
-      var tagWrap = el('span', { class: 'tags__row' });
       var emptyMsg = el('p', { class: 'hint' });
       var msgEl = el('p', { class: 'hint' });
       var live = el('p', { class: 'sr-only', role: 'status', 'aria-live': 'polite' });
@@ -86,7 +82,7 @@ window.BL = window.BL || {};
       var track = el('div', { class: 'reel__track', 'aria-hidden': 'true' });
 
       function saveFilters() {
-        storage.set(K.filters, { min: state.min, max: state.max, tags: state.tags });
+        storage.set(K.filters, { min: state.min, max: state.max });
       }
 
       /* 난이도를 '전체' 로 바꾼 그 순간에만 양쪽을 전체로 돌린다.
@@ -107,40 +103,7 @@ window.BL = window.BL || {};
       }
 
       function baseList() {
-        return query.filter(maps, { min: state.min, max: state.max, tags: state.tags });
-      }
-
-      function renderTags() {
-        clear(tagWrap);
-        tagChips = [];
-        if (!allTags.length) {
-          tagWrap.appendChild(el('span', { class: 'tags__empty', text: '아직 등록된 해시태그가 없습니다 (나중에 추가 예정)' }));
-          return;
-        }
-        allTags.forEach(function (t) {
-          var on = state.tags.indexOf(t) >= 0;
-          var btn = el('button', {
-            class: 'tchip', type: 'button', 'aria-pressed': on ? 'true' : 'false',
-            text: '#' + t, onClick: function () { toggleTag(t); }
-          });
-          tagChips.push({ tag: t, btn: btn });
-          tagWrap.appendChild(btn);
-        });
-      }
-
-      function syncTags() {
-        tagChips.forEach(function (c) {
-          c.btn.setAttribute('aria-pressed', state.tags.indexOf(c.tag) >= 0 ? 'true' : 'false');
-        });
-      }
-
-      function toggleTag(t) {
-        var i = state.tags.indexOf(t);
-        if (i >= 0) state.tags.splice(i, 1);
-        else state.tags.push(t);
-        saveFilters();
-        syncTags();
-        refresh();
+        return query.filter(maps, { min: state.min, max: state.max });
       }
 
       function reelItem(m) {
@@ -151,13 +114,22 @@ window.BL = window.BL || {};
         ]);
       }
 
+      /* 아직 안 뽑았을 때의 자리표시 — 맵 제목·제작자를 미리 보여주지 않는다 */
+      function dashItem() {
+        return el('div', { class: 'reel__item' }, [
+          el('span', { class: 'reel__by', text: '-' }),
+          el('span', { class: 'reel__name reel__name--dash', text: '-' }),
+          el('span', { class: 'reel__diff', text: '난이도 -' })
+        ]);
+      }
+
       function restReel() {
         var list = baseList();
-        var show = state.winner || list[0] || null;
         clear(track);
         track.style.transition = 'none';
         track.style.transform = 'translateY(0)';
-        if (show) track.appendChild(reelItem(show));
+        if (state.winner) track.appendChild(reelItem(state.winner));
+        else if (list.length) track.appendChild(dashItem());
         else track.appendChild(el('div', { class: 'reel__item' }, [el('span', { class: 'reel__name', text: '후보 없음' })]));
       }
 
@@ -246,7 +218,7 @@ window.BL = window.BL || {};
         restReel();
         renderTable();
         spinBtn.disabled = state.rolling || !list.length;
-        emptyMsg.textContent = list.length ? '' : '조건에 맞는 맵이 없습니다. 난이도 범위나 해시태그를 바꿔보세요.';
+        emptyMsg.textContent = list.length ? '' : '조건에 맞는 맵이 없습니다. 난이도 범위를 바꿔보세요.';
       }
 
       var detailsEl = el('details', { class: 'details', onToggle: function () { if (detailsEl.open) renderTable(); } }, [
@@ -269,7 +241,6 @@ window.BL = window.BL || {};
               el('span', { class: 'f__label', text: '난이도' }),
               el('span', { class: 'f__row' }, [minSel, el('em', { class: 'dash', text: '~' }), maxSel])
             ]),
-            el('div', { class: 'f' }, [el('span', { class: 'f__label', text: '해시태그' }), tagWrap]),
             el('span', { class: 'count' }, countEl)
           ]),
           el('div', { class: 'reel' }, track),
@@ -287,7 +258,6 @@ window.BL = window.BL || {};
         ])
       ]));
 
-      renderTags();
       refresh();
     }
   };

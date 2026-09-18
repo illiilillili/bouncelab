@@ -24,7 +24,8 @@ window.BL = window.BL || {};
     return list.sort(function (a, b) { return diffRank(a) - diffRank(b); });
   }
 
-  /* 맵에 달린 해시태그. 아직 없으면 빈 배열. */
+  /* 맵에 달린 해시태그. 아직 없으면 빈 배열.
+     룰렛 화면의 거르는 칸은 뺐지만, 데이터에 태그가 쌓이면 tagOptions 로 목록을 뽑아 다시 붙이면 된다. */
   function tagsOf(m) {
     return m.tags instanceof Array ? m.tags : [];
   }

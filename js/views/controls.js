@@ -127,13 +127,22 @@ window.BL = window.BL || {};
         ]);
       }
 
+      /* 아직 안 뽑았을 때의 자리표시 — 컨트롤 이름을 미리 보여주지 않는다 */
+      function dashItem() {
+        return el('div', { class: 'reel__item' }, [
+          el('span', { class: 'reel__by', text: '난이도 -' }),
+          el('span', { class: 'reel__name reel__name--dash', text: '-' }),
+          el('span', { class: 'reel__diff', text: '-' })
+        ]);
+      }
+
       function restReel() {
         var list = baseList();
-        var show = state.winner || list[0] || null;
         clear(track);
         track.style.transition = 'none';
         track.style.transform = 'translateY(0)';
-        if (show) track.appendChild(reelItem(show));
+        if (state.winner) track.appendChild(reelItem(state.winner));
+        else if (list.length) track.appendChild(dashItem());
         else track.appendChild(el('div', { class: 'reel__item' }, [el('span', { class: 'reel__name', text: '후보 없음' })]));
       }
 

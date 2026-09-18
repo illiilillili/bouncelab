@@ -9,7 +9,7 @@
 window.BL = window.BL || {};
 window.BL.features = [
   { id: 'roulette', name: '맵 룰렛',
-    desc: '무작위로 맵 하나를 뽑습니다. 난이도와 해시태그로 걸러서 고릅니다.',
+    desc: '무작위로 맵 하나를 뽑습니다. 난이도 범위로 걸러서 고릅니다.',
     status: 'ready' },
 
   { id: 'controls', name: '랜덤 컨트롤 룰렛',
