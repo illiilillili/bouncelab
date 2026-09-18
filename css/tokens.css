@@ -1,32 +1,70 @@
-/* 색은 5개 고정: 022B3A / 1F7A8C / BFDBF7 / E1E5F2 / FFFFFF */
+/* 색은 5개 고정: 022B3A / 1F7A8C / BFDBF7 / E1E5F2 / FFFFFF
+ * 그 위에 역할 색 2개만 더 쓴다.
+ *   brand(보라) — ① 주 CTA ② 활성 상태 ③ 링크 ④ 포커스 링. 이 네 곳에만.
+ *   amber(앰버) — ① 난이도 막대 ② '준비 중' 표시. 이 두 곳에만.
+ * 그림자는 2단계(--sh-2 카드 / --sh-3 떠오름), 그라디언트는 --page-bg 하나뿐이다. */
 :root {
+  /* 바탕색 5개 (게임에서 온 고정 팔레트) */
   --ink: #022b3a;
   --teal: #1f7a8c;
   --sky: #bfdbf7;
   --lav: #e1e5f2;
+  --white: #ffffff;
 
-  /* 브랜드 포인트 (인디고) */
+  /* 글자·선·면 */
+  --text: var(--ink);
+  --text-dim: #4a5b66;    /* 흰 배경 대비 약 7:1 — 작은 글자에도 쓴다 */
+  --line: #dde5ef;        /* 헤어라인 */
+  --surface: #f4f7fb;     /* 면 1 — 인셋·칩 */
+  --surface-2: #eaf0f8;   /* 면 2 — 타일·강조된 칩 */
+  --tile-line: #04191f;   /* 게임 타일 외곽선 */
+
+  /* 브랜드 (보라) */
   --brand: #4f46e5;
   --brand-ink: #3730a3;
   --brand-soft: #eef2ff;
   --brand-line: #c7d2fe;
-  --shadow: 0 1px 2px rgba(15, 23, 42, .05);
-  --shadow-hover: 0 4px 14px rgba(15, 23, 42, .10);
-  --white: #ffffff;
 
-  --text: var(--ink);
-  --text-dim: #4a5b66;
-  --line: #d9e3f0;
-  --surface: #f6f8fc;
-  --tile-line: #04191f;   /* 타일 외곽선 */
+  /* 포인트 (앰버) — 아주 제한적으로만 */
+  --amber: #e0a03c;
+  --amber-soft: #fdf3e2;
+  --amber-ink: #6b4a05;
 
-  --r: 10px;
-  --r-sm: 6px;
-  --r-lg: 12px;
-  --maxw: 1080px;
-  --side-w: 360px;        /* 넓은 화면에서 오른쪽 옆칸(결과·값) 너비 */
-  --top-h: 48px;          /* 상단바 높이 — 옆칸이 붙는(sticky) 자리를 계산할 때 씀 */
+  /* 라운드 3종 (+타일용 1종) */
+  --r-xs: 8px;      /* 타일·작은 인셋 */
+  --r-sm: 12px;     /* 버튼·입력·칩 */
+  --r: 16px;        /* 카드·패널 */
+  --r-lg: 16px;     /* 예전 이름 — 위와 같은 값 */
+  --r-full: 999px;
+
+  /* 간격 6종 */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+
+  /* 그림자 2단계 (과하지 않게) */
+  --sh-2: 0 1px 2px rgba(2, 43, 58, .05), 0 8px 20px rgba(2, 43, 58, .05);
+  --sh-3: 0 2px 4px rgba(2, 43, 58, .06), 0 14px 30px rgba(2, 43, 58, .09);
+  --shadow: var(--sh-2);          /* 예전 이름 */
+  --shadow-hover: var(--sh-3);    /* 예전 이름 */
+
+  /* 모션 — hover 전환에만 쓴다 (등장 애니메이션 없음) */
+  --dur-fast: 120ms;
+  --dur: 180ms;
+  --ease: cubic-bezier(.2, .7, .3, 1);
+
+  /* 레이아웃 */
+  --maxw: 1120px;
+  --side-w: 340px;        /* 넓은 화면에서 오른쪽 옆칸(결과·값) 너비 */
+  --top-h: 56px;          /* 상단바 높이 — 옆칸이 붙는(sticky) 자리를 계산할 때 씀 */
   --reel-h: 58px;         /* 슬롯 한 줄 높이 — js/views/*.js 의 ITEM_H(58) 와 같아야 함 */
+
   --font: system-ui, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
   --mono: ui-monospace, Consolas, "Courier New", monospace;
+
+  /* 페이지 배경 — 화면 전체에서 유일한 그라디언트 */
+  --page-bg: linear-gradient(180deg, #f7f9fd 0%, #ffffff 420px);
 }

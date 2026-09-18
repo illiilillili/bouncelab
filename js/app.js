@@ -36,23 +36,44 @@ window.BL = window.BL || {};
     return list.length ? el('span', { class: 'item__tags' }, list) : null;
   }
 
-  /* 카드 : 그림 + 이름만. 설명·수치 줄은 두지 않는다 */
+  /* 카드 : 그림 + 이름 + 한 줄 설명(data/features.js 의 desc).
+     수치 줄(개수 같은 것)은 두지 않는다 — 홈 히어로가 그 몫을 맡는다. */
   function card(f) {
     return el('a', { class: 'item item--' + f.id, href: '#/f/' + f.id }, [
       el('span', { class: 'item__icon' }, icon(f)),
-      el('span', { class: 'item__name', text: f.name }),
+      el('span', { class: 'item__body' }, [
+        el('span', { class: 'item__name', text: f.name }),
+        el('span', { class: 'item__desc', text: f.desc })
+      ]),
       tags(f)
+    ]);
+  }
+
+  /* 홈 히어로 : 제목 · 한 줄 설명 · 숫자 한 줄.
+     숫자는 데이터에서 세어 쓴다 (값을 손으로 적지 않는다). 버튼은 두지 않는다 —
+     바로 아래 카드가 입구라서 같은 역할을 두 번 만들지 않는다. */
+  function hero() {
+    var maps = (BL.maps || []).length;
+    var controls = (BL.controls || []).length;
+    var stats = [
+      maps + '개 맵',
+      controls + '개 컨트롤',
+      '난이도 0~10',
+      '랜덤 색 64,000가지'
+    ];
+    return el('section', { class: 'hero' }, [
+      el('h1', { text: '바운스볼 도구 상자' }),
+      el('p', { class: 'hero__lead', text: '맵, 컨트롤, 색을 뽑아서 씁니다. 설치나 로그인 없이 브라우저에서 바로 돌아갑니다.' }),
+      el('p', { class: 'hero__stats', text: stats.join(' · ') })
     ]);
   }
 
   function renderHome(root) {
     clear(root);
 
-    root.appendChild(el('section', { class: 'hero' }, [
-      el('h1', { text: BL.site.nameKo })
-    ]));
+    root.appendChild(hero());
 
-    /* 카드 수에 맞춰 열이 자동으로 잡힌다 (좁은 화면 2열 → 넓으면 네 장이 한 줄) */
+    /* 좁은 화면 2열 → 900px 부터 네 장이 한 줄 (style.css 의 .list) */
     root.appendChild(el('section', { class: 'list-wrap' }, [
       el('h2', { class: 'list-title', text: '기능' }),
       el('div', { class: 'list' }, (BL.features || []).map(card))
@@ -66,7 +87,8 @@ window.BL = window.BL || {};
     clear(root);
     root.appendChild(el('div', { class: 'bar' }, [
       el('a', { class: 'bar__back', href: '#/', text: '← 홈' }),
-      el('h1', {}, [icon(f), f.name])
+      el('h1', {}, [icon(f), f.name]),
+      el('p', { class: 'bar__desc', text: f.desc })   /* 기능 설명 한 줄 (features.js) */
     ]));
     var body = el('div');
     root.appendChild(body);

@@ -4,7 +4,8 @@
  * needsData  맵 이름처럼 알려줘야 하는 값이 필요한 기능
  * desc       준비 중 화면(js/views/_soon.js)에 나오는 설명
  *
- * 홈 카드에는 그림(js/lib/icons.js 의 art)과 이름만 나온다 — 설명·수치 줄은 두지 않는다.
+ * 홈 카드에는 그림(js/lib/icons.js 의 art) · 이름 · desc 한 줄이 나온다.
+ * 개수 같은 수치 줄은 두지 않는다 (홈 히어로의 숫자 한 줄이 그 몫을 맡는다).
  */
 window.BL = window.BL || {};
 window.BL.features = [

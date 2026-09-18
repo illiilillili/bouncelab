@@ -123,8 +123,9 @@ window.BL = window.BL || {};
           el('div', { class: 'pick' }, [rows.h.row, rows.s.row, rows.v.row]),
           hexEl,
           rgbEl,
-          el('div', { class: 'roll-row' }, [
-            rollBtn,
+          el('div', { class: 'roll-row' }, [rollBtn]),
+          /* 조건 체크박스는 따로 모아 둔다 (버튼과 한 줄에 섞이면 줄이 지저분해진다) */
+          el('div', { class: 'opts' }, [
             checkLabel(chkDull, '칙칙한 색 제외'),
             checkLabel(chkPastel, '파스텔 색만'),
             checkLabel(chkVivid, '쨍한 색만')

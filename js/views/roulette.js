@@ -236,14 +236,17 @@ window.BL = window.BL || {};
       /* 좁은 화면 : 위에서 아래로 한 줄 / 넓은 화면 : 왼쪽(고르기) + 오른쪽 옆칸(결과) */
       root.appendChild(el('div', { class: 'tool' }, [
         el('div', { class: 'tool__main' }, [
-          el('div', { class: 'filters' }, [
-            el('div', { class: 'f' }, [
-              el('span', { class: 'f__label', text: '난이도' }),
-              el('span', { class: 'f__row' }, [minSel, el('em', { class: 'dash', text: '~' }), maxSel])
+          /* 필터와 슬롯은 한 덩어리(뽑기 판)라서 한 면(.board) 안에 묶는다 */
+          el('div', { class: 'board' }, [
+            el('div', { class: 'filters' }, [
+              el('div', { class: 'f' }, [
+                el('span', { class: 'f__label', text: '난이도' }),
+                el('span', { class: 'f__row' }, [minSel, el('em', { class: 'dash', text: '~' }), maxSel])
+              ]),
+              el('span', { class: 'count' }, countEl)
             ]),
-            el('span', { class: 'count' }, countEl)
+            el('div', { class: 'reel' }, track)
           ]),
-          el('div', { class: 'reel' }, track),
           el('div', { class: 'roll-row' }, spinBtn),
           emptyMsg
         ]),
