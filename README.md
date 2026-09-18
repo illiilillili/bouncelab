@@ -21,6 +21,18 @@
 - 배포 전 점검: npm run check (파일 이름 대소문자 · 절대경로 · 데이터 상태)
 - 바뀐 내용 저장(커밋+푸시): npm run save   (또는 npm run save -- "메시지")
 
+## 저장 시점 (스냅샷)
+
+중요한 시점은 이름을 붙여 태그로 남깁니다. 태그는 커밋과 달리 저절로 움직이지 않고 GitHub 에도 함께 올라가서, 몇 달 뒤에도 그때 파일을 그대로 꺼낼 수 있습니다.
+
+- 남겨 둔 시점 목록: npm run tag
+- 지금 상태 남기기: npm run tag -- "저장3"   (이름은 한글 · 영문 · 숫자 · `-_.` 만. 저장 안 된 변경이 있으면 먼저 npm run save)
+- 그때 파일로 되돌리기: `git checkout "저장2" -- .` → 그 뒤 `npm run save` (아직 저장 안 한 변경은 사라집니다)
+- 그때로 새 브랜치에서 둘러보기: `git checkout -b 복원2 "저장2"` (끝나면 `git checkout master`)
+- 다른 기기에서 태그 받기: `git fetch --tags` / GitHub 저장소 화면의 Tags 목록에서도 받을 수 있습니다
+
+예: `저장1`(git 저장 도구를 만든 시점) · `저장2`(홈 카드 · 룰렛 정리)
+
 ## 배포 (다른 기기에서 쓰기)
 
 정적 사이트라 **서버가 필요 없습니다.** 폴더를 그대로 올리면 끝입니다 (빌드 과정 없음).
@@ -60,6 +72,7 @@
       scripts/control-tips.json  컨트롤 이름 → 설명(팁)
       scripts/check-deploy.js    배포 전 점검 (npm run check)
       scripts/save.js            커밋+푸시 한 번에 (npm run save)
+      scripts/tag.js             저장 시점(스냅샷) 태그 만들기 (npm run tag)
       server.js             정적 서버 (의존성 없음)
       package.json
 

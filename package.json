@@ -8,6 +8,7 @@
     "start": "node server.js",
     "sync:controls": "node scripts/sync-controls.js",
     "check": "node scripts/check-deploy.js",
-    "save": "node scripts/save.js"
+    "save": "node scripts/save.js",
+    "tag": "node scripts/tag.js"
   }
 }
