@@ -25,5 +25,11 @@ window.BL.features = [
      (js/views/rating.js · js/lib/reviews.js · Supabase) */
   { id: 'rating', name: '오브젝트 평점',
     desc: '오브젝트(별·공)에 별점과 리뷰를 남기고, 다른 사람이 남긴 리뷰도 봅니다.',
+    status: 'ready' },
+
+  /* 바운스볼 뉴스 — 소식을 기사처럼 읽는다 (data/news.js · js/views/news.js).
+     쓰는 방식(누가 어떻게 쓰는지)은 아직 정하지 않았다 — 지금은 data/news.js 의 예시 기사를 보여준다 */
+  { id: 'news', name: '바운스볼 뉴스',
+    desc: '바운스볼 소식을 기사처럼 읽습니다. 목록에서 하나를 고르면 본문이 열립니다.',
     status: 'ready' }
 ];

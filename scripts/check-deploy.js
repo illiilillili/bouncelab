@@ -45,12 +45,12 @@ out.push('  확인한 참조 ' + refs.length + '개');
 const SITE_FILES = [
   'index.html', 'block-preview.html', 'control-gif-preview.html',
   'css/style.css', 'css/tokens.css',
-  'data/site.js', 'data/features.js', 'data/maps.js', 'data/controls.js',
+  'data/site.js', 'data/features.js', 'data/maps.js', 'data/controls.js', 'data/news.js',
   'js/app.js', 'js/lib/dom.js', 'js/lib/icons.js', 'js/lib/storage.js', 'js/lib/rng.js',
   'js/lib/query.js', 'js/lib/color.js', 'js/lib/contact.js', 'js/lib/objects.js',
   'js/lib/supabase.js', 'js/lib/reviews.js', 'js/lib/review-filter.js',
   'js/views/_soon.js', 'js/views/roulette.js', 'js/views/controls.js', 'js/views/colors.js',
-  'js/views/rating.js'
+  'js/views/rating.js', 'js/views/news.js'
 ];
 const stuck = [];
 SITE_FILES.forEach(function (f) {
@@ -62,9 +62,9 @@ t('서버주소·절대경로 없음', stuck.join(', ') || '없음', '없음');
 
 /* 3) 배포에 꼭 있어야 하는 파일 */
 const NEED = ['index.html', 'css/tokens.css', 'css/style.css', 'data/site.js', 'data/features.js',
-  'data/maps.js', 'data/controls.js', 'js/app.js', 'js/views/roulette.js', 'js/views/controls.js',
-  'js/views/colors.js', 'js/views/rating.js', 'js/lib/icons.js', 'js/lib/objects.js',
-  'js/lib/reviews.js', 'js/lib/review-filter.js'];
+  'data/maps.js', 'data/controls.js', 'data/news.js', 'js/app.js', 'js/views/roulette.js',
+  'js/views/controls.js', 'js/views/colors.js', 'js/views/rating.js', 'js/views/news.js',
+  'js/lib/icons.js', 'js/lib/objects.js', 'js/lib/reviews.js', 'js/lib/review-filter.js'];
 const gone = NEED.filter(function (f) { return !fs.existsSync(path.join(PROJ, f)); });
 t('필요한 파일 있음', gone.join(', ') || '없음', '없음');
 
@@ -77,6 +77,16 @@ t('컨트롤 개수', C.length, 631);
 t('GIF 연결', C.filter(function (c) { return c.imgs.length; }).length, 624);
 t('설명 연결', C.filter(function (c) { return c.tip; }).length, 630);
 t('난이도 범위 값', C.every(function (c) { return Number.isInteger(c.diff) && c.diff >= 0 && c.diff <= 10; }), true);
+
+/* 4-1) 뉴스 기사 (화면이 목록을 그리려면 id · 제목 · 날짜가 있어야 한다) */
+require(path.join(PROJ, 'data', 'news.js'));
+const NEWS = global.window.BL.news || [];
+const newsBad = NEWS.filter(function (n) { return !n.id || !n.title || !n.date; })
+  .map(function (n) { return n.id || '(id 없음)'; });
+t('뉴스 기사 id·제목·날짜 있음', newsBad.join(', ') || '없음', '없음');
+const newsDup = NEWS.map(function (n) { return n.id; })
+  .filter(function (id, i, arr) { return arr.indexOf(id) !== i; });
+t('뉴스 기사 id 안 겹침', newsDup.join(', ') || '없음', '없음');
 
 /* 5) 대문자 섞인 파일 이름 (윈도우에서 만들면 실수하기 쉬움) */
 const caps = [];
@@ -102,6 +112,12 @@ const noImg = imgRefs.filter(function (r) { return !exact(r[1]); })
   .map(function (r) { return r[0] + ' → ' + r[1]; });
 t('그림 파일 있음', noImg.join(', ') || '없음', '없음');
 out.push('  확인한 그림 ' + imgRefs.length + '개');
+
+/* 뉴스 목록 카드 그림(thumb)도 실제 파일과 이름이 같은지 (없으면 선화를 쓰므로 비어 있어도 된다) */
+const newsImgs = NEWS.map(function (n) { return n.thumb; }).filter(Boolean);
+const noNewsImg = newsImgs.filter(function (p) { return !exact(p); });
+t('뉴스 그림 파일 있음', noNewsImg.join(', ') || '없음', '없음');
+out.push('  확인한 뉴스 그림 ' + newsImgs.length + '개');
 
 t('fails', fails, 0);
 console.log(out.join('\n'));
