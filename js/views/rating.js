@@ -253,11 +253,11 @@ window.BL = window.BL || {};
       open = true;
       writeBtn.setAttribute('aria-expanded', 'true');
       clear(formBox);
-      if (reviews.mineFor(o.id)) {
-        /* 한 사람은 이 오브젝트에 리뷰 하나만 — 지우면 다시 남길 수 있다 */
+      if (reviews.mineCount(o.id) >= reviews.maxPerObject) {
+        /* 남길 수 있는 수를 넘었다 — 지우면 다시 남길 수 있다 */
         formBox.appendChild(el('p', {
           class: 'hint',
-          text: '이미 이 오브젝트에 리뷰를 남기셨습니다. 남긴 리뷰를 지우면 다시 남길 수 있습니다.'
+          text: '이 오브젝트에는 리뷰를 ' + reviews.maxPerObject + '개까지 남길 수 있습니다. 남긴 리뷰를 지우면 다시 남길 수 있습니다.'
         }));
         return;
       }

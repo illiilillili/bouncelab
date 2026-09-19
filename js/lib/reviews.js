@@ -18,6 +18,7 @@ window.BL = window.BL || {};
   var MAX_BODY = cfg.maxBody || 50;
   var COLUMNS = 'id,object_id,stars,nickname,body,created_at,user_id';
   var LIMIT = 300;                     /* 한 번에 받아 오는 최대 줄 수 */
+  var MAX_PER_OBJECT = 2;              /* 한 사람이 한 오브젝트에 남길 수 있는 리뷰 수 */
 
   var K = {
     nick: 'reviews.nick',              /* 마지막으로 쓴 닉네임 */
@@ -32,8 +33,7 @@ window.BL = window.BL || {};
     var msg = (e && (e.message || e.details || e.hint)) || '';
     if (!msg) return '알 수 없는 오류입니다.';
     if (/fetch|network|load failed|timeout|timed out/i.test(msg)) return '리뷰 서버에 연결하지 못했습니다.';
-    /* 표에 (오브젝트, 신분) 고유 규칙을 걸어 두면 여기로 걸린다 — 직접 API 를 부르는 우회 대비 */
-    if ((e && e.code) === '23505') return '이미 이 오브젝트에 리뷰를 남기셨습니다.';
+
     return msg;
   }
 
@@ -175,9 +175,9 @@ window.BL = window.BL || {};
     else if (body.length > MAX_BODY) errors.body = '리뷰는 ' + MAX_BODY + '자까지 쓸 수 있습니다.';
     if (!objectId) errors.object = '오브젝트를 찾지 못했습니다.';
 
-    /* 같은 오브젝트에 내 리뷰가 이미 있으면 새로 남길 수 없다 (지우고 다시 남기면 된다) */
-    if (objectId && mineFor(objectId)) {
-      errors.form = '이미 이 오브젝트에 리뷰를 남기셨습니다. 남긴 리뷰를 지우면 다시 남길 수 있습니다.';
+    /* 한 사람이 한 오브젝트에 남길 수 있는 수를 넘으면 막는다 (지우면 다시 남길 수 있다) */
+    if (objectId && mineCount(objectId) >= MAX_PER_OBJECT) {
+      errors.form = '이 오브젝트에는 리뷰를 ' + MAX_PER_OBJECT + '개까지 남길 수 있습니다. 남긴 리뷰를 지우면 다시 남길 수 있습니다.';
     }
 
     /* 저장 전 검열 — 부적절한 표현 · 연락처 · 광고 (js/lib/review-filter.js) */
@@ -290,12 +290,6 @@ window.BL = window.BL || {};
     return n;
   }
 
-  /* 이 오브젝트에 내가 남긴 리뷰 (없으면 null) — 한 사람은 오브젝트마다 하나만 쓴다 */
-  function mineFor(objectId) {
-    var found = null;
-    cached(objectId).forEach(function (r) { if (!found && isMine(r)) found = r; });
-    return found;
-  }
 
   /* 내 리뷰를 목록·캐시에서 뺀다 (서버에서 지운 뒤) */
   function forget(id) {
@@ -322,6 +316,7 @@ window.BL = window.BL || {};
 
   BL.reviews = {
     limits: { stars: MAX_STARS, nick: MAX_NICK, body: MAX_BODY },
+    maxPerObject: MAX_PER_OBJECT,
     ready: ready,
     fail: fail,
     ensureUser: ensureUser,
@@ -339,7 +334,6 @@ window.BL = window.BL || {};
     rememberNick: rememberNick,
     isMine: isMine,
     mineCount: mineCount,
-    mineFor: mineFor,
     legacyStars: legacyStars,
     clearLegacy: clearLegacy
   };
