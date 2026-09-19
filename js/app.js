@@ -50,20 +50,18 @@ window.BL = window.BL || {};
   }
 
   /* 홈 히어로 : 제목 · 한 줄 설명 · 숫자 한 줄.
-     숫자는 데이터에서 세어 쓴다 (값을 손으로 적지 않는다). 버튼은 두지 않는다 —
-     바로 아래 카드가 입구라서 같은 역할을 두 번 만들지 않는다. */
+     숫자는 데이터에서 세어 쓴다 (값을 손으로 적지 않는다). */
   function hero() {
     var maps = (BL.maps || []).length;
     var controls = (BL.controls || []).length;
     var stats = [
       maps + '개 맵',
       controls + '개 컨트롤',
-      '난이도 0~10',
       '랜덤 색 64,000가지'
     ];
     return el('section', { class: 'hero' }, [
-      el('h1', { text: '바운스볼 도구 상자' }),
-      el('p', { class: 'hero__lead', text: '맵, 컨트롤, 색을 뽑아서 씁니다. 설치나 로그인 없이 브라우저에서 바로 돌아갑니다.' }),
+      el('h1', { text: 'BounceLab' }),
+      el('p', { class: 'hero__lead', text: '바운스볼을 더 재밌게! 설치나 로그인 없이 브라우저에서 바로 돌아갑니다.' }),
       el('p', { class: 'hero__stats', text: stats.join(' · ') })
     ]);
   }
@@ -78,6 +76,9 @@ window.BL = window.BL || {};
       el('h2', { class: 'list-title', text: '기능' }),
       el('div', { class: 'list' }, (BL.features || []).map(card))
     ]));
+
+    /* 문의하기 — 홈 맨 아래에 버튼 하나만. 받을 곳은 data/site.js 의 contact 에서 채운다 */
+    root.appendChild(BL.contact.row());
 
     window.scrollTo(0, 0);
   }

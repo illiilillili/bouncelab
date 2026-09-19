@@ -8,13 +8,14 @@ window.BL.site = {
   repo: 'https://github.com/illiilillili/bouncelab',
   storagePrefix: 'bl:',
 
-  /* 문의하기 (맵 삭제·오타 제보)
+  /* 문의하기 — 홈 화면 맨 아래 버튼 하나
      href 에 오픈채팅·디스코드·구글폼 주소를 넣으면 그 링크로 열립니다.
      mail 에 주소를 넣으면 메일 쓰기로 열립니다.
-     둘 다 비어 있으면 맵 정보가 들어간 문의 양식을 클립보드로 복사합니다. */
+     둘 다 비어 있으면 copyText 를 클립보드로 복사합니다 (지금은 임시로 '-메일-'). */
   contact: {
     label: '문의하기',
-    hint: '맵이 삭제되었거나 오타가 있나요?',
+    hint: '',
+    copyText: '-메일-',
     href: '',
     mail: ''
   },

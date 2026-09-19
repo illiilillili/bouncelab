@@ -114,12 +114,10 @@ window.BL = window.BL || {};
         ]);
       }
 
-      /* 아직 안 뽑았을 때의 자리표시 — 맵 제목·제작자를 미리 보여주지 않는다 */
+      /* 아직 안 뽑았을 때 — 슬롯 가운데에 표시 하나만 (제목·제작자를 미리 보여주지 않는다) */
       function dashItem() {
-        return el('div', { class: 'reel__item' }, [
-          el('span', { class: 'reel__by', text: '-' }),
-          el('span', { class: 'reel__name reel__name--dash', text: '-' }),
-          el('span', { class: 'reel__diff', text: '난이도 -' })
+        return el('div', { class: 'reel__item reel__item--dash' }, [
+          el('span', { class: 'reel__dash', text: '-' })
         ]);
       }
 
@@ -253,10 +251,6 @@ window.BL = window.BL || {};
         el('div', { class: 'tool__side' }, [resultEl, msgEl]),
         el('div', { class: 'tool__foot' }, [
           detailsEl,
-          BL.contact.row(function () {
-            var m = state.winner;
-            return m ? ['맵 제목: ' + m.name, '제작자: ' + m.by, '난이도: ' + m.diff] : [];
-          }),
           live
         ])
       ]));

@@ -1,13 +1,14 @@
 window.BL = window.BL || {};
 
 /* 문의하기 버튼 — 목적지(href/mail)가 있으면 그리로 보내고,
-   없으면 맵 정보가 들어간 문의 양식을 클립보드로 복사한다. */
+   아직 없으면 정해 둔 문구(예: '-메일-')만 클립보드로 복사한다. */
 (function (BL) {
   function config() {
     var c = (BL.site && BL.site.contact) || {};
     return {
       label: c.label || '문의하기',
-      hint: c.hint || '맵이 삭제되었거나 오타가 있으면 알려주세요.',
+      hint: c.hint || '',
+      copyText: c.copyText || '-메일-',
       href: c.href || '',
       mail: c.mail || ''
     };
@@ -54,13 +55,14 @@ window.BL = window.BL || {};
           '&body=' + encodeURIComponent(template(body));
         return;
       }
-      copyLine(template(body), function (msg) {
-        note.textContent = msg + ' 사용하는 커뮤니티·채팅방에 붙여넣어 주세요.';
-      });
+      /* 목적지가 아직 없을 때 — 정해 둔 문구만 복사해 준다.
+         실제 주소가 생기면 data/site.js 의 contact.mail (또는 href) 을 채우면 그리로 보낸다. */
+      copyLine(c.copyText, function (msg) { note.textContent = msg; });
     }
 
+    /* 설명 없이 버튼만 (hint 를 비워 두면 문구도 안 나온다) */
     return el('div', { class: 'ask' }, [
-      el('p', { class: 'ask__hint', text: c.hint }),
+      c.hint ? el('p', { class: 'ask__hint', text: c.hint }) : null,
       el('button', { class: 'btn', type: 'button', text: c.label, onClick: ask }),
       note
     ]);

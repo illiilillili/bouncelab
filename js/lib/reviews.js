@@ -155,7 +155,9 @@ window.BL = window.BL || {};
       ids.forEach(function (id) { storage.set(K.cache + id, byId[id]); });
       cb({ ok: true, byId: byId, error: '' });
     });
-  }  /* ── 검증 : DB 의 check 제약과 같은 규칙 (화면에서 먼저 막는다) ── */
+  }
+
+  /* ── 검증 : DB 의 check 제약과 같은 규칙 (화면에서 먼저 막는다) ── */
   function validate(raw) {
     var input = raw || {};
     var stars = Math.round(Number(input.stars) || 0);
@@ -170,6 +172,19 @@ window.BL = window.BL || {};
     if (!body) errors.body = '리뷰 내용을 적어주세요.';
     else if (body.length > MAX_BODY) errors.body = '리뷰는 ' + MAX_BODY + '자까지 쓸 수 있습니다.';
     if (!objectId) errors.object = '오브젝트를 찾지 못했습니다.';
+
+    /* 저장 전 검열 — 부적절한 표현 · 연락처 · 광고 (js/lib/review-filter.js) */
+    var filter = BL.reviewFilter;
+    if (filter) {
+      if (!errors.nickname) {
+        var fn = filter.validateReviewContent(nickname);
+        if (!fn.ok) errors.nickname = fn.message;
+      }
+      if (!errors.body) {
+        var fb = filter.validateReviewContent(body);
+        if (!fb.ok) errors.body = fb.message;
+      }
+    }
 
     var ok = true;
     for (var k in errors) { if (errors.hasOwnProperty(k)) { ok = false; break; } }

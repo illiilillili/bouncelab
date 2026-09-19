@@ -127,12 +127,10 @@ window.BL = window.BL || {};
         ]);
       }
 
-      /* 아직 안 뽑았을 때의 자리표시 — 컨트롤 이름을 미리 보여주지 않는다 */
+      /* 아직 안 뽑았을 때 — 슬롯 가운데에 표시 하나만 (이름을 미리 보여주지 않는다) */
       function dashItem() {
-        return el('div', { class: 'reel__item' }, [
-          el('span', { class: 'reel__by', text: '난이도 -' }),
-          el('span', { class: 'reel__name reel__name--dash', text: '-' }),
-          el('span', { class: 'reel__diff', text: '-' })
+        return el('div', { class: 'reel__item reel__item--dash' }, [
+          el('span', { class: 'reel__dash', text: '-' })
         ]);
       }
 
@@ -246,14 +244,6 @@ window.BL = window.BL || {};
         el('div', { class: 'tool__side' }, [resultEl]),
         el('div', { class: 'tool__foot' }, [
           el('p', { class: 'hint', text: '도감 컨트롤 ' + all.length + '개 · 그림 ' + (meta.withImg || 0) + '개 · 자료 출처: 바운스볼 도감' }),
-          BL.contact.row(function () {
-            var c = state.winner;
-            if (!c) return [];
-            var lines = ['컨트롤: ' + c.name, '난이도: ' + c.diff];
-            if (c.tags.length) lines.push('태그: ' + c.tags.join(' '));
-            if (c.cell) lines.push('도감 위치: ' + c.cell);
-            return lines;
-          }),
           live
         ])
       ]));

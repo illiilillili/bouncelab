@@ -7,7 +7,7 @@
 - **랜덤 색상 추천** — 맵 에디터용 HSV 색 뽑기 (H·S·V 각 0~39 인덱스, HEX·RGB 표시)
 - **오브젝트 평점 (리뷰)** — 별 · 공 오브젝트에 별점(1~5)과 리뷰(50자)를 남기고, 모두가 남긴 리뷰와 평균 별점을 봅니다. 주소는 `#/f/rating`, 쓰고 보는 창은 `#/f/rating/star` · `#/f/rating/ball`. 리뷰는 Supabase 에 쌓여 닉네임과 함께 공개됩니다. 내가 쓴 리뷰는 직접 지울 수 있습니다
 
-홈은 **히어로**(제목 · 한 줄 설명 · 숫자 한 줄)와 기능 카드로 그려집니다. 둘 다 `js/app.js` 가 `data/features.js` 를 읽어 만듭니다.
+홈은 **히어로**(제목 · 한 줄 설명 · 숫자 한 줄) · 기능 카드 · 맨 아래 **문의하기 버튼**(설명 없이 하나만)으로 그려집니다. 카드는 `js/app.js` 가 `data/features.js` 를 읽어 만듭니다. 문의하기가 보낼 곳은 `data/site.js` 의 `contact` 에서 채우고, 지금은 임시로 `-메일-` 만 복사합니다.
 카드에는 **그림 · 이름 · 한 줄 설명**(`features.desc`)이 나옵니다. 개수 같은 수치 줄은 카드에 두지 않고 히어로의 숫자 줄 하나로 모읍니다.
 카드 아이콘 칩은 중립 1색이고, 기능 색은 **hover 테두리에서만** 드러납니다(`css/style.css` 의 `.item--<기능 id>` 안 `--hover`).
 그림은 `js/lib/icons.js` 의 `art()` 가 `img/` 안의 파일을 그대로 씁니다.
@@ -74,6 +74,7 @@
       js/lib/storage.js     localStorage 래퍼
       js/lib/supabase.js    Supabase 연결 (익명 리뷰 저장소)
       js/lib/reviews.js     리뷰 읽기 · 쓰기 · 검증 · 집계
+      js/lib/review-filter.js  리뷰 검열 (금지어 · 연락처 · 광고)
       js/lib/rng.js         뽑기 난수 (pick · shuffle)
       js/lib/query.js       난이도 랭크 · 필터 (순수 함수)
       js/views/_soon.js     준비 중 화면
@@ -173,6 +174,19 @@ H·S·V 모두 0~39 인덱스(40단계), 조합은 40 x 40 x 40 = 64,000 가지�
       create policy "리뷰 쓰기"    on public.reviews for insert to anon, authenticated with check (user_id = auth.uid());
       create policy "내 리뷰 삭제" on public.reviews for delete to anon, authenticated using (user_id = auth.uid());
       create policy "내 리뷰 수정" on public.reviews for update to anon, authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+
+## 리뷰 검열 (금지어 · 연락처 · 광고)
+
+리뷰를 저장하기 전에 `js/lib/review-filter.js` 가 내용을 검사합니다(닉네임도 같이 검사). 목록과 규칙은 그 파일 한 곳에 모여 있습니다.
+
+- 금지어 6묶음 : 욕설 · 성적 표현 · 혐오 · 위협 · 도박 · 광고 (`PROFANITY` `SEXUAL` `HATE` `THREAT` `GAMBLING` `AD`)
+- 우회 대응 : 검사 전에 공백·특수문자를 지우고 같은 글자 반복을 하나로 줄입니다 → `씨.발` `씨 발` `씨-발` `씨***발` `ㅅㅂ` `ㅆㅂ` `개-새-끼` `ㅄ` `ㅈㄴ` 모두 걸립니다. 모음을 끼워 넣는 `시이이발` 은 변형 단어(`씨이발` `시이발`)로 대응합니다
+- 봐주는 단어(`ALLOW`) : `시발점` `시발역` `꺼져있` `꺼져서` `자위권` `자위대` `아이디어` — 검사 전에 지웁니다(정상 문장 오탐 방지)
+- 개인정보 패턴 : 전화번호 · 이메일 · URL · `discord.gg/…` · `open.kakao.com/…` · `@아이디` — 문맥과 상관없이 차단
+- 외부 연락 : 플랫폼 이름(`디스코드` `디코` `카톡` `유튜브` …)은 **그 단어만으로는 차단하지 않습니다.** 플랫폼 이름 + 연락 유도어(`연락` `쪽지` `번호` `아이디` …) 이거나 이름 바로 뒤에 아이디 같은 글자가 붙을 때만 차단합니다
+  - 통과 : `이 게임 디코에서도 유명하던데` / 차단 : `디코로 연락하세요` · `내 디코 아이디는 ABC123`
+- 화면 문구 3종 : 부적절한 표현 / 연락 유도 / 전화·이메일·링크 (어떤 단어가 걸렸는지는 알려주지 않습니다 — 알려주면 그 단어만 피해가는 우회가 쉬워짐)
+- 한계 : 화면(클라이언트)에서 검사하므로 화면을 거치지 않고 API 를 직접 부르면 건너뛸 수 있습니다. 같은 규칙을 서버(DB)에도 넣으려면 표·정책 추가가 필요합니다
 
 ## 자료 출처
 
