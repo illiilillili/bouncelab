@@ -3,6 +3,34 @@
  *   brand(보라) — ① 주 CTA ② 활성 상태 ③ 링크 ④ 포커스 링. 이 네 곳에만.
  *   amber(앰버) — ① 난이도 막대 ② '준비 중' 표시. 이 두 곳에만.
  * 그림자는 2단계(--sh-2 카드 / --sh-3 떠오름), 그라디언트는 --page-bg 하나뿐이다. */
+/* ── 웹 폰트 대체(fallback) 보정 ─────────────────────────────
+ * Pretendard 는 index.html 의 CDN 에서 받고, 도착 전에는 시스템 폰트로 먼저 그려진다.
+ * 두 폰트는 글자 폭과 줄 높이가 달라서, 바뀌는 순간 줄바꿈과 높이가 밀린다(FOUT).
+ * 그래서 대체 폰트를 재서 보정해 둔다 (100px 기준 측정값).
+ *   한글   : Pretendard 0.92em/자 · 시스템 1.00em/자 → 폭이 같아지게 90.3%
+ *   라틴   : 숫자·영문도 폭이 같아지게 103.9%
+ *   줄박스 : Pretendard 1.19em(0.95+0.24) · 시스템 1.33em(1.09+0.24)
+ * 이 값을 모르는 브라우저는 아래 선언만 무시하고 --font 의 다음 폰트로 넘어간다. */
+@font-face {
+  font-family: "Pretendard Fallback";
+  src: local("Malgun Gothic"), local("Apple SD Gothic Neo"), local("Noto Sans KR"), local("Noto Sans CJK KR");
+  unicode-range: U+1100-11FF, U+3130-318F, U+A960-A97F, U+AC00-D7A3, U+D7B0-D7FF;   /* 한글만 */
+  size-adjust: 90.3%;
+  ascent-override: 105.22%;
+  descent-override: 26.58%;
+  line-gap-override: 0%;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Pretendard Fallback";
+  src: local("Segoe UI Variable"), local("Segoe UI"), local("Helvetica Neue"), local("Arial"), local("Roboto");
+  unicode-range: U+0-10FF, U+1200-312F, U+3190-A95F, U+A980-ABFF, U+D7A8-D7AF, U+D800-10FFFF;   /* 한글 뺀 나머지 */
+  size-adjust: 103.9%;
+  ascent-override: 91.48%;
+  descent-override: 23.11%;
+  line-gap-override: 0%;
+  font-display: swap;
+}
 :root {
   /* 바탕색 5개 (게임에서 온 고정 팔레트) */
   --ink: #022b3a;
@@ -62,8 +90,8 @@
   --top-h: 56px;          /* 상단바 높이 — 옆칸이 붙는(sticky) 자리를 계산할 때 씀 */
   --reel-h: 58px;         /* 슬롯 한 줄 높이 — js/views/*.js 의 ITEM_H(58) 와 같아야 함 */
 
-  /* Pretendard (index.html 에서 jsDelivr CDN 으로 불러온다) — 못 불러오면 시스템 폰트로 넘어간다 */
-  --font: "Pretendard Variable", Pretendard, system-ui, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  /* Pretendard (index.html 의 CDN) — 도착 전에는 보정해 둔 "Pretendard Fallback" 로 그린다 (파일 맨 위 @font-face) */
+  --font: "Pretendard Variable", "Pretendard Fallback", system-ui, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
   --mono: var(--font);   /* 숫자도 같은 폰트 — 자릿수 정렬은 body 의 tabular-nums 로 맞춘다 */
 
   /* 페이지 배경 — 화면 전체에서 유일한 그라디언트 */

@@ -26,6 +26,23 @@
 - 전환 효과는 hover 에만. 등장 애니메이션·바운스·블러·글로우는 넣지 않습니다
 - `--reel-h`(58px)는 `js/views/*.js` 의 `ITEM_H` 와 짝이라 따로 바꾸지 않습니다
 
+## 글꼴 (Pretendard) 과 FOUT
+
+본문은 **Pretendard Variable** 이고, `index.html` 에서 jsDelivr CDN 의 `pretendardvariable-dynamic-subset.min.css` (동적 서브셋 92개)로 받아 옵니다. 그 파일의 `@font-face` 에는 이미 `font-display: swap` 이 들어 있습니다.
+
+`swap` 은 "시스템 폰트로 먼저 그리고, Pretendard 가 오면 바꾼다"는 뜻이라 — **글자 폭이 다르면 폰트가 바뀌는 순간 줄바꿈과 높이가 밀립니다(FOUT)**. 그래서 `css/tokens.css` 에 보정한 대체 폰트 `"Pretendard Fallback"` 을 직접 선언해 두었습니다 (`font-display: swap` · 100px 기준 실측).
+
+| 100px 기준 | Pretendard | 보정한 대체 폰트 | 보정 전 시스템 폰트 |
+|---|---|---|---|
+| 한글 폭 | 2978.42 | 2988.75 (+0.3%) | 3332.03 (+11.9%) |
+| 라틴 폭 | 2128.41 | 2129.34 (+0.04%) | 2114.27 (−0.7%) |
+| 줄박스 (`line-height: normal`) | 119px | 119px | 133px |
+
+- 한글 face `size-adjust: 90.3%` — Pretendard 한글은 0.92em/자, 시스템 한글 폰트는 1.00em/자
+- 라틴 face `size-adjust: 103.9%` · 두 face 모두 `ascent-override` `descent-override` 로 줄박스를 1.19em(0.95+0.24)에 맞춤
+- `index.html` 에서 `preconnect`(연결 미리 열기) + `preload`(가장 많이 쓰는 서브셋 91 · 38KB 하나를 먼저 받기)로 도착을 앞당김
+- 값을 모르는 브라우저는 이 선언만 무시하고 `--font` 의 다음 폰트로 넘어갑니다 (보정 전과 같음)
+
 ## 실행
 
 - index.html 을 브라우저로 열기
