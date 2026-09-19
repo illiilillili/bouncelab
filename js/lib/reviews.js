@@ -261,8 +261,7 @@ window.BL = window.BL || {};
     return {
       count: list.length,
       avg: list.length ? sum / list.length : 0,
-      hist: hist,
-      filled: list.length ? Math.round(sum / list.length) : 0   /* 평균을 채운 별 개수로 */
+      hist: hist
     };
   }
 

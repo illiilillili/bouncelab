@@ -25,15 +25,43 @@ window.BL = window.BL || {};
     return d.getFullYear() + '.' + pad2(d.getMonth() + 1) + '.' + pad2(d.getDate());
   }
 
-  /* 별 그림 — 읽기용은 평균만큼 채우고, 쓰기용은 누른 만큼 켠다 */
-  function stars(filled, big, label) {
+  /* 별 한 겹 — 바탕(빈 별)과 채움(색 별)을 겹쳐 소수점까지 보여주려고 나눠 그린다 */
+  function layer(cls) {
+    var img = objects.star();
+    if (img) img.className = cls;
+    return img;
+  }
+
+  /* 별 그림 — 평균만큼 채운다 (읽기용).
+   * value 는 0~MAX 사이의 실수. 소수점은 마지막 별을 --fill 비율만큼만 칠해서 보여준다.
+   * 평균 숫자와 눈금을 맞추려고 소수 한 자리에서 끊는다 — 4.3 → 별 4개 + 마지막 별 30%. */
+  function stars(value, big, label) {
+    var v = Math.round((Number(value) || 0) * 10) / 10;
+    if (v < 0) v = 0;
+    if (v > MAX) v = MAX;
+    var whole = Math.floor(v);
+    var rest = Math.round((v - whole) * 100);   /* 0 · 10 · 20 … 90 (%) */
+
     var row = [];
     for (var i = 1; i <= MAX; i++) {
-      row.push(el('span', { class: 'stars__i' + (i <= filled ? ' on' : ''), 'aria-hidden': 'true' }, objects.star()));
+      var attrs = { class: 'stars__i', 'aria-hidden': 'true' };
+      var kids;
+      if (i <= whole) {
+        kids = [layer('stars__fg')];                 /* 꽉 찬 별은 채움 한 겹 */
+      } else if (i === whole + 1 && rest) {
+        attrs.class = 'stars__i part';
+        attrs.style = '--fill:' + rest + '%';        /* 마지막 별만 이만큼 채운다 */
+        kids = [layer('stars__bg'), layer('stars__fg')];
+      } else {
+        kids = [layer('stars__bg')];                 /* 빈 별은 바탕 한 겹 */
+      }
+      row.push(el('span', attrs, kids));
     }
+
+    var txt = (v % 1 === 0) ? String(v) : reviews.avgText(v);
     return el('span', {
       class: 'stars' + (big ? ' stars--lg' : ''), role: 'img',
-      'aria-label': label || (MAX + '점 만점에 ' + filled + '점')
+      'aria-label': label || (MAX + '점 만점에 ' + txt + '점')
     }, row);
   }
 
@@ -61,9 +89,9 @@ window.BL = window.BL || {};
         var mine = reviews.mineCount(o.id);
         var meta = metas[o.id];
         clear(meta);
-        /* 평점은 숫자 대신 별 그림으로 (상세 화면과 같은 이미지) */
+        /* 평점은 숫자 대신 별 그림으로 (상세 화면과 같은 이미지) — 소수점은 마지막 별이 부분 채움 */
         if (s.count) {
-          meta.appendChild(stars(s.filled, false, '평균 ' + reviews.avgText(s.avg) + '점'));
+          meta.appendChild(stars(s.avg, false, '평균 ' + reviews.avgText(s.avg) + '점'));
           meta.appendChild(el('span', { text: '리뷰 ' + s.count + '개' }));
         } else {
           meta.appendChild(el('span', { text: '아직 리뷰 없음' }));
@@ -106,7 +134,7 @@ window.BL = window.BL || {};
     function paintStat() {
       var s = reviews.stats(rows);
       clear(statBox);
-      statBox.appendChild(stars(s.filled, true));
+      statBox.appendChild(stars(s.avg, true));
       statBox.appendChild(el('span', { class: 'rate__avg' }, [
         s.count ? reviews.avgText(s.avg) : '—',
         el('small', { text: ' / ' + MAX })

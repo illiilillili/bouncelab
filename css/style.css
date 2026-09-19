@@ -318,12 +318,13 @@ select:focus-visible { border-color: var(--brand); outline: none; box-shadow: 0 
 .rate__count { font-size: 14.5px; color: var(--text-dim); }
 .rate__btns { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--sp-2); margin-top: var(--sp-5); }
 
-/* 별 그림 — 회색으로 죽여 두고 켜진 것만 색이 산다 */
+/* 별 그림 — 빈 별(회색) 위에 채운 별(색)을 겹쳐 평균의 소수점까지 보여준다 */
 .stars { display: inline-flex; align-items: center; gap: 2px; }
-.stars__i { width: 20px; height: 20px; }
+.stars__i { position: relative; width: 20px; height: 20px; }   /* 두 겹을 겹쳐 놓을 자리 */
 .stars--lg .stars__i { width: 28px; height: 28px; }
-.stars__i img, .stars__i svg { filter: grayscale(1); opacity: .28; }
-.stars__i.on img, .stars__i.on svg { filter: none; opacity: 1; }
+.stars__bg, .stars__fg { position: absolute; left: 0; top: 0; }
+.stars__bg { filter: grayscale(1); opacity: .28; }   /* 빈 별 */
+.stars__i.part .stars__fg { clip-path: inset(0 calc(100% - var(--fill, 100%)) 0 0); }   /* 마지막 별 — 왼쪽부터 --fill 만큼만 */
 .star {
   width: 46px; height: 46px; padding: 6px; border: 1px solid transparent; border-radius: var(--r-sm);
   background: none; cursor: pointer;
