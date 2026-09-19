@@ -13,7 +13,7 @@ window.BL.features = [
     desc: '무작위로 맵 하나를 뽑습니다. 난이도 범위로 걸러서 고릅니다.',
     status: 'ready' },
 
-  { id: 'controls', name: '랜덤 컨트롤 룰렛',
+  { id: 'controls', name: '컨트롤 룰렛',
     desc: '바운스볼 도감 컨트롤 중 하나를 뽑습니다. 난이도·태그·제작자와 함께 봅니다.',
     status: 'ready' },
 

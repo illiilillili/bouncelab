@@ -87,7 +87,7 @@ window.BL = window.BL || {};
     var f = feature(id);
     clear(root);
     root.appendChild(el('div', { class: 'bar' }, [
-      el('a', { class: 'bar__back', href: '#/', text: '← 홈' }),
+
       el('h1', {}, [icon(f), f.name]),
       el('p', { class: 'bar__desc', text: f.desc })   /* 기능 설명 한 줄 (features.js) */
     ]));

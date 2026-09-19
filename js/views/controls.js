@@ -1,6 +1,6 @@
 window.BL = window.BL || {};
 
-/* 랜덤 컨트롤 룰렛 — 도감(스프레드시트)의 컨트롤 631개 중 하나를 뽑는다.
+/* 컨트롤 룰렛 — 도감(스프레드시트)의 컨트롤 631개 중 하나를 뽑는다.
  * 그림은 도감 DB(bbDB)의 gif 칸에 걸린 드라이브 파일을 그대로 불러온다.
  * 그림이 없거나 못 불러오면 이름에서 뽑은 색 타일로 대신한다. */
 (function (BL) {
@@ -73,7 +73,7 @@ window.BL = window.BL || {};
 
       if (!all.length) {
         root.appendChild(el('div', { class: 'box' }, [
-          el('h2', { text: '랜덤 컨트롤 룰렛' }),
+          el('h2', { text: '컨트롤 룰렛' }),
           el('p', { text: '컨트롤 목록이 없습니다. npm run sync:controls 로 도감에서 받아오면 여기서 바로 돌아갑니다.' })
         ]));
         return;

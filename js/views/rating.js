@@ -26,14 +26,14 @@ window.BL = window.BL || {};
   }
 
   /* 별 그림 — 읽기용은 평균만큼 채우고, 쓰기용은 누른 만큼 켠다 */
-  function stars(filled, big) {
+  function stars(filled, big, label) {
     var row = [];
     for (var i = 1; i <= MAX; i++) {
       row.push(el('span', { class: 'stars__i' + (i <= filled ? ' on' : ''), 'aria-hidden': 'true' }, objects.star()));
     }
     return el('span', {
       class: 'stars' + (big ? ' stars--lg' : ''), role: 'img',
-      'aria-label': MAX + '점 만점에 ' + filled + '점'
+      'aria-label': label || (MAX + '점 만점에 ' + filled + '점')
     }, row);
   }
 
@@ -59,9 +59,16 @@ window.BL = window.BL || {};
       objects.list.forEach(function (o) {
         var s = reviews.stats(res.byId[o.id] || []);
         var mine = reviews.mineCount(o.id);
-        metas[o.id].textContent =
-          (s.count ? '평균 ' + reviews.avgText(s.avg) + ' · 리뷰 ' + s.count + '개' : '아직 리뷰 없음') +
-          (mine ? ' · 내 리뷰 있음' : '');
+        var meta = metas[o.id];
+        clear(meta);
+        /* 평점은 숫자 대신 별 그림으로 (상세 화면과 같은 이미지) */
+        if (s.count) {
+          meta.appendChild(stars(s.filled, false, '평균 ' + reviews.avgText(s.avg) + '점'));
+          meta.appendChild(el('span', { text: '리뷰 ' + s.count + '개' }));
+        } else {
+          meta.appendChild(el('span', { text: '아직 리뷰 없음' }));
+        }
+        if (mine) meta.appendChild(el('span', { text: '· 내 리뷰 있음' }));
       });
       if (!res.ok) warn.textContent = res.error + (res.cached ? ' 저장해 둔 목록을 보여줍니다.' : '');
     });

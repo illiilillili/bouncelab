@@ -62,8 +62,9 @@
   --top-h: 56px;          /* 상단바 높이 — 옆칸이 붙는(sticky) 자리를 계산할 때 씀 */
   --reel-h: 58px;         /* 슬롯 한 줄 높이 — js/views/*.js 의 ITEM_H(58) 와 같아야 함 */
 
-  --font: system-ui, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
-  --mono: ui-monospace, Consolas, "Courier New", monospace;
+  /* Pretendard (index.html 에서 jsDelivr CDN 으로 불러온다) — 못 불러오면 시스템 폰트로 넘어간다 */
+  --font: "Pretendard Variable", Pretendard, system-ui, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  --mono: var(--font);   /* 숫자도 같은 폰트 — 자릿수 정렬은 body 의 tabular-nums 로 맞춘다 */
 
   /* 페이지 배경 — 화면 전체에서 유일한 그라디언트 */
   --page-bg: linear-gradient(180deg, #f7f9fd 0%, #ffffff 420px);
