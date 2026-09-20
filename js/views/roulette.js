@@ -81,6 +81,13 @@ window.BL = window.BL || {};
       var spinBtn = el('button', { class: 'btn btn--main', type: 'button', onClick: spin, text: '맵 뽑기' });
       var track = el('div', { class: 'reel__track', 'aria-hidden': 'true' });
 
+      /* 자기 맵을 룰렛에 넣고 싶은 사람에게 — 누르면 연락처(data/site.js 의 contact.copyText)를 복사한다.
+         지금은 '-메일-' 이 복사되고, 실제 주소를 채우면 그 주소가 복사된다 (js/lib/contact.js). */
+      var inviteBtn = el('button', {
+        class: 'invite__btn', type: 'button', text: '자기의 맵을 룰렛에 넣고싶다면?',
+        onClick: function () { BL.contact.copyLine(BL.contact.config().copyText, flash); }
+      });
+
       function saveFilters() {
         storage.set(K.filters, { min: state.min, max: state.max });
       }
@@ -246,7 +253,8 @@ window.BL = window.BL || {};
             el('div', { class: 'reel' }, track)
           ]),
           el('div', { class: 'roll-row' }, spinBtn),
-          emptyMsg
+          emptyMsg,
+          el('p', { class: 'invite' }, inviteBtn)
         ]),
         el('div', { class: 'tool__side' }, [resultEl, msgEl]),
         el('div', { class: 'tool__foot' }, [

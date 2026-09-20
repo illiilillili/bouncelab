@@ -211,6 +211,18 @@ select:focus-visible { border-color: var(--brand); outline: none; box-shadow: 0 
 .hint { margin: var(--sp-3) 0 0; font-size: 13.5px; color: var(--text-dim); }
 .hint:empty { display: none; }   /* 안내 문구가 없을 때 위아래 여백도 없앤다 */
 
+/* ── 맵 제보 안내 : 룰렛 화면 아래 한 줄 ──
+ * 버튼이지만 생김새는 링크 — 밑줄을 옅게 두었다가 hover 에서 진해진다 */
+.invite { margin: var(--sp-4) 0 0; font-size: 14.5px; }
+.invite__btn {
+  padding: 0; border: 0; background: none; color: var(--brand-ink);
+  font: inherit; font-weight: 700; cursor: pointer;
+  text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px;
+  text-decoration-color: var(--brand-line);
+  transition: color var(--dur) var(--ease), text-decoration-color var(--dur) var(--ease);
+}
+.invite__btn:hover { color: var(--brand); text-decoration-color: var(--brand); text-decoration-thickness: 2.5px; }
+
 /* ── 전체 목록 표 ────────────────────────── */
 .details {
   margin-top: var(--sp-5); background: var(--white); border: 1px solid var(--line);

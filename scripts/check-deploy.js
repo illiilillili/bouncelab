@@ -88,6 +88,14 @@ const newsDup = NEWS.map(function (n) { return n.id; })
   .filter(function (id, i, arr) { return arr.indexOf(id) !== i; });
 t('뉴스 기사 id 안 겹침', newsDup.join(', ') || '없음', '없음');
 
+/* 4-2) 맵 목록 (난이도 0 은 룰렛에서 뺐다 — 시트에서 다시 붙여넣을 때 섞여 들어오지 않게 본다) */
+require(path.join(PROJ, 'data', 'maps.js'));
+const MAPS = global.window.BL.maps || [];
+const zero = MAPS.filter(function (m) { return String(m.diff).trim() === '0'; })
+  .map(function (m) { return m.name; });
+t('난이도 0 맵 없음', zero.join(', ') || '없음', '없음');
+out.push('  확인한 맵 ' + MAPS.length + '개');
+
 /* 5) 대문자 섞인 파일 이름 (윈도우에서 만들면 실수하기 쉬움) */
 const caps = [];
 (function walk(dir, rel) {

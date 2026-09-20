@@ -2,6 +2,7 @@ window.BL = window.BL || {};
 
 /* 맵 목록. 시트에서 붙여넣은 값을 그대로 옮김 (시트 순서 유지).
  * diff 는 문자열 그대로: 0 ~ 15+ , R
+ *   난이도 0 맵은 룰렛에서 뺐다 — 시트에서 다시 붙여넣을 때도 0 은 빼고 넣는다
  * tags 는 나중에 붙일 해시태그 배열 (없으면 생략)
  *   { by: "scrapafton", name: "Hellkite", diff: "6", tags: ["오토맵"] }
  */
@@ -392,27 +393,5 @@ window.BL.maps = [
   { by: "8chthelu", name: "Ocean Queen", diff: "1" },
   { by: "뱀이", name: "양파 샤워 크림 소스", diff: "1" },
   { by: "뱀이", name: "Rotten Blue Cheese", diff: "1" },
-  { by: "8chthelu", name: "Tsunami", diff: "1" },
-  { by: "알텍스", name: "Wisteria Petal", diff: "0" },
-  { by: "뤄지", name: "뤄지 특별선", diff: "0" },
-  { by: "성단", name: "흔들리지 않고 피는 꽃이 어디 있으랴.", diff: "0" },
-  { by: "성단", name: "푸름의 깊이를 거닐는 희미한 허상 속에 날아오르리", diff: "0" },
-  { by: "42mm", name: "뱀이 사는 초원", diff: "0" },
-  { by: "jeutean", name: "두 사람의 영혼을 섞으면... 그냥 쓰레기잖아!!!", diff: "0" },
-  { by: "42mm", name: "뱀이 사는 초원 easy", diff: "0" },
-  { by: "42mm", name: "Vorticity_", diff: "0" },
-  { by: "msung0723", name: "오즈의 9999단계 마라탕먹방(먹다가 역류성식도염ㅋㅋ)", diff: "0" },
-  { by: "2000년대생19학번남3", name: "SKELETAL SHENANIGANS", diff: "0" },
-  { by: "jeutean", name: "End of Purism - 현대적 미술의 복잡한 세계", diff: "0" },
-  { by: "8chthelu", name: "Sky Temple", diff: "0" },
-  { by: "8chthelu", name: "Atlantis", diff: "0" },
-  { by: "GROK", name: "기억의 편린을 되새기며", diff: "0" },
-  { by: "감탄사1", name: "Ň€ØŇ ŞiGN", diff: "0" },
-  { by: "TheChallenge", name: "A S C E N D A N T [Extreme]", diff: "0" },
-  { by: "TheChallenge", name: "#illusionar y[Extreme]", diff: "0" },
-  { by: "assess", name: "Emerald Cave", diff: "0" },
-  { by: "Mhua", name: "나우플리온", diff: "0" },
-  { by: "8chthelu", name: "Lemona", diff: "0" },
-  { by: "8chthelu", name: "Raid Ready", diff: "0" },
-  { by: "abcd0123", name: "총알을 지켜라", diff: "0" }
+  { by: "8chthelu", name: "Tsunami", diff: "1" }
 ];
