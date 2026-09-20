@@ -21,10 +21,10 @@ window.BL.features = [
     desc: 'HSV 40단계로 색을 뽑고 HEX·RGB 값을 바로 확인합니다.',
     status: 'ready' },
 
-  /* 오브젝트 리뷰 — 별 · 공에 별점과 리뷰를 남기고 모두의 리뷰를 본다
+  /* 오브젝트 리뷰 — 별 · 공 · 가시 · 표창 · 톱니 · 블록에 별점과 리뷰를 남기고 모두의 리뷰를 본다
      (js/views/rating.js · js/lib/reviews.js · Supabase) */
   { id: 'rating', name: '오브젝트 평점',
-    desc: '오브젝트(별·공)에 별점과 리뷰를 남기고, 다른 사람이 남긴 리뷰도 봅니다.',
+    desc: '오브젝트(별·공·가시·표창·톱니·블록)에 별점과 리뷰를 남기고, 다른 사람이 남긴 리뷰도 봅니다.',
     status: 'ready' },
 
   /* 바운스볼 뉴스 — 소식을 기사처럼 읽는다 (data/news.js · js/views/news.js).
