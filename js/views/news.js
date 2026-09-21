@@ -102,12 +102,19 @@ window.BL = window.BL || {};
       return;
     }
 
+    /* 메타 : [소식] · 날짜 · 저자 — 값이 없으면 그 자리와 구분자도 함께 빠진다 */
+    var bits = [];
+    function bit(node) {
+      if (!node) return;
+      if (bits.length) bits.push(el('span', { class: 'news__sep', 'aria-hidden': 'true', text: '·' }));
+      bits.push(node);
+    }
+    bit(n.tag ? el('span', { class: 'tag tag--news', text: n.tag }) : null);
+    bit(el('time', { class: 'news__date', datetime: n.date || '', text: when(n.date) }));
+    bit(n.writer ? el('span', { class: 'news__who', text: n.writer }) : null);
+
     var head = [
-      el('p', { class: 'news__meta' }, [
-        n.tag ? el('span', { class: 'tag tag--news', text: n.tag }) : null,
-        el('time', { class: 'news__date', datetime: n.date || '', text: when(n.date) }),
-        n.writer ? el('span', { class: 'news__who', text: n.writer }) : null
-      ]),
+      el('p', { class: 'news__meta' }, bits),
       el('h1', { class: 'news__title', text: n.title })
     ];
     if (n.deck) head.push(el('p', { class: 'news__deck', text: n.deck }));
