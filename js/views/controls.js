@@ -99,7 +99,8 @@ window.BL = window.BL || {};
   }
 
   /* ── 재미도 (8칸) ──────────────────────────
-   * 컨트롤 하나에 8칸. 아무도 안 고른 칸은 완전히 비어 있고, 하나를 누르면 그게 내 재미도가 된다.
+   * 난이도 막대 바로 아래 줄에 붙는다 (맨 왼쪽에 '재미도' 라벨).
+   * 아무도 안 고른 칸은 비어 있고, 하나를 누르면 그 칸까지 왼쪽부터 차례로 채워진다 (난이도 막대와 같은 모양).
    * 사람들이 고른 칸 수는 서버(control_fun 표)에 쌓여 칸 안 숫자로 함께 보인다.
    * 서버를 못 쓰면 이 브라우저에만 저장되고, 아래 한 줄이 그 사실을 알려준다. */
   function funBox(c) {
@@ -117,7 +118,7 @@ window.BL = window.BL || {};
         var isMine = r.mine === score;
         btn.firstChild.textContent = n ? String(n) : '';
         btn.classList.toggle('is-voted', !!n);
-        btn.classList.toggle('is-mine', isMine);
+        btn.classList.toggle('is-fill', r.mine >= score);   /* 내 점수까지 앞 칸들도 채운다 */
         btn.setAttribute('aria-pressed', isMine ? 'true' : 'false');
         btn.setAttribute('aria-label', '재미도 ' + score + '점' + (n ? ' · ' + n + '명' : ''));
         btn.title = '재미도 ' + score + '점' + (n ? ' · ' + n + '명' : '');
@@ -157,7 +158,13 @@ window.BL = window.BL || {};
       paint(res);
     });
 
-    return el('div', { class: 'funbox' }, [row, note]);
+    return el('div', { class: 'funbox' }, [
+      el('div', { class: 'ctrl__rows funrow' }, [
+        el('span', { class: 'ctrl__label', text: '재미도' }),
+        row
+      ]),
+      note
+    ]);
   }
 
   BL.views.controls = {
@@ -307,6 +314,7 @@ window.BL = window.BL || {};
               el('span', { class: 'diffnum', text: String(c.diff) }),
               el('span', { class: 'diffof', text: '/ 10' })
             ]),
+            funBox(c),
             el('div', { class: 'ctrl__rows' }, [el('span', { class: 'ctrl__label', text: '태그' }), chips(c.tags, '없음')]),
             el('div', { class: 'ctrl__rows' }, [el('span', { class: 'ctrl__label', text: '재료' }), chips(c.mats, '없음')]),
             c.tip ? el('div', { class: 'ctrl__rows' }, [el('span', { class: 'ctrl__label', text: '설명' }), el('span', { class: 'ctrl__tip', text: c.tip })]) : null
@@ -317,7 +325,6 @@ window.BL = window.BL || {};
             [BL.icons.get('rotate'), el('span', { text: '다시 뽑기' })]),
           el('a', { class: 'btn', href: sheetUrl(c), target: '_blank', rel: 'noopener' }, ['도감에서 보기 ↗'])
         ]));
-        resultEl.appendChild(funBox(c));
       }
 
       function refresh() {

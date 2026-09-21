@@ -207,11 +207,13 @@ select:focus-visible { border-color: var(--brand); outline: none; box-shadow: 0 
 .result__btns--pair { display: grid; grid-template-columns: 1fr 1fr; }
 .result__btns--pair .btn { height: 48px; padding: 0 var(--sp-3); }
 
-/* ── 재미도 : 8칸 ─────────────────────────
- * 두 버튼과 같은 가로폭, 세로는 조금 더 짧게. 아무도 안 고른 칸은 비어 있고,
- * 내가 고른 칸은 보라로 채워진다. 칸 안 숫자는 그 칸을 고른 사람 수 (재미도 공유) */
+/* ── 재미도 : 8칸 (난이도 막대 바로 아래 줄) ─────
+ * 왼쪽에 '재미도' 라벨, 오른쪽에 8칸. 아무도 안 고른 칸은 비어 있고,
+ * 하나를 누르면 그 칸까지 왼쪽부터 차례로 보라로 채워진다 (난이도 막대와 같은 모양).
+ * 칸 안 숫자는 그 칸을 고른 사람 수 (재미도 공유) */
 .funbox { margin-top: var(--sp-2); }
-.fun { display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; }
+.funrow .ctrl__label { flex: 0 0 auto; }   /* '재미도' 세 글자가 잘리지 않게 (다른 줄 라벨은 34px 그대로) */
+.fun { flex: 1; min-width: 0; display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; }
 .fun__cell {
   height: 36px; padding: 0; border: 1px solid var(--line); border-radius: var(--r-xs);
   background: var(--white); color: var(--text-dim);
@@ -221,7 +223,7 @@ select:focus-visible { border-color: var(--brand); outline: none; box-shadow: 0 
 }
 .fun__cell:hover { border-color: var(--lav); background: var(--surface); }
 .fun__cell.is-voted { color: var(--ink); }
-.fun__cell.is-mine { border-color: transparent; background: var(--brand); color: var(--white); }
+.fun__cell.is-fill { border-color: transparent; background: var(--brand); color: var(--white); }
 .fun__note { margin: var(--sp-2) 0 0; font-size: 13px; color: var(--text-dim); }
 .fun__note:empty { display: none; }
 .mtile {
