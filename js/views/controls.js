@@ -192,8 +192,8 @@ window.BL = window.BL || {};
       }, 120);
     });
 
-    /* 처음에는 이 브라우저가 아는 값만 보여준다 (서버가 이미 준비되어 있으면 평균까지) */
-    BL.fun.peek(c.name, paint);
+    /* 처음부터 서버 평균까지 보여준다 — 이때 Supabase SDK 가 아직이면 그때 받는다 (js/lib/fun.js 의 get) */
+    BL.fun.get(c.name, paint);
 
     return { box: wrap, note: note };
   }
