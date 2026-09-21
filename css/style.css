@@ -293,6 +293,9 @@ select:focus-visible { border-color: var(--brand); outline: none; box-shadow: 0 
 /* 색 뽑기 아래 보조 버튼 2개 — 주 버튼보다 낮은 중요도 (.btn 그대로 · 폭만 반씩) */
 .btnrow { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-top: var(--sp-2); }
 .btnrow .btn { flex: 1 1 0; min-width: 0; }
+/* 색 뽑기도 아래 보조 버튼 줄과 같은 폭으로 (이 화면의 .roll-row 는 색 화면에만 있다 ·
+   모바일은 이미 .btn--main { width:100% } 라 달라지지 않는다) */
+.tool__side .roll-row .btn--main { width: 100%; }
 .blkrow { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-top: var(--sp-3); }
 .blk { position: relative; flex: 0 0 auto; width: 100px; height: 70px; border: 3px solid var(--tile-line); border-radius: var(--r-sm); overflow: hidden; }
 .blk__fill { position: absolute; inset: 0; }
