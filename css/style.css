@@ -207,18 +207,38 @@ select:focus-visible { border-color: var(--brand); outline: none; box-shadow: 0 
 .result__btns--pair { display: grid; grid-template-columns: 1fr 1fr; }
 .result__btns--pair .btn { height: 48px; padding: 0 var(--sp-3); }
 
-/* ── 재미도 : 점수 박스 (도감에서 보기 자리) ─────
- * 다시 뽑기와 같은 크기. 누르면 1~5 작은 목록이 떠서 하나를 고르고, 고른 값이 곧 재미도가 된다.
- * 박스에는 '재미도 : 3' 처럼, 아직 안 골랐으면 '재미도 : -' 로 보인다. */
+/* ── 재미도 : 평균 박스 + 점수 매기기 (도감에서 보기 자리) ─────
+ * 다시 뽑기와 같은 크기. 박스에는 모두가 매긴 점수의 평균이 보이고(아무도 안 매겼으면 '-'),
+ * 누르면 1~5 작은 목록이 떠서 고른다. 고르면 살짝 커졌다 돌아오는 효과(.is-pop)로 알려준다. */
+.funwrap { position: relative; min-width: 0; }
 .funpick {
-  height: 48px; padding: 0 var(--sp-3);
+  width: 100%; height: 48px; padding: 0 var(--sp-3);
   border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--white); color: var(--ink);
-  font: inherit; font-size: 14.5px; font-weight: 600; cursor: pointer;
-  text-align: center; text-align-last: center;
-  appearance: none; -webkit-appearance: none;
+  font: inherit; font-size: 14.5px; font-weight: 600; font-variant-numeric: tabular-nums; cursor: pointer;
   transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
 }
 .funpick:hover { border-color: var(--lav); background: var(--surface); }
+.funpick[aria-expanded="true"] { border-color: var(--lav); background: var(--surface); }
+.funpick.is-pop { border-color: var(--brand-line); animation: funpop 620ms var(--ease); }
+@keyframes funpop {                     /* 점수를 매겼을 때 — 살짝 커졌다 돌아온다 (튀지 않게) */
+  0%   { transform: scale(1);    box-shadow: 0 0 0 0 var(--brand-soft); }
+  35%  { transform: scale(1.05); box-shadow: 0 0 0 6px var(--brand-soft); }
+  100% { transform: scale(1);    box-shadow: 0 0 0 0 var(--brand-soft); }
+}
+.funlist {
+  position: absolute; left: 0; right: 0; top: calc(100% + 4px); z-index: 3;
+  padding: 4px; display: grid; gap: 2px;
+  background: var(--white); border: 1px solid var(--line); border-radius: var(--r-sm); box-shadow: var(--sh-3);
+}
+.funlist[hidden] { display: none; }
+.funlist__i {
+  height: 32px; padding: 0 var(--sp-3); border: 0; border-radius: var(--r-xs);
+  background: var(--white); color: var(--ink); font: inherit; font-size: 14px; font-weight: 600;
+  text-align: left; cursor: pointer;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.funlist__i:hover { background: var(--surface); }
+.funlist__i.is-mine { background: var(--brand-soft); color: var(--brand-ink); font-weight: 800; }
 .fun__note { margin: var(--sp-2) 0 0; font-size: 13px; color: var(--text-dim); }
 .fun__note:empty { display: none; }
 .mtile {

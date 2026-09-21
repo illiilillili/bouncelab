@@ -98,34 +98,84 @@ window.BL = window.BL || {};
     document.head.appendChild(tag);
   }
 
-  /* ── 재미도 : 점수 박스 ────────────────────
-   * '도감에서 보기' 자리에 들어간다. 누르면 1~5 작은 목록이 떠서 하나를 고르고, 고른 값이 곧 재미도가 된다.
-   * 박스에는 '재미도 : 3' 처럼 보인다 (아직 안 골랐으면 '재미도 : -').
-   * 서버(control_fun 표)에 쌓여 모두와 공유되고, 못 쓰면 이 브라우저에만 저장된다 —
-   * 그때는 아래 한 줄이 그 사실을 알려준다. */
+  /* 평균 3.43 → 3.4 (리뷰 평균과 같은 한 자리 표기) */
+  function avgText(v) { return (Math.round(Number(v) * 10) / 10).toFixed(1); }
+
+  /* ── 재미도 : 평균 박스 + 점수 매기기 ────────
+   * '도감에서 보기' 자리에 들어간다. 박스에는 모두가 매긴 점수의 **평균**이 보이고 (아무도 안 매겼으면 '-'),
+   * 누르면 1~5 작은 목록이 떠서 하나를 고른다. 고르면 박스가 살짝 커졌다 돌아오는 효과로 알려준다.
+   * 내가 고른 점수는 목록에서 표시되고, 서버(control_fun 표)에 쌓여 모두와 공유된다.
+   * 서버를 못 쓰면 이 브라우저에만 저장되고, 아래 한 줄이 그 사실을 알려준다. */
   function funPick(c) {
     var note = el('p', { class: 'fun__note' });
-    var options = [el('option', { value: '', text: '재미도 : -' })];
+    var wrap = el('div', { class: 'funwrap' });
+    var txt = el('span', { class: 'funpick__txt', text: '재미도 : -' });
+    var box = el('button', {
+      class: 'funpick', type: 'button',
+      'aria-haspopup': 'listbox', 'aria-expanded': 'false', 'aria-label': '재미도 점수',
+      onClick: function () { open(list.hidden); },
+      onKeydown: onKey
+    }, [txt]);
+    var list = el('div', {
+      class: 'funlist', role: 'listbox', 'aria-label': '재미도 고르기',
+      hidden: true, onKeydown: onKey
+    });
+    var items = [];
+    var last = null;               /* 마지막으로 받은 값 (평균 · 내 점수) */
+    var mine = 0;
+
     for (var i = BL.fun.min; i <= BL.fun.max; i++) {
-      options.push(el('option', { value: String(i), text: '재미도 : ' + i }));
+      (function (score) {
+        var it = el('button', {
+          class: 'funlist__i', type: 'button', role: 'option', 'aria-selected': 'false',
+          text: String(score),
+          onClick: function () { pick(score); }
+        });
+        items.push(it);
+        list.appendChild(it);
+      })(i);
+    }
+    wrap.appendChild(box);
+    wrap.appendChild(list);
+
+    function open(v) {
+      list.hidden = !v;
+      box.setAttribute('aria-expanded', v ? 'true' : 'false');
     }
 
-    var box = el('select', {
-      class: 'funpick', 'aria-label': '재미도 점수',
-      onChange: function () { pick(Number(box.value)); }
-    }, options);
+    function onKey(e) {
+      if (e.key === 'Escape' || e.keyCode === 27) { open(false); box.focus(); }
+    }
 
     function paint(res) {
-      var mine = (res && res.mine) || BL.fun.mineLocal(c.name) || 0;
-      box.value = mine ? String(mine) : '';
-      box.title = mine ? '재미도 : ' + mine + ' (누르면 바꿀 수 있습니다)'
-                       : '재미도 : - (누르면 매길 수 있습니다)';
+      var r = res || {};
+      last = r;
+      var total = r.total || 0;
+      mine = r.mine || BL.fun.mineLocal(c.name) || 0;
+      txt.textContent = '재미도 : ' + (total ? avgText(r.avg) : '-');
+      box.title = (total ? '평균 ' + avgText(r.avg) + '점 · ' + total + '명' : '아직 아무도 안 매겼습니다') +
+        (mine ? ' · 내 점수 : ' + mine : '') + ' · 누르면 ' + (mine ? '바꿀 수 있습니다' : '매길 수 있습니다');
+      items.forEach(function (it, i) {
+        var isMine = mine === i + 1;
+        it.classList.toggle('is-mine', isMine);
+        it.setAttribute('aria-selected', isMine ? 'true' : 'false');
+      });
+    }
+
+    /* 매겼을 때 박스를 살짝 (효과). 움직임을 줄이는 설정이면 CSS 가 알아서 끕니다 */
+    function pop() {
+      box.classList.remove('is-pop');
+      void box.offsetWidth;
+      box.classList.add('is-pop');
+      window.setTimeout(function () { box.classList.remove('is-pop'); }, 700);
     }
 
     function pick(score) {
       if (!score) return;
+      open(false);
       note.textContent = '';
-      paint({ mine: score });                     /* 고른 즉시 표시 (기다리지 않는다) */
+      paint({ total: last ? last.total : 0, avg: last ? last.avg : 0, mine: score });   /* 고른 즉시 표시 */
+      pop();
       BL.fun.set(c.name, score, function (res) {
         if (!res.ok && res.error) note.textContent = res.error + ' 이 브라우저에만 저장했습니다.';
         BL.fun.get(c.name, function (got) {
@@ -135,10 +185,17 @@ window.BL = window.BL || {};
       });
     }
 
-    /* 처음에는 이 브라우저가 고른 값만 보여준다 (서버가 이미 준비되어 있으면 서버 값도) */
+    /* 목록 밖으로 포커스가 나가면 닫는다 (목록 항목으로 옮겨간 경우는 그대로) */
+    box.addEventListener('blur', function () {
+      window.setTimeout(function () {
+        if (!wrap.contains(document.activeElement)) open(false);
+      }, 120);
+    });
+
+    /* 처음에는 이 브라우저가 아는 값만 보여준다 (서버가 이미 준비되어 있으면 평균까지) */
     BL.fun.peek(c.name, paint);
 
-    return { box: box, note: note };
+    return { box: wrap, note: note };
   }
 
   BL.views.controls = {

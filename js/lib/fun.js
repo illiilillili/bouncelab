@@ -2,7 +2,7 @@ window.BL = window.BL || {};
 
 /* 컨트롤 재미도 — 1~5 중 하나를 고르면 그 컨트롤의 재미도가 된다.
  *   peek(name, cb)   지금 아는 것만 (서버가 아직 안 받아졌으면 이 브라우저 값만 · 서버를 새로 받지 않는다)
- *   get(name, cb)    서버가 필요하면 받아서 알려준다 (사람들이 고른 칸 수까지)
+ *   get(name, cb)    서버가 필요하면 받아서 알려준다 (평균 · 사람들이 고른 점수 분포까지)
  *   set(name, score, cb)  내 재미도 저장 (한 사람 한 표 · 다시 누르면 바뀐다)
  *
  * 저장은 익명 리뷰와 같은 Supabase 저장소의 control_fun 표 (표 만드는 SQL 은 README 참고).
@@ -42,7 +42,7 @@ window.BL = window.BL || {};
     var mine = mineLocal(name);
 
     function local(error) {
-      cb({ ok: false, mine: mine, counts: zeros(), total: 0, shared: false, error: error || '' });
+      cb({ ok: false, mine: mine, counts: zeros(), total: 0, avg: 0, shared: false, error: error || '' });
     }
 
     if (!BL.sb || typeof BL.sb.ensure !== 'function') { local(''); return; }
@@ -56,14 +56,17 @@ window.BL = window.BL || {};
       var q = BL.sb.client.from(TABLE).select('score,user_id').eq('control_key', key(name));
       Promise.resolve(q).then(function (res) {
         if (res && res.error) { local(fail(res.error)); return; }
-        var counts = zeros(), total = 0, found = 0;
+        var counts = zeros(), total = 0, found = 0, sum = 0;
         ((res && res.data) || []).forEach(function (r) {
           var s = Number(r.score);
-          if (s >= MIN && s <= MAX) { counts[s - MIN]++; total++; }
+          if (s >= MIN && s <= MAX) { counts[s - MIN]++; total++; sum += s; }
           if (r.user_id === uid) found = s;
         });
         if (found) { mine = found; BL.storage.set(K + key(name), found); }
-        cb({ ok: true, mine: mine, counts: counts, total: total, shared: true, error: '' });
+        cb({
+          ok: true, mine: mine, counts: counts, total: total,
+          avg: total ? sum / total : 0, shared: true, error: ''
+        });
       }, function (e) { local(fail(e)); });
     });
   }
