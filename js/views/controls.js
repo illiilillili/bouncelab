@@ -116,8 +116,6 @@ window.BL = window.BL || {};
         var score = i + 1;
         var n = counts[i] || 0;
         var isMine = r.mine === score;
-        btn.firstChild.textContent = n ? String(n) : '';
-        btn.classList.toggle('is-voted', !!n);
         btn.classList.toggle('is-fill', r.mine >= score);   /* 내 점수까지 앞 칸들도 채운다 */
         btn.setAttribute('aria-pressed', isMine ? 'true' : 'false');
         btn.setAttribute('aria-label', '재미도 ' + score + '점' + (n ? ' · ' + n + '명' : ''));
@@ -146,7 +144,7 @@ window.BL = window.BL || {};
           class: 'fun__cell', type: 'button', 'aria-pressed': 'false',
           'aria-label': '재미도 ' + score + '점',
           onClick: function () { pick(score); }
-        }, [el('span', { class: 'fun__n' })]);
+        });
         cells.push(btn);
         row.appendChild(btn);
       })(i);
