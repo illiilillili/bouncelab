@@ -75,8 +75,10 @@ window.BL = window.BL || {};
         onClick: toggleNear, text: '비슷한 색'
       });
       var nearPanel = el('div', { class: 'near', id: 'nearPanel', hidden: true });
-      var nearChips = [];              /* 가운데 5칸 (-2 ~ +2) */
-      var nearSel = 0;                 /* 지금 테두리가 있는 칸 */
+      var nearLabels = ['기준 색', '+15도', '-15도', '톤온톤'];
+      var nearChips = [];              /* 비슷한 색 4칸 */
+      var nearList = [];               /* 지금 보이는 4색 (HSV) — 칸을 눌러도 그대로 */
+      var nearSel = -1;                /* 지금 테두리가 있는 칸 (아직 없으면 -1) */
 
       function apply(idx) {
         var hsv = color.hsvOf(idx.h, idx.s, idx.v);
@@ -100,7 +102,6 @@ window.BL = window.BL || {};
       function pick() {
         apply(color.randomIndices(opt));
         resetGrad();             /* 새로 뽑았으면 그라데이션도 그 색 기준으로 다시 (테두리는 0 으로) */
-        resetNear();             /* 비슷한 색 패널도 함께 */
       }
 
       function onToggle(src) {
@@ -213,29 +214,28 @@ window.BL = window.BL || {};
       buildRow('h', '색 그라데이션');
 
       /* ── 비슷한 색 패널 ─────────────────────────
-       * 그라데이션과 같은 방식(접었다 펴기 · 칸을 누르면 그 색이 현재 색 · 0 칸은 기준 색)이되,
-       * 양옆으로 2개씩(모두 5개)만 · 숫자 없이 한 줄로만 보여준다.
-       * 그라데이션과 같은 11칸 격자를 쓰고 가운데 5칸에만 칸을 두어, 두 패널의 색 자리가 나란히 맞는다. */
-      function markNear() {
-        nearChips.forEach(function (c) {
-          var now = c.step === nearSel;
+       * 열 때마다 기준 색을 새로 뽑아(색상 난수 · 채도 60~90% · 명도 70~90%) 비슷한 색 4개를 보여준다.
+       *   1) 기준 색  2) 색상 +15도  3) 색상 -15도  4) 톤온톤 (채도 낮추고 명도 올림)
+       * 색 계산은 js/lib/color.js 가 맡고(HEX·RGB 로 바꾸기 쉬운 HSV 배열), 여기서는 인덱스로 바꿔 칠한다.
+       * 칸을 누르면 그 색이 현재 색이 되고(4색은 그대로), 테두리가 그 칸으로 옮겨간다. */
+      function paintNear() {
+        nearChips.forEach(function (c, i) {
+          var x = color.indicesOfHsv(nearList[i]);
+          c.idx = x;
+          c.hex = color.hexOf(x.h, x.s, x.v);
+          c.chip.style.background = c.hex;
+          var now = i === nearSel;
           c.btn.classList.toggle('is-now', now);
-          c.btn.title = (now ? '지금 색 ' : '비슷한 색 ') + c.hex;
-          c.btn.setAttribute('aria-label', (now ? '지금 색 ' : '비슷한 색 ') + c.hex);
+          c.btn.title = (now ? '지금 색 · ' : '') + nearLabels[i] + ' ' + c.hex;
+          c.btn.setAttribute('aria-label', (now ? '지금 색 · ' : '') + nearLabels[i] + ' ' + c.hex);
         });
       }
 
       function resetNear() {
         if (nearPanel.hidden) return;
-        var list = color.similars(cur);
-        nearChips.forEach(function (c, i) {
-          var s = list[i];
-          c.idx = s;
-          c.hex = color.hexOf(s.h, s.s, s.v);
-          c.chip.style.background = c.hex;
-        });
-        nearSel = 0;
-        markNear();
+        nearList = color.similarsOf(color.randomSimilarBase());
+        nearSel = -1;
+        paintNear();
       }
 
       function toggleNear() {
@@ -248,30 +248,23 @@ window.BL = window.BL || {};
         resetNear();
       }
 
-      function pickNear(step) {
-        var c = null;
-        for (var i = 0; i < nearChips.length; i++) if (nearChips[i].step === step) c = nearChips[i];
-        if (!c || !c.idx) return;
-        nearSel = step;                              /* 테두리를 누른 칸으로 옮기고 */
-        markNear();
-        apply(c.idx);                                /* 그 색만 적용 — 기준 색은 그대로 */
+      function pickNear(i) {
+        if (!nearChips[i] || !nearList[i]) return;
+        nearSel = i;                                 /* 테두리를 누른 칸으로 옮기고 */
+        paintNear();
+        apply(nearChips[i].idx);                     /* 그 색만 적용 — 4색은 다시 뽑지 않는다 */
       }
 
-      function buildNearChip(step) {
+      /* 칸 4개는 한 번만 만들고 색만 다시 칠한다 */
+      nearLabels.forEach(function (label, i) {
         var chip = el('span', { class: 'near__c' });
         var btn = el('button', {
           class: 'near__i', type: 'button',
-          onClick: function () { pickNear(step); }
+          onClick: function () { pickNear(i); }
         }, chip);
-        nearChips.push({ step: step, chip: chip, btn: btn, idx: null, hex: '' });
+        nearChips.push({ chip: chip, btn: btn, idx: null, hex: '' });
         nearPanel.appendChild(btn);
-      }
-
-      for (var n = 0; n <= 2 * color.glow; n++) {    /* 그라데이션과 같은 11칸 자리에 놓는다 */
-        var nStep = n - color.glow;
-        if (nStep < -color.near || nStep > color.near) nearPanel.appendChild(el('span', { 'aria-hidden': 'true' }));
-        else buildNearChip(nStep);
-      }
+      });
 
       chkDull.checked = opt.avoidDull;
       chkPastel.checked = opt.pastel;

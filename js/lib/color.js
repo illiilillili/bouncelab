@@ -162,21 +162,59 @@ window.BL = window.BL || {};
     return list;
   }
 
-  /* ── 비슷한 색 ──────────────────────────────────────────────
-   * 밝기·채도는 그대로 두고 색조만 한 칸에 1단계(9도)씩 옮긴 색 5개 (가운데가 지금 색).
-   * 그라데이션 색조줄(2단계씩 11개)보다 더 가까운 색만 골라 준다. */
-  var NEAR = 2;             /* 한쪽으로 몇 개 (앞뒤 2개씩 = 모두 5개) */
-  var NEAR_STEP = 1;
+  /* ── 비슷한 색 (유사 색상 + 톤온톤) ────────────────────────
+   * 기준 색은 색상 0~360(난수) · 채도 60~90% · 명도 70~90% 로 새로 뽑고, 거기서 4개를 만든다.
+   *   1) 기준 색 그대로
+   *   2) 색상 +15도   ((H + 15) % 360)
+   *   3) 색상 -15도   ((H - 15 + 360) % 360)
+   *   4) 톤온톤       (채도 -20%p · 명도 +10%p — 차분한 톤)
+   * 값은 0~100(색상은 0~360) 밖으로 나가지 않게 자르고(clamp),
+   * 돌려주는 것은 HEX · RGB 로 바꾸기 쉬운 HSV 객체 배열이다. */
+  var NEAR_HUE = 15;         /* 좌우로 돌리는 각도(도) */
+  var NEAR_S = [60, 90];     /* 기준 색 채도 범위(%) */
+  var NEAR_V = [70, 90];     /* 기준 색 명도 범위(%) */
+  var TONE_S = -20;          /* 톤온톤 : 채도 %p */
+  var TONE_V = 10;           /* 톤온톤 : 명도 %p */
 
-  function nearShadeOf(idx, step) {
-    if (!step) return { h: idx.h, s: idx.s, v: idx.v };
-    return { h: wrapHue(idx.h + step * NEAR_STEP), s: idx.s, v: idx.v };
+  function clampRange(n, lo, hi) {
+    var x = Number(n);
+    if (isNaN(x)) return lo;
+    return x < lo ? lo : (x > hi ? hi : x);
   }
 
-  function similars(idx) {
-    var list = [];
-    for (var step = -NEAR; step <= NEAR; step++) list.push(nearShadeOf(idx, step));
-    return list;
+  function ring360(h) { return ((Number(h) % 360) + 360) % 360; }
+
+  /* 기준 색 하나 — 색상은 난수, 채도·명도는 위 범위 안 */
+  function randomSimilarBase() {
+    return {
+      h: Math.random() * 360,
+      s: NEAR_S[0] + Math.random() * (NEAR_S[1] - NEAR_S[0]),
+      v: NEAR_V[0] + Math.random() * (NEAR_V[1] - NEAR_V[0])
+    };
+  }
+
+  /* 기준 색에서 비슷한 색 4개 (HSV 객체 배열 · h 0~360 · s·v 0~100) */
+  function similarsOf(base) {
+    var b = base || {};
+    var h = ring360(b.h || 0);
+    var s = clampRange(b.s, 0, 100);
+    var v = clampRange(b.v, 0, 100);
+    return [
+      { h: h, s: s, v: v },
+      { h: ring360(h + NEAR_HUE), s: s, v: v },
+      { h: ring360(h - NEAR_HUE), s: s, v: v },
+      { h: h, s: clampRange(s + TONE_S, 0, 100), v: clampRange(v + TONE_V, 0, 100) }
+    ];
+  }
+
+  /* 도·% 로 된 색을 이 사이트의 인덱스(0~39)로 바꾼다 — 화면은 인덱스로 다닌다 */
+  function indicesOfHsv(c) {
+    var x = c || {};
+    return {
+      h: clampIndex(Math.round(ring360(x.h || 0) / 9.0)),
+      s: clampIndex(Math.round(clampRange(x.s, 0, 100) * INDEX_MAX / 100)),
+      v: clampIndex(Math.round(clampRange(x.v, 0, 100) * INDEX_MAX / 100))
+    };
   }
 
   BL.color = {
@@ -190,8 +228,9 @@ window.BL = window.BL || {};
     glow: GLOW,
     hues: hues,
     hueStep: HUE_STEP,
-    similars: similars,
-    near: NEAR,
+    randomSimilarBase: randomSimilarBase,
+    similarsOf: similarsOf,
+    indicesOfHsv: indicesOfHsv,
     isDull: isDull,
     isPastel: isPastel,
     isVivid: isVivid,

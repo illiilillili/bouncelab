@@ -307,7 +307,8 @@ select:focus-visible { border-color: var(--brand); outline: none; box-shadow: 0 
 }
 .grad { gap: var(--sp-2); }                        /* 위 줄 = 밝기 · 아래 줄 = 색 */
 .grad[hidden], .near[hidden] { display: none; }
-.grad__row, .near { display: grid; grid-template-columns: repeat(11, 1fr); gap: 3px; }
+.grad__row { display: grid; grid-template-columns: repeat(11, 1fr); gap: 3px; }
+.near { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; }   /* 비슷한 색 4개는 폭을 나눠 크게 */
 @keyframes gradin {
   from { opacity: 0; transform: translateY(-4px); }
   to   { opacity: 1; transform: none; }
