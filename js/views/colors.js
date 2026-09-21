@@ -124,6 +124,11 @@ window.BL = window.BL || {};
           hexEl,
           rgbEl,
           el('div', { class: 'roll-row' }, [rollBtn]),
+          /* 색 뽑기보다 중요도가 낮은 보조 기능 2개 — UI 만 (기능은 아직 없음) */
+          el('div', { class: 'btnrow' }, [
+            el('button', { class: 'btn', type: 'button', text: '그라데이션' }),
+            el('button', { class: 'btn', type: 'button', text: '비슷한 색' })
+          ]),
           /* 조건 체크박스는 따로 모아 둔다 (버튼과 한 줄에 섞이면 줄이 지저분해진다) */
           el('div', { class: 'opts' }, [
             checkLabel(chkDull, '칙칙한 색 제외'),
