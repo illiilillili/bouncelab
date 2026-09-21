@@ -18,6 +18,16 @@ window.BL = window.BL || {};
 
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
 
+  /* SDK(Supabase)는 이 화면에서 처음 필요해질 때 받는다 (js/lib/supabase.js 의 ensure).
+   * 아직 받는 중이면 true 를 돌려주고, 다 되면 cb() 를 부른다 — 화면은 그동안 '불러오는 중' 을 보여준다.
+   * 받는 중이 아니면(이미 됐거나, 설정이 없어 안 되는 게 확정) false 를 돌려준다. */
+  function loadingSDK(cb) {
+    if (!BL.sb || typeof BL.sb.ensure !== 'function') return false;
+    if (reviews.ready() || BL.sb.why) return false;
+    BL.sb.ensure(cb);
+    return true;
+  }
+
   /* 2026.09.19 */
   function when(iso) {
     var d = new Date(iso);
@@ -67,6 +77,11 @@ window.BL = window.BL || {};
 
   /* ── 오브젝트 고르는 화면 ───────────────── */
   function pick(root) {
+    /* SDK 를 아직 안 받았으면 받는 동안 안내만 보여주고, 준비되면 이 화면을 다시 그린다 */
+    if (loadingSDK(function () { if (root.isConnected) { clear(root); pick(root); } })) {
+      root.appendChild(el('p', { class: 'hint', text: '리뷰를 불러오는 중…' }));
+      return;
+    }
     var metas = {};
     var warn = el('p', { class: 'hint', role: 'status', 'aria-live': 'polite' });
 
@@ -298,12 +313,14 @@ window.BL = window.BL || {};
       }
       if (reviews.ready()) {
         formBox.appendChild(form);
-      } else {
-        formBox.appendChild(el('p', {
-          class: 'hint',
-          text: '지금은 리뷰 서버에 연결하지 못했습니다. 잠시 뒤 다시 시도해 주세요.'
-        }));
+        return;
       }
+      /* SDK 를 아직 받는 중일 수 있다 — 준비되면 이 자리를 다시 그린다 */
+      loadingSDK(function () { if (open && reviews.ready()) openForm(); });
+      formBox.appendChild(el('p', {
+        class: 'hint',
+        text: '지금은 리뷰 서버에 연결하지 못했습니다. 잠시 뒤 다시 시도해 주세요.'
+      }));
     }
 
     function closeForm() {
@@ -353,8 +370,12 @@ window.BL = window.BL || {};
       });
     }
 
-    /* 서버에서 최신 목록을 받아 다시 그린다 */
+    /* 서버에서 최신 목록을 받아 다시 그린다 (SDK 를 아직 받는 중이면 다 받은 뒤에) */
     function refresh() {
+      if (loadingSDK(function () { if (root.isConnected) refresh(); })) {
+        warn.textContent = '리뷰를 불러오는 중…';
+        return;
+      }
       reviews.list(o.id, function (res) {
         rows = res.rows;
         paintStat();

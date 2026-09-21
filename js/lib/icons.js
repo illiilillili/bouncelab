@@ -28,12 +28,13 @@ window.BL = window.BL || {};
 
   /* ── 기능 그림 ──────────────────────────────
      직접 그리지 않고 준 그림 파일(img/)을 그대로 쓴다.
-     홈 카드와 기능 제목에 쓰는 게임 그림이라 파일 이름만 여기서 정한다. */
+     홈 카드와 기능 제목에 쓰는 게임 그림이라 파일 이름만 여기서 정한다.
+     형식은 WebP — PNG 와 눈으로 구분되지 않으면서 1/4 크기다 (바꾸는 방법은 README 참고). */
   var ART = {
-    roulette: 'img/feature-roulette.png',   /* 금색 룰렛 타일 */
-    controls: 'img/feature-controls.png',   /* 가운데가 뚫린 톱니별 */
-    colors: 'img/feature-colors.png',       /* 색 부채꼴 8칸 타일 */
-    rating: 'img/feature-rating.png'        /* 노란 별 */
+    roulette: 'img/feature-roulette.webp',   /* 금색 룰렛 타일 */
+    controls: 'img/feature-controls.webp',   /* 가운데가 뚫린 톱니별 */
+    colors: 'img/feature-colors.webp',       /* 색 부채꼴 8칸 타일 */
+    rating: 'img/feature-rating.webp'        /* 노란 별 */
   };
 
 

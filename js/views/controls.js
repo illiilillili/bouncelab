@@ -67,9 +67,52 @@ window.BL = window.BL || {};
 
   BL.views = BL.views || {};
 
+  /* ── 목록 받아오기 ──────────────────────────
+   * data/controls.js 는 297KB(도감 631개)라 첫 화면에서 받지 않는다.
+   * 이 화면을 처음 열 때 그때 받고, 그동안은 '불러오는 중' 을 보여준다.
+   * 캐시 무효화 값(?v=)은 HTML 이 쓰는 값과 같아야 하므로 script 주소에서 그대로 물려받는다. */
+  var DATA = 'data/controls.js';
+  var waiting = false;
+
+  function stamp() {
+    var n = document.querySelector('script[src*="data/"]');
+    var m = n && /\?v=(\d+)/.exec(n.getAttribute('src') || '');
+    return m ? '?v=' + m[1] : '';
+  }
+
+  function loadData(root) {
+    if (waiting) return;
+    waiting = true;
+    var tag = document.createElement('script');
+    tag.src = DATA + stamp();
+    tag.async = true;
+    tag.onload = function () {
+      waiting = false;
+      if (root.isConnected) { clear(root); BL.views.controls.render(root); }
+    };
+    tag.onerror = function () {
+      waiting = false;
+      BL.controlsFailed = true;          /* 다시 시도하지 않고 안내만 보여준다 */
+      if (root.isConnected) { clear(root); BL.views.controls.render(root); }
+    };
+    document.head.appendChild(tag);
+  }
+
   BL.views.controls = {
     render: function (root) {
-      var all = BL.controls || [];
+      /* 아직 안 받았으면 받는 동안 안내만 (목록이 없는 것과 다르다) */
+      if (!BL.controls) {
+        root.appendChild(el('div', { class: 'box' }, [
+          el('h2', { text: '컨트롤 룰렛' }),
+          el('p', BL.controlsFailed
+            ? { text: '컨트롤 목록을 불러오지 못했습니다. 인터넷 연결을 확인하고 새로고침해 주세요.' }
+            : { class: 'hint', text: '컨트롤 목록' + (BL.controlsCount ? ' (' + BL.controlsCount + '개)' : '') + '을 불러오는 중…' })
+        ]));
+        if (!BL.controlsFailed) loadData(root);
+        return;
+      }
+
+      var all = BL.controls;
 
       if (!all.length) {
         root.appendChild(el('div', { class: 'box' }, [

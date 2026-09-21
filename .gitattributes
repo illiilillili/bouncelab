@@ -1,0 +1,15 @@
+# 줄바꿈 · 파일 형식 규칙 (Windows 와 다른 기기에서 같이 작업해도 파일이 흔들리지 않게)
+#
+# 텍스트는 저장소 안에 LF 로 통일한다. 윈도우 편집기가 CRLF 로 저장해도 커밋할 때 LF 로 바뀌므로
+# 파일마다 줄바꿈이 섞여 'LF will be replaced by CRLF' 같은 경고가 나지 않는다.
+* text=auto eol=lf
+
+# 그림 · 폰트는 손대지 않는다 (줄바꿈 변환 대상이 아니다)
+*.png binary
+*.webp binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary

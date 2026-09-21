@@ -50,10 +50,12 @@ window.BL = window.BL || {};
   }
 
   /* 홈 히어로 : 제목 · 한 줄 설명 · 숫자 한 줄.
-     숫자는 데이터에서 세어 쓴다 (값을 손으로 적지 않는다). */
+     숫자는 데이터에서 세어 쓴다 (값을 손으로 적지 않는다).
+     컨트롤은 개수만 담은 작은 파일(data/controls-count.js)에서 온다 —
+     297KB 목록은 컨트롤 룰렛 화면을 열 때 받는다 (js/views/controls.js). */
   function hero() {
     var maps = (BL.maps || []).length;
-    var controls = (BL.controls || []).length;
+    var controls = BL.controlsCount || (BL.controls || []).length;
     var stats = [
       maps + '개 맵',
       controls + '개 컨트롤',

@@ -51,6 +51,8 @@
 - 컨트롤 목록 갱신: npm run sync:controls (도감 시트 → data/controls.js)
 - 배포 전 점검: npm run check (파일 이름 대소문자 · 절대경로 · 데이터 상태)
 - 바뀐 내용 저장(커밋+푸시): npm run save   (또는 npm run save -- "메시지")
+- `npm` 이 "이 시스템에서 스크립트를 실행할 수 없으므로" 로 막히면(PowerShell 실행정책) `npm.cmd run save` 로 실행합니다
+  (또는 한 번만: `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`)
 
 ## 저장 시점 (스냅샷)
 
@@ -102,15 +104,33 @@
       js/views/rating.js    오브젝트 리뷰 화면 (고르기 · 최종 평점 · 작성 폼 · 리뷰 목록)
       js/views/news.js      뉴스 화면 (기사 목록 · 기사 본문)
       js/app.js             해시 라우팅 (#/ · #/f/<id> · #/f/<id>/<안쪽 화면>) · 화면 렌더
-      data/controls.js      컨트롤 목록 (도감 시트에서 자동 생성)
-      scripts/sync-controls.js   도감 시트 → data/controls.js
+      data/controls.js      컨트롤 목록 (도감 시트에서 자동 생성 · 첫 화면에서는 안 받고 컨트롤 룰렛 화면에서 받는다)
+      data/controls-count.js  컨트롤 개수만 (홈 화면 숫자용 · 위 파일과 같은 스크립트가 함께 만든다)
+      scripts/sync-controls.js   도감 시트 → data/controls.js + data/controls-count.js
       scripts/control-gifs.json  컨트롤 이름 → 드라이브 GIF 파일ID
       scripts/control-tips.json  컨트롤 이름 → 설명(팁)
       scripts/check-deploy.js    배포 전 점검 (npm run check)
       scripts/save.js            커밋+푸시 한 번에 (npm run save)
       scripts/tag.js             저장 시점(스냅샷) 태그 만들기 (npm run tag)
+      .gitattributes        줄바꿈 규칙 (텍스트는 저장소 안에서 LF · 그림은 그대로)
       server.js             정적 서버 (의존성 없음)
       package.json
+
+## 첫 화면을 가볍게 (지연 로드 · 그림 형식)
+
+첫 화면에 필요 없는 것은 그때 받습니다. 그래서 화면 파일(`*.html`)에는 **외부 `<script>` 가 하나도 없습니다**
+(외부 CDN 이 멈추면 그 뒤 화면 코드가 통째로 안 돌아 화면이 비어 버려서, `npm run check` 로 막아 둡니다).
+
+- **컨트롤 목록** `data/controls.js` (297KB) — 홈은 개수만 필요해서 `data/controls-count.js` 만 받습니다.
+  컨트롤 룰렛 화면을 처음 열 때 `js/views/controls.js` 가 받아 옵니다(그동안 '불러오는 중' · `?v=` 값은 HTML 에서 물려받습니다).
+  두 파일은 `npm run sync:controls` 가 함께 만들고, 개수가 어긋나면 `npm run check` 가 잡습니다.
+- **Supabase SDK** — 익명 리뷰(오브젝트 평점)에서만 씁니다. 그 화면을 열 때 `js/lib/supabase.js` 가 받습니다.
+  버전은 박아 둡니다(`@2.116.0`) — CDN 이 새 버전을 내놓아도 화면이 예고 없이 바뀌지 않게.
+- **웹 폰트 CSS** — `media="print"` 로 받고 `onload` 에서 켭니다. CDN 이 느리거나 막혀도 화면이 먼저 뜨고 글꼴만 늦게 바뀝니다
+  (대체 폰트 크기는 `css/tokens.css` 의 `size-adjust` 로 맞춰 두어 글자가 튀지 않습니다).
+- **그림은 WebP** — 같은 그림이 PNG 의 1/4 크기이고 눈으로는 구분되지 않습니다 (2026-09 에 PNG 에서 바꿨습니다).
+  화면에 나오는 크기는 홈 카드 40px · 오브젝트 56~72px 이라 원본은 그 2~4배면 충분하고,
+  `npm run check` 가 40KB 넘는 그림을 알려줍니다.
 
 ## 색상 규칙 (맵 에디터 HSV)
 
@@ -153,11 +173,14 @@ H·S·V 모두 0~39 인덱스(40단계), 조합은 40 x 40 x 40 = 64,000 가지�
 평점을 매기는 오브젝트는 `js/lib/objects.js` 의 `LIST` 한 곳에 모여 있습니다.
 그림을 `img/` 에 두고 한 줄만 더하면 목록 · 상세 · 리뷰 저장까지 그대로 따라옵니다 (화면 코드는 고치지 않습니다).
 
-    { id: 'spike', name: '가시', img: 'img/object-spike.png' }
+    { id: 'spike', name: '가시', img: 'img/object-spike.webp' }
 
 - `id` 는 주소(`#/f/rating/spike`)와 서버의 `object_id` 에 그대로 남습니다 — 한 번 정하면 바꾸지 않습니다
 - `name` 은 화면에 나오는 이름입니다 (별 · 공 · 가시 · 표창 · 톱니 · 블록)
-- `img` 는 `img/` 안의 파일 경로입니다 (PNG · WEBP 둘 다 됩니다). 화면에 나오는 크기는 목록 56px · 상세 72px 이라 원본이 크면 그만큼 줄여 두는 편이 가볍습니다
+- `img` 는 `img/` 안의 파일 경로입니다. 화면에 나오는 크기는 목록 56px · 상세 72px 이라 그보다 훨씬 크게 잡을 필요가 없습니다.
+  형식은 **WebP** 를 씁니다 — 같은 그림이 PNG 의 1/4 크기이고 눈으로는 구분되지 않습니다 (2026-09 에 있던 PNG 를 모두 바꿨습니다).
+  PNG 밖에 없으면 그대로 넣어도 화면은 같고(무거울 뿐), 바꾸는 건 그림 도구(포토샵 · 김프 · 온라인 변환기) 아무거나 됩니다
+  (품질 0.97 권장 — 안내: `npm run check` 가 40KB 넘는 그림을 알려줍니다)
 - `별`(`star`)만은 평점의 별 그림으로도 쓰입니다 (`BL.objects.star()`)
 
 ## 저장되는 것

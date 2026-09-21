@@ -9,6 +9,8 @@ const SHEET_ID = '1oigeOzho6fp_deBIHgRnf8b92_EAXepWERYRWimlW6A';
 const GID = '1670459966';
 const URL = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:csv&gid=' + GID;
 const OUT = path.join(__dirname, '..', 'data', 'controls.js');
+/* 개수만 담은 작은 파일 — 첫 화면(홈)이 이 파일만 받는다 (297KB 목록은 도감 화면에서 받는다) */
+const COUNT_OUT = path.join(__dirname, '..', 'data', 'controls-count.js');
 const GIFS = path.join(__dirname, 'control-gifs.json');
 const TIPS = path.join(__dirname, 'control-tips.json');
 
@@ -123,7 +125,16 @@ async function main() {
     }, null, 2) + ';\n';
 
   fs.writeFileSync(OUT, header + body, 'utf8');
+  /* 개수만 담은 작은 파일도 함께 만든다 — 첫 화면은 이 파일만 받고,
+     목록 전체는 컨트롤 룰렛 화면을 열 때 받는다 (js/views/controls.js). */
+  fs.writeFileSync(COUNT_OUT,
+    '/* 자동 생성 파일 - scripts/sync-controls.js 로 갱신합니다. 직접 수정하지 마세요.\n' +
+    ' * 홈 화면의 \'컨트롤 N개\' 숫자 하나 때문에 297KB 목록을 받지 않게, 개수만 따로 둔 파일.\n' +
+    ' * 목록 전체는 data/controls.js 에 있고, 컨트롤 룰렛 화면을 처음 열 때 받는다\n' +
+    ' * (받아오는 코드는 js/views/controls.js). */\n' +
+    'window.BL = window.BL || {};\nwindow.BL.controlsCount = ' + controls.length + ';\n', 'utf8');
   console.log('저장: ' + OUT);
+  console.log('저장: ' + COUNT_OUT + ' (개수 ' + controls.length + '개)');
   console.log('컨트롤 ' + controls.length + '개 (빈 행 ' + blank + '개 건너뜀) / GIF ' + withImg + '개 / 팁 ' + withTip + '개 연결');
   console.log('난이도 분포: ' + Object.keys(counts).sort(function (a, b) { return a - b; })
     .map(function (k) { return k + ':' + counts[k]; }).join(' '));

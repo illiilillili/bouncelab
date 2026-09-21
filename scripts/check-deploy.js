@@ -45,7 +45,8 @@ out.push('  확인한 참조 ' + refs.length + '개');
 const SITE_FILES = [
   'index.html', 'block-preview.html', 'control-gif-preview.html',
   'css/style.css', 'css/tokens.css',
-  'data/site.js', 'data/features.js', 'data/maps.js', 'data/controls.js', 'data/news.js',
+  'data/site.js', 'data/features.js', 'data/maps.js', 'data/controls.js', 'data/controls-count.js',
+  'data/news.js',
   'js/app.js', 'js/lib/dom.js', 'js/lib/icons.js', 'js/lib/storage.js', 'js/lib/rng.js',
   'js/lib/query.js', 'js/lib/color.js', 'js/lib/contact.js', 'js/lib/objects.js',
   'js/lib/supabase.js', 'js/lib/reviews.js', 'js/lib/review-filter.js',
@@ -60,9 +61,32 @@ SITE_FILES.forEach(function (f) {
 });
 t('서버주소·절대경로 없음', stuck.join(', ') || '없음', '없음');
 
+/* 2-2) 화면 파일이 부르는 '외부 스크립트' 가 없는지
+ * 외부 CDN 이 멈추면 그 스크립트 뒤에 있는 화면 코드가 통째로 안 돌아서 화면이 비어 버린다.
+ * (Supabase SDK 는 평점 화면에서 필요할 때 js/lib/supabase.js 가 직접 받는다.) */
+const extScript = [];
+PAGES.forEach(function (page) {
+  const html = fs.readFileSync(path.join(PROJ, page), 'utf8');
+  [...html.matchAll(/<script[^>]+src=\"(https?:[^\"]+)\"/g)].forEach(function (m) {
+    extScript.push(page + ' → ' + m[1]);
+  });
+});
+t('외부 스크립트 없음', extScript.join(', ') || '없음', '없음');
+
+/* 2-3) 웹 폰트 CSS 가 화면 그리기를 막지 않는지 (media="print" 로 받고 onload 에서 켠다) */
+const fontBlock = [];
+PAGES.forEach(function (page) {
+  const html = fs.readFileSync(path.join(PROJ, page), 'utf8');
+  [...html.matchAll(/<link[^>]+rel=\"stylesheet\"[^>]+href=\"(https?:[^\"]+)\"/g)].forEach(function (m) {
+    if (m[0].indexOf('media=\"print\"') < 0) fontBlock.push(page + ' → ' + m[1]);
+  });
+});
+t('웹 폰트 CSS 화면 안 막음', fontBlock.join(', ') || '없음', '없음');
+
 /* 3) 배포에 꼭 있어야 하는 파일 */
 const NEED = ['index.html', 'css/tokens.css', 'css/style.css', 'data/site.js', 'data/features.js',
-  'data/maps.js', 'data/controls.js', 'data/news.js', 'js/app.js', 'js/views/roulette.js',
+  'data/maps.js', 'data/controls.js', 'data/controls-count.js', 'data/news.js', 'js/app.js',
+  'js/views/roulette.js',
   'js/views/controls.js', 'js/views/colors.js', 'js/views/rating.js', 'js/views/news.js',
   'js/lib/icons.js', 'js/lib/objects.js', 'js/lib/reviews.js', 'js/lib/review-filter.js'];
 const gone = NEED.filter(function (f) { return !fs.existsSync(path.join(PROJ, f)); });
@@ -95,6 +119,35 @@ const zero = MAPS.filter(function (m) { return String(m.diff).trim() === '0'; })
   .map(function (m) { return m.name; });
 t('난이도 0 맵 없음', zero.join(', ') || '없음', '없음');
 out.push('  확인한 맵 ' + MAPS.length + '개');
+
+/* 맵 이름+제작자가 같은 줄이 두 번 들어갔는지 (시트에서 두 번 붙여넣는 사고) */
+const seenMap = {}, dupMaps = [];
+MAPS.forEach(function (m) {
+  const k = m.by + '|' + m.name;
+  if (seenMap[k]) dupMaps.push(k);
+  seenMap[k] = 1;
+});
+t('맵 중복 없음', dupMaps.join(', ') || '없음', '없음');
+
+/* 4-3) 첫 화면이 받는 개수 파일이 목록과 맞는지
+ *     (홈 숫자는 data/controls-count.js 만 보고 쓰므로, 어긋나면 숫자가 틀린다) */
+require(path.join(PROJ, 'data', 'controls-count.js'));
+t('컨트롤 개수 파일 일치', global.window.BL.controlsCount, C.length);
+
+/* 4-4) 오브젝트 평점 목록 — id 가 겹치면 리뷰가 한 칸에 섞인다 (서버의 object_id 로 쌓인다) */
+const objSrc = fs.readFileSync(path.join(PROJ, 'js', 'lib', 'objects.js'), 'utf8');
+const objIds = [...objSrc.matchAll(/\{ id: '([^']+)'/g)].map(function (m) { return m[1]; });
+const dupObj = objIds.filter(function (id, i) { return objIds.indexOf(id) !== i; });
+t('오브젝트 id 안 겹침', dupObj.join(', ') || '없음', '없음');
+out.push('  확인한 오브젝트 ' + objIds.length + '개');
+
+/* 그림 크기 — 화면에는 28~72px 로만 나오므로 40KB 넘는 파일이 들어오면 알려준다 */
+const bigImg = fs.readdirSync(path.join(PROJ, 'img')).filter(function (f) {
+  return fs.statSync(path.join(PROJ, 'img', f)).size > 40 * 1024;
+}).map(function (f) {
+  return f + ' ' + Math.round(fs.statSync(path.join(PROJ, 'img', f)).size / 1024) + 'KB';
+});
+out.push('  그림 40KB 넘는 것: ' + (bigImg.join(', ') || '없음'));
 
 /* 5) 대문자 섞인 파일 이름 (윈도우에서 만들면 실수하기 쉬움) */
 const caps = [];
