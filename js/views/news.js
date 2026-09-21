@@ -54,7 +54,7 @@ window.BL = window.BL || {};
       class: 'obj obj--ask', type: 'button',
       onClick: function () { BL.contact.send([], note); }
     }, [
-      el('span', { class: 'obj__art', 'aria-hidden': 'true' }, el('span', { class: 'ask__mark', text: '✦' })),
+      el('span', { class: 'obj__art', 'aria-hidden': 'true' }, el('span', { class: 'ask__mark', text: '!' })),
       el('span', { class: 'obj__main' }, [
         el('span', { class: 'obj__name', text: '바운스랩에 소식 제보하기' }),
         el('span', { class: 'ask__desc', text: '새로운 소식이나 알려주고 싶은 내용을 보내주세요.' })

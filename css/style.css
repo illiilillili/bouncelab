@@ -471,7 +471,7 @@ select:focus-visible { border-color: var(--brand); outline: none; box-shadow: 0 
 .obj--ask:hover { border-color: var(--brand); }
 .ask__mark {
   display: grid; place-items: center; width: 100%; height: 100%;
-  color: var(--brand); font-size: 26px; line-height: 1;
+  color: var(--brand); font-size: 26px; font-weight: 800; line-height: 1;
 }
 .ask__desc { display: block; margin-top: 3px; font-size: 13.5px; line-height: 1.55; color: var(--text-dim); }
 
@@ -480,8 +480,9 @@ select:focus-visible { border-color: var(--brand); outline: none; box-shadow: 0 
   background: var(--white); border: 1px solid var(--line); border-radius: var(--r); box-shadow: var(--sh-2);
 }
 .news__meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2) var(--sp-3); margin: 0; }
-.news__date, .news__who { font-size: 12.5px; color: var(--text-dim); }
-.news__title { margin: var(--sp-3) 0 0; font-size: clamp(23px, 3.4vw, 30px); line-height: 1.28; letter-spacing: -.03em; }
+.news__date { font-size: 14.5px; color: var(--text); }   /* 날짜 — 조금 크고(12.5 → 14.5) 진하게 */
+.news__who { font-size: 14px; color: var(--text-dim); }  /* 저자 — 날짜와 비슷한 크기, 한 단계 연하게 */
+.news__title { margin: var(--sp-4) 0 0; font-size: clamp(23px, 3.4vw, 30px); line-height: 1.28; letter-spacing: -.03em; }
 .news__deck { margin: var(--sp-2) 0 0; font-size: 15.5px; line-height: 1.6; color: var(--text-dim); }
 .news__pic { margin: var(--sp-4) 0 0; }
 .news__pic img {
