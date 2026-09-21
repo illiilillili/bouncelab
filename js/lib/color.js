@@ -108,6 +108,41 @@ window.BL = window.BL || {};
     return { h: randomIndex(), s: pair[0], v: pair[1] };
   }
 
+  function clampIndex(n) {
+    return n < 0 ? 0 : (n > INDEX_MAX ? INDEX_MAX : n);
+  }
+
+  /* ── 그라데이션 (같은 색 계열 이어가기) ──────────────────────
+   * 현재 색에서 밝기(V)와 채도(S)만 단계적으로 움직여 색 11개를 만든다.
+   * RGB 를 각각 더하는 방식이 아니고, 색조(H)는 그대로 두어 같은 색 계열로 보이게 한다.
+   *   밝은 쪽(+1~+5) : V 를 남은 만큼 올리고 S 는 조금씩 낮춘다 (파스텔 쪽으로)
+   *   어두운 쪽(-1~-5): V 를 25% 까지 내리고 S 는 조금씩 올린다 (진한 쪽으로, 완전 검정은 안 만든다)
+   * V 가 한계(0 · 39)에 닿으면 S 변화가 단계 차이를 이어 간다.
+   * 돌려주는 배열은 -5 ~ +5 순서이고, 가운데([GLOW])가 지금 색과 정확히 같다. */
+  var GLOW = 5;             /* 한쪽으로 몇 단계 (-5 ~ +5 = 11개) */
+  var DARK_KEEP = 0.25;     /* 어두운 쪽에서 남겨 두는 밝기 비율 */
+  var SAT_MOVE = 0.35;      /* 채도가 움직이는 최대 비율 */
+
+  function shadeOf(idx, step) {
+    if (!step) return { h: idx.h, s: idx.s, v: idx.v };    /* 0 = 지금 색 그대로 */
+    var t = step / GLOW;                                   /* -1 ~ +1 */
+    var s, v;
+    if (step > 0) {
+      v = idx.v + t * (INDEX_MAX - idx.v);
+      s = idx.s * (1 - t * SAT_MOVE);
+    } else {
+      v = idx.v * (1 + t * (1 - DARK_KEEP));
+      s = idx.s + (-t) * (INDEX_MAX - idx.s) * SAT_MOVE;
+    }
+    return { h: idx.h, s: clampIndex(Math.round(s)), v: clampIndex(Math.round(v)) };
+  }
+
+  function shades(idx) {
+    var list = [];
+    for (var step = -GLOW; step <= GLOW; step++) list.push(shadeOf(idx, step));
+    return list;
+  }
+
   BL.color = {
     INDEX_MAX: INDEX_MAX,
     hsvOf: hsvOf,
@@ -115,6 +150,8 @@ window.BL = window.BL || {};
     hexOf: hexOf,
     randomIndex: randomIndex,
     randomIndices: randomIndices,
+    shades: shades,
+    glow: GLOW,
     isDull: isDull,
     isPastel: isPastel,
     isVivid: isVivid,

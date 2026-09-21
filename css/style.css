@@ -296,6 +296,26 @@ select:focus-visible { border-color: var(--brand); outline: none; box-shadow: 0 
 /* 색 뽑기도 아래 보조 버튼 줄과 같은 폭으로 (이 화면의 .roll-row 는 색 화면에만 있다 ·
    모바일은 이미 .btn--main { width:100% } 라 달라지지 않는다) */
 .tool__side .roll-row .btn--main { width: 100%; }
+
+/* ── 그라데이션 패널 (그라데이션 버튼 아래 펼쳐진다) ──
+ * 현재 색에서 이어지는 색 11개. 왼쪽 -5 → 가운데 0(현재 색) → 오른쪽 +5 */
+.grad {
+  display: grid; grid-template-columns: repeat(11, 1fr); gap: 3px;
+  margin-top: var(--sp-2);
+  animation: gradin var(--dur-fast) var(--ease);   /* 짧게 내려오며 나타난다 */
+}
+.grad[hidden] { display: none; }
+@keyframes gradin {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: none; }
+}
+.grad__i { display: grid; gap: 3px; padding: 0; border: 0; background: none; cursor: pointer; }
+.grad__n { font-family: var(--mono); font-size: 10px; line-height: 1; color: var(--text-dim); text-align: center; }
+.grad__c { height: 22px; border: 1px solid var(--line); border-radius: var(--r-xs); }
+.grad__i:hover .grad__c { border-color: var(--lav); }
+.grad__i:hover .grad__n { color: var(--ink); }
+.grad__i.is-now .grad__c { border: 2px solid var(--ink); }   /* 0 = 지금 색 — 테두리를 더 뚜렷하게 */
+.grad__i.is-now .grad__n { color: var(--ink); font-weight: 700; }
 .blkrow { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-top: var(--sp-3); }
 .blk { position: relative; flex: 0 0 auto; width: 100px; height: 70px; border: 3px solid var(--tile-line); border-radius: var(--r-sm); overflow: hidden; }
 .blk__fill { position: absolute; inset: 0; }

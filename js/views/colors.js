@@ -62,6 +62,12 @@ window.BL = window.BL || {};
       var chkPastel = el('input', { type: 'checkbox', onChange: function () { onToggle('pastel'); } });
       var chkVivid = el('input', { type: 'checkbox', onChange: function () { onToggle('vivid'); } });
       var rollBtn = el('button', { class: 'btn btn--main', type: 'button', onClick: pick, text: '색 뽑기' });
+      var gradBtn = el('button', {
+        class: 'btn', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'gradPanel',
+        onClick: toggleGrad, text: '그라데이션'
+      });
+      var gradPanel = el('div', { class: 'grad', id: 'gradPanel', hidden: true });
+      var gradChips = [];
 
       function apply(idx) {
         var hsv = color.hsvOf(idx.h, idx.s, idx.v);
@@ -80,6 +86,7 @@ window.BL = window.BL || {};
         hexEl.textContent = hex;
         rgbEl.textContent = 'RGB ' + rgb.join(', ');
         live.textContent = hex + ' / H ' + idx.h + ' S ' + idx.s + ' V ' + idx.v;
+        paintGradIfOpen();       /* 색이 바뀌면 그라데이션도 그 색 기준으로 다시 칠한다 */
       }
 
       function pick() {
@@ -109,6 +116,60 @@ window.BL = window.BL || {};
         if (!color.allows(opt, cur.h, cur.s, cur.v)) pick();
       }
 
+      /* ── 그라데이션 (지금 색에서 이어지는 색 11개) ──────────────
+       * 색 계산은 js/lib/color.js 의 shades() 가 맡는다 (색조는 그대로, 밝기·채도만 단계적으로).
+       * 칩을 누르면 그 색이 현재 색이 된다 — H·S·V · HEX · RGB 와 타일 색까지 함께 바뀐다.
+       * 처음에는 접혀 있고, 버튼을 누르면 펼쳐지고 다시 누르면 접힌다. */
+      var stepList = (function () {
+        var out = [];
+        for (var d = -color.glow; d <= color.glow; d++) out.push(d);
+        return out;
+      })();
+
+      function labelOf(step) { return step > 0 ? '+' + step : String(step); }
+
+      function paintGrad(idx) {
+        var list = color.shades(idx);
+        gradChips.forEach(function (c, i) {
+          var s = list[i];
+          var hex = color.hexOf(s.h, s.s, s.v);
+          var now = c.step === 0;
+          c.idx = s;
+          c.chip.style.background = hex;
+          c.btn.title = (now ? '현재 색 ' : labelOf(c.step) + ' 단계 ') + hex;
+          c.btn.setAttribute('aria-label', (now ? '현재 색' : labelOf(c.step)) + ' ' + hex);
+          c.btn.classList.toggle('is-now', now);
+        });
+      }
+
+      function paintGradIfOpen() { if (!gradPanel.hidden) paintGrad(cur); }
+
+      function toggleGrad() {
+        var open = gradPanel.hidden;                 /* 지금 접혀 있으면 편다 */
+        gradPanel.hidden = !open;
+        gradBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (open) paintGrad(cur);
+      }
+
+      function pickShade(step) {
+        var c = gradChips[step + color.glow];
+        if (c && c.idx) apply(c.idx);                /* 누른 색이 현재 색이 된다 */
+      }
+
+      /* 칩 11개는 한 번만 만들고 색만 다시 칠한다 (색이 바뀌어도 다시 만들지 않는다) */
+      stepList.forEach(function (step) {
+        var chip = el('span', { class: 'grad__c' });
+        var btn = el('button', {
+          class: 'grad__i', type: 'button',
+          onClick: function () { pickShade(step); }
+        }, [
+          el('span', { class: 'grad__n', text: labelOf(step) }),
+          chip
+        ]);
+        gradChips.push({ step: step, chip: chip, btn: btn, idx: null });
+        gradPanel.appendChild(btn);
+      });
+
       chkDull.checked = opt.avoidDull;
       chkPastel.checked = opt.pastel;
       chkVivid.checked = opt.vivid;
@@ -126,9 +187,10 @@ window.BL = window.BL || {};
           el('div', { class: 'roll-row' }, [rollBtn]),
           /* 색 뽑기보다 중요도가 낮은 보조 기능 2개 — UI 만 (기능은 아직 없음) */
           el('div', { class: 'btnrow' }, [
-            el('button', { class: 'btn', type: 'button', text: '그라데이션' }),
+            gradBtn,
             el('button', { class: 'btn', type: 'button', text: '비슷한 색' })
           ]),
+          gradPanel,
           /* 조건 체크박스는 따로 모아 둔다 (버튼과 한 줄에 섞이면 줄이 지저분해진다) */
           el('div', { class: 'opts' }, [
             checkLabel(chkDull, '칙칙한 색 제외'),
