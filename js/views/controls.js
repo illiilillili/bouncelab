@@ -287,8 +287,18 @@ window.BL = window.BL || {};
         else track.appendChild(el('div', { class: 'reel__item' }, [el('span', { class: 'reel__name', text: '후보 없음' })]));
       }
 
+      /* 난이도를 '전체' 로 바꾸면 양쪽 다 전체로 돌리고,
+         3~1 처럼 뒤집어 골라도 1~3 으로 맞춰서 보여준다 (거르는 값도 1~3 으로 본다). */
       function onRange(which, value) {
         state[which] = value;
+        if (value === '') {
+          state.min = '';
+          state.max = '';
+        } else if (state.min !== '' && state.max !== '' && Number(state.min) > Number(state.max)) {
+          var t = state.min; state.min = state.max; state.max = t;
+        }
+        minSel.value = state.min;
+        maxSel.value = state.max;
         storage.set(K.filters, { min: state.min, max: state.max });
         refresh();
       }

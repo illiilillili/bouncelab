@@ -41,11 +41,13 @@ window.BL = window.BL || {};
   }
 
   /* min / max 는 난이도 문자열(빈 값이면 제한 없음),
-     tags 는 고른 해시태그 — 고른 걸 모두 가진 맵만 남긴다. */
+     tags 는 고른 해시태그 — 고른 걸 모두 가진 맵만 남긴다.
+     3~1 처럼 뒤집어 골라도 1~3 으로 보고 거른다. */
   function filter(maps, opts) {
     var o = opts || {};
-    var lo = o.min ? diffRank(o.min) : -Infinity;
-    var hi = o.max ? diffRank(o.max) : Infinity;
+    var a = o.min ? diffRank(o.min) : -Infinity;
+    var b = o.max ? diffRank(o.max) : Infinity;
+    var lo = Math.min(a, b), hi = Math.max(a, b);
     var tags = o.tags instanceof Array ? o.tags : [];
     return maps.filter(function (m) {
       var r = diffRank(m.diff);
