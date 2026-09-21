@@ -1,6 +1,6 @@
 window.BL = window.BL || {};
 
-/* 컨트롤 재미도 — 8칸 중 하나를 고르면 그 컨트롤의 재미도가 된다.
+/* 컨트롤 재미도 — 1~5 중 하나를 고르면 그 컨트롤의 재미도가 된다.
  *   peek(name, cb)   지금 아는 것만 (서버가 아직 안 받아졌으면 이 브라우저 값만 · 서버를 새로 받지 않는다)
  *   get(name, cb)    서버가 필요하면 받아서 알려준다 (사람들이 고른 칸 수까지)
  *   set(name, score, cb)  내 재미도 저장 (한 사람 한 표 · 다시 누르면 바뀐다)
@@ -11,7 +11,7 @@ window.BL = window.BL || {};
 (function (BL) {
   var cfg = (BL.site && BL.site.reviews) || {};
   var TABLE = cfg.funTable || 'control_fun';
-  var MIN = 1, MAX = 8;
+  var MIN = 1, MAX = 5;
   var K = 'fun.';                      /* bl:fun.<컨트롤 이름> = 내 점수 */
 
   function ready() { return !!(BL.sb && BL.sb.ready && BL.sb.client); }
