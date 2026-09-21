@@ -1,7 +1,7 @@
 window.BL = window.BL || {};
 
 /* 문의하기 버튼 — 목적지(href/mail)가 있으면 그리로 보내고,
-   아직 없으면 정해 둔 문구(예: '-메일-')만 클립보드로 복사한다. */
+   아직 없으면 정해 둔 값(보통 메일 주소)만 클립보드로 복사한다. */
 (function (BL) {
   function config() {
     var c = (BL.site && BL.site.contact) || {};

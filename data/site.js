@@ -11,11 +11,11 @@ window.BL.site = {
   /* 문의하기 — 홈 화면 맨 아래 버튼 하나
      href 에 오픈채팅·디스코드·구글폼 주소를 넣으면 그 링크로 열립니다.
      mail 에 주소를 넣으면 메일 쓰기로 열립니다.
-     둘 다 비어 있으면 copyText 를 클립보드로 복사합니다 (지금은 임시로 '-메일-'). */
+     둘 다 비어 있으면 copyText 를 클립보드로 복사합니다 (뉴스 제보 카드 · 룰렛 제보 안내도 같은 값을 씁니다). */
   contact: {
     label: '문의하기',
     hint: '',
-    copyText: '-메일-',
+    copyText: 'bouncelabkr@gmail.com',
     href: '',
     mail: ''
   },
