@@ -207,20 +207,18 @@ select:focus-visible { border-color: var(--brand); outline: none; box-shadow: 0 
 .result__btns--pair { display: grid; grid-template-columns: 1fr 1fr; }
 .result__btns--pair .btn { height: 48px; padding: 0 var(--sp-3); }
 
-/* ── 재미도 : 8칸 (난이도 막대와 같은 디자인) ─────
- * 왼쪽에 '재미도' 라벨, 오른쪽에 난이도 막대(.diffbar)와 똑같은 사각형 8개.
- * 채워진 칸 = 앰버, 빈 칸 = 라벤더. 하나를 누르면 그 칸까지 왼쪽부터 차례로 채워진다.
- * 사람 수는 칸 안에 넣지 않고 마우스를 올렸을 때(title)와 화면 낭독기(aria-label)로 알려준다. */
-.funbox { margin-top: var(--sp-2); }
-.funrow .ctrl__label { flex: 0 0 auto; }   /* '재미도' 세 글자가 잘리지 않게 (다른 줄 라벨은 34px 그대로) */
-.fun { display: inline-flex; gap: 3px; }
-.fun__cell {
-  width: 12px; height: 12px; padding: 0; border: 0; border-radius: 3px;
-  background: var(--lav); cursor: pointer;
-  transition: background var(--dur) var(--ease);
+/* ── 재미도 : 점수 박스 (도감에서 보기 자리) ─────
+ * 다시 뽑기와 같은 크기. 누르면 1~8 작은 목록이 떠서 하나를 고르고, 고른 값이 곧 재미도가 된다.
+ * 박스에는 '재미도 : 3' 처럼, 아직 안 골랐으면 '재미도 : -' 로 보인다. */
+.funpick {
+  height: 48px; padding: 0 var(--sp-3);
+  border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--white); color: var(--ink);
+  font: inherit; font-size: 14.5px; font-weight: 600; cursor: pointer;
+  text-align: center; text-align-last: center;
+  appearance: none; -webkit-appearance: none;
+  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
 }
-.fun__cell:hover { background: var(--brand-line); }
-.fun__cell.is-fill { background: var(--amber); }
+.funpick:hover { border-color: var(--lav); background: var(--surface); }
 .fun__note { margin: var(--sp-2) 0 0; font-size: 13px; color: var(--text-dim); }
 .fun__note:empty { display: none; }
 .mtile {
@@ -506,6 +504,7 @@ select:focus-visible { border-color: var(--brand); outline: none; box-shadow: 0 
   .btn { height: 44px; }
   .btn--main { width: 100%; height: 50px; }
   .result__btns--pair .btn { height: 50px; }   /* 두 버튼은 폰에서도 같은 높이로 */
+  .result__btns--pair .funpick { height: 50px; }
   .roll-row { gap: var(--sp-2) var(--sp-4); }
   .chk { font-size: 14.5px; }
   .chk input { width: 18px; height: 18px; }
