@@ -201,6 +201,29 @@ select:focus-visible { border-color: var(--brand); outline: none; box-shadow: 0 
 .result__meta { margin: var(--sp-2) 0 0; font-size: 13.5px; color: var(--text-dim); }
 .result__btns { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-top: var(--sp-4); }
 .result--empty p { margin: 0; font-size: 14.5px; color: var(--text-dim); }
+
+/* ── 컨트롤 룰렛 : 두 버튼을 같은 크기로 ──
+ * 다시 뽑기(주 버튼)와 도감에서 보기(보조 버튼)를 같은 폭·같은 높이로 나란히 둔다 */
+.result__btns--pair { display: grid; grid-template-columns: 1fr 1fr; }
+.result__btns--pair .btn { height: 48px; padding: 0 var(--sp-3); }
+
+/* ── 재미도 : 8칸 ─────────────────────────
+ * 두 버튼과 같은 가로폭, 세로는 조금 더 짧게. 아무도 안 고른 칸은 비어 있고,
+ * 내가 고른 칸은 보라로 채워진다. 칸 안 숫자는 그 칸을 고른 사람 수 (재미도 공유) */
+.funbox { margin-top: var(--sp-2); }
+.fun { display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; }
+.fun__cell {
+  height: 36px; padding: 0; border: 1px solid var(--line); border-radius: var(--r-xs);
+  background: var(--white); color: var(--text-dim);
+  font: inherit; font-size: 12.5px; font-weight: 700; font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.fun__cell:hover { border-color: var(--lav); background: var(--surface); }
+.fun__cell.is-voted { color: var(--ink); }
+.fun__cell.is-mine { border-color: transparent; background: var(--brand); color: var(--white); }
+.fun__note { margin: var(--sp-2) 0 0; font-size: 13px; color: var(--text-dim); }
+.fun__note:empty { display: none; }
 .mtile {
   flex: 0 0 auto; width: 72px; height: 72px; overflow: hidden;
   border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--surface);
@@ -483,6 +506,8 @@ select:focus-visible { border-color: var(--brand); outline: none; box-shadow: 0 
   /* 손가락으로 누르기 좋게 */
   .btn { height: 44px; }
   .btn--main { width: 100%; height: 50px; }
+  .result__btns--pair .btn { height: 50px; }   /* 두 버튼은 폰에서도 같은 높이로 */
+  .fun__cell { height: 40px; }                 /* 8칸 — 손가락으로 누르기 좋게 조금 더 */
   .roll-row { gap: var(--sp-2) var(--sp-4); }
   .chk { font-size: 14.5px; }
   .chk input { width: 18px; height: 18px; }

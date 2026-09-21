@@ -49,7 +49,7 @@ const SITE_FILES = [
   'data/news.js',
   'js/app.js', 'js/lib/dom.js', 'js/lib/icons.js', 'js/lib/storage.js', 'js/lib/rng.js',
   'js/lib/query.js', 'js/lib/color.js', 'js/lib/contact.js', 'js/lib/objects.js',
-  'js/lib/supabase.js', 'js/lib/reviews.js', 'js/lib/review-filter.js',
+  'js/lib/supabase.js', 'js/lib/reviews.js', 'js/lib/review-filter.js', 'js/lib/fun.js',
   'js/views/_soon.js', 'js/views/roulette.js', 'js/views/controls.js', 'js/views/colors.js',
   'js/views/rating.js', 'js/views/news.js'
 ];
@@ -88,7 +88,7 @@ const NEED = ['index.html', 'css/tokens.css', 'css/style.css', 'data/site.js', '
   'data/maps.js', 'data/controls.js', 'data/controls-count.js', 'data/news.js', 'js/app.js',
   'js/views/roulette.js',
   'js/views/controls.js', 'js/views/colors.js', 'js/views/rating.js', 'js/views/news.js',
-  'js/lib/icons.js', 'js/lib/objects.js', 'js/lib/reviews.js', 'js/lib/review-filter.js'];
+  'js/lib/icons.js', 'js/lib/objects.js', 'js/lib/reviews.js', 'js/lib/review-filter.js', 'js/lib/fun.js'];
 const gone = NEED.filter(function (f) { return !fs.existsSync(path.join(PROJ, f)); });
 t('필요한 파일 있음', gone.join(', ') || '없음', '없음');
 

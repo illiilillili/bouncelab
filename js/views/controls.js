@@ -98,6 +98,68 @@ window.BL = window.BL || {};
     document.head.appendChild(tag);
   }
 
+  /* ── 재미도 (8칸) ──────────────────────────
+   * 컨트롤 하나에 8칸. 아무도 안 고른 칸은 완전히 비어 있고, 하나를 누르면 그게 내 재미도가 된다.
+   * 사람들이 고른 칸 수는 서버(control_fun 표)에 쌓여 칸 안 숫자로 함께 보인다.
+   * 서버를 못 쓰면 이 브라우저에만 저장되고, 아래 한 줄이 그 사실을 알려준다. */
+  function funBox(c) {
+    var cells = [];
+    var note = el('p', { class: 'fun__note' });
+    var row = el('div', { class: 'fun', role: 'group', 'aria-label': '재미도' });
+    var current = null;
+
+    function paint(res) {
+      var r = res || {};
+      var counts = r.counts || [];
+      cells.forEach(function (btn, i) {
+        var score = i + 1;
+        var n = counts[i] || 0;
+        var isMine = r.mine === score;
+        btn.firstChild.textContent = n ? String(n) : '';
+        btn.classList.toggle('is-voted', !!n);
+        btn.classList.toggle('is-mine', isMine);
+        btn.setAttribute('aria-pressed', isMine ? 'true' : 'false');
+        btn.setAttribute('aria-label', '재미도 ' + score + '점' + (n ? ' · ' + n + '명' : ''));
+        btn.title = '재미도 ' + score + '점' + (n ? ' · ' + n + '명' : '');
+      });
+    }
+
+    function pick(score) {
+      note.textContent = '';
+      paint({ mine: score, counts: current ? current.counts : [] });   /* 누른 즉시 표시 (기다리지 않는다) */
+      BL.fun.set(c.name, score, function (res) {
+        if (!res.ok && res.error) {
+          note.textContent = res.error + ' 이 브라우저에만 저장했습니다.';
+        }
+        BL.fun.get(c.name, function (got) {
+          current = got;
+          paint(got);
+          if (!got.ok && got.error && !note.textContent) note.textContent = got.error;
+        });
+      });
+    }
+
+    for (var i = BL.fun.min; i <= BL.fun.max; i++) {
+      (function (score) {
+        var btn = el('button', {
+          class: 'fun__cell', type: 'button', 'aria-pressed': 'false',
+          'aria-label': '재미도 ' + score + '점',
+          onClick: function () { pick(score); }
+        }, [el('span', { class: 'fun__n' })]);
+        cells.push(btn);
+        row.appendChild(btn);
+      })(i);
+    }
+
+    /* 처음에는 이 브라우저가 고른 값만 보여준다 (서버가 이미 준비되어 있으면 사람들 값까지) */
+    BL.fun.peek(c.name, function (res) {
+      current = res;
+      paint(res);
+    });
+
+    return el('div', { class: 'funbox' }, [row, note]);
+  }
+
   BL.views.controls = {
     render: function (root) {
       /* 아직 안 받았으면 받는 동안 안내만 (목록이 없는 것과 다르다) */
@@ -250,11 +312,12 @@ window.BL = window.BL || {};
             c.tip ? el('div', { class: 'ctrl__rows' }, [el('span', { class: 'ctrl__label', text: '설명' }), el('span', { class: 'ctrl__tip', text: c.tip })]) : null
           ])
         ]));
-        resultEl.appendChild(el('div', { class: 'result__btns' }, [
+        resultEl.appendChild(el('div', { class: 'result__btns result__btns--pair' }, [
           el('button', { class: 'btn btn--main', type: 'button', onClick: spin },
             [BL.icons.get('rotate'), el('span', { text: '다시 뽑기' })]),
           el('a', { class: 'btn', href: sheetUrl(c), target: '_blank', rel: 'noopener' }, ['도감에서 보기 ↗'])
         ]));
+        resultEl.appendChild(funBox(c));
       }
 
       function refresh() {
