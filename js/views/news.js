@@ -43,6 +43,27 @@ window.BL = window.BL || {};
     ];
   }
 
+  /* ── 제보 카드 ─────────────────────────────
+   * 목록 맨 위(전체 N건 바로 아래)에 붙는 안내 카드. 뉴스 카드와 같은 틀(.obj)을 쓰되
+   * 날짜·기자·분류 같은 메타는 두지 않고, 아주 옅은 보라 배경으로 뉴스 카드와 구분한다.
+   * 누르면 문의와 같은 창구(js/lib/contact.js)로 보낸다 —
+   * 주소가 채워지면 그리로 열리고, 아직 없으면 정해 둔 문구를 복사한다. */
+  function askCard() {
+    var note = el('p', { class: 'ask__note' });
+    var card = el('button', {
+      class: 'obj obj--ask', type: 'button',
+      onClick: function () { BL.contact.send([], note); }
+    }, [
+      el('span', { class: 'obj__art', 'aria-hidden': 'true' }, el('span', { class: 'ask__mark', text: '✦' })),
+      el('span', { class: 'obj__main' }, [
+        el('span', { class: 'obj__name', text: '바운스랩에 소식 제보하기' }),
+        el('span', { class: 'ask__desc', text: '새로운 소식이나 알려주고 싶은 내용을 보내주세요.' })
+      ]),
+      el('span', { class: 'obj__go', text: '→' })
+    ]);
+    return el('div', { class: 'askrow' }, [card, note]);
+  }
+
   /* ── 기사 목록 ─────────────────────────────
    * 오브젝트 평점의 고르는 화면과 같은 카드(.objs · .obj)를 쓰고,
    * 카드에 부제 한 줄(obj__deck)과 분류 · 날짜 · 기자(obj__meta)를 더한다. */
@@ -54,6 +75,7 @@ window.BL = window.BL || {};
     }
 
     root.appendChild(el('p', { class: 'news__count', text: '전체 ' + all.length + '건 · 최신순' }));
+    root.appendChild(askCard());          /* 제보 카드 — 목록 맨 위에 늘 붙는다 */
     root.appendChild(el('div', { class: 'objs' }, all.map(function (n) {
       return el('a', { class: 'obj', href: '#/f/news/' + n.id }, [
         el('span', { class: 'obj__art' }, art(n)),

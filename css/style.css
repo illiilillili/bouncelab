@@ -458,6 +458,23 @@ select:focus-visible { border-color: var(--brand); outline: none; box-shadow: 0 
 }
 .news__count { margin: 0 0 var(--sp-3); font-size: 13.5px; font-weight: 700; color: var(--text-dim); }
 
+/* ── 제보 카드 (뉴스 목록 맨 위) ──────────────────────
+ * 뉴스 카드와 같은 틀(.obj)을 쓰되, 날짜·기자·분류 메타는 없고 아주 옅은 보라 배경으로 구분한다.
+ * hover 는 뉴스 카드와 같고(.obj 규칙 — 살짝 떠오름 · 화살표 이동) 테두리만 보라로 진해진다. */
+.askrow { margin: 0 0 var(--sp-3); }
+.askrow .ask__note { margin-top: var(--sp-2); }
+.obj--ask {
+  width: 100%; text-align: left; cursor: pointer;
+  font: inherit; color: var(--ink);
+  background: var(--brand-soft); border-color: var(--brand-line);
+}
+.obj--ask:hover { border-color: var(--brand); }
+.ask__mark {
+  display: grid; place-items: center; width: 100%; height: 100%;
+  color: var(--brand); font-size: 26px; line-height: 1;
+}
+.ask__desc { display: block; margin-top: 3px; font-size: 13.5px; line-height: 1.55; color: var(--text-dim); }
+
 .newscard {
   width: 100%; max-width: 780px; margin: 0 auto; padding: clamp(20px, 3vw, 32px);
   background: var(--white); border: 1px solid var(--line); border-radius: var(--r); box-shadow: var(--sh-2);
