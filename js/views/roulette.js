@@ -93,7 +93,7 @@ window.BL = window.BL || {};
       }
 
       /* 난이도를 '전체' 로 바꾼 그 순간에만 양쪽을 전체로 돌린다.
-         3~1 처럼 뒤집어 골라도 1~3 으로 맞춰서 보여준다 (거르는 값도 1~3 으로 본다). */
+         뒤집어 골라도(12 ~ 10) 보이는 값은 그대로 두고, 거르는 값만 10~12 로 본다 (js/lib/query.js 의 filter). */
       function onRange(side, value) {
         if (value === '') {
           state.min = '';
@@ -102,9 +102,6 @@ window.BL = window.BL || {};
           state.min = value;
         } else {
           state.max = value;
-        }
-        if (state.min !== '' && state.max !== '' && query.diffRank(state.min) > query.diffRank(state.max)) {
-          var t = state.min; state.min = state.max; state.max = t;
         }
         minSel.value = state.min;
         maxSel.value = state.max;
