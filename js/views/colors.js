@@ -67,8 +67,9 @@ window.BL = window.BL || {};
         onClick: toggleGrad, text: '그라데이션'
       });
       var gradPanel = el('div', { class: 'grad', id: 'gradPanel', hidden: true });
-      var gradChips = [];
-      var selStep = 0;                 /* 지금 테두리가 있는 칸 (-5 ~ +5) */
+      var gradChips = [];              /* 두 줄(밝기 · 색) 합쳐 22칸 */
+      var selKind = 'v';               /* 지금 테두리가 있는 줄 : 'v' 밝기 / 'h' 색 */
+      var selStep = 0;                 /* 그 줄에서 고른 칸 (-5 ~ +5) */
 
       function apply(idx) {
         var hsv = color.hsvOf(idx.h, idx.s, idx.v);
@@ -133,23 +134,24 @@ window.BL = window.BL || {};
          칩을 눌러도 0 칸은 기준 색 그대로라, 언제든 0 을 눌러 원래 색으로 돌아올 수 있다. */
       function markChips() {
         gradChips.forEach(function (c) {
-          var now = c.step === selStep;
+          var now = c.kind === selKind && c.step === selStep;
           c.btn.classList.toggle('is-now', now);
           c.btn.title = (now ? '지금 색 ' : labelOf(c.step) + ' 단계 ') + c.hex;
           c.btn.setAttribute('aria-label', (now ? '지금 색 ' : labelOf(c.step) + ' ') + c.hex);
         });
       }
 
-      /* 기준 색이 바뀌었을 때 (색 뽑기 · 패널 열기) : 11칸을 그 색 기준으로 다시 계산하고 테두리는 0 으로 */
+      /* 기준 색이 바뀌었을 때 (색 뽑기 · 패널 열기) : 두 줄 22칸을 그 색 기준으로 다시 계산하고 테두리는 0 으로 */
       function resetGrad() {
         if (gradPanel.hidden) return;
-        var list = color.shades(cur);
-        gradChips.forEach(function (c, i) {
-          var s = list[i];
+        var list = { v: color.shades(cur), h: color.hues(cur) };
+        gradChips.forEach(function (c) {
+          var s = list[c.kind][c.step + color.glow];
           c.idx = s;
           c.hex = color.hexOf(s.h, s.s, s.v);
           c.chip.style.background = c.hex;
         });
+        selKind = 'v';
         selStep = 0;
         markChips();
       }
@@ -161,27 +163,43 @@ window.BL = window.BL || {};
         if (open) resetGrad();
       }
 
-      function pickShade(step) {
-        var c = gradChips[step + color.glow];
+      function chipOf(kind, step) {
+        for (var i = 0; i < gradChips.length; i++) {
+          if (gradChips[i].kind === kind && gradChips[i].step === step) return gradChips[i];
+        }
+        return null;
+      }
+
+      function pickShade(kind, step) {
+        var c = chipOf(kind, step);
         if (!c || !c.idx) return;
-        selStep = step;                              /* 테두리를 누른 칸으로 옮기고 */
+        selKind = kind;                              /* 테두리를 누른 칸으로 옮기고 */
+        selStep = step;
         markChips();
         apply(c.idx);                                /* 그 색만 적용 — 그라데이션 기준은 그대로 둔다 */
       }
 
-      /* 칩 11개는 한 번만 만들고 색만 다시 칠한다 (색이 바뀌어도 다시 만들지 않는다) */
-      stepList.forEach(function (step) {
-        var chip = el('span', { class: 'grad__c' });
-        var btn = el('button', {
-          class: 'grad__i', type: 'button',
-          onClick: function () { pickShade(step); }
-        }, [
-          el('span', { class: 'grad__n', text: labelOf(step) }),
-          chip
-        ]);
-        gradChips.push({ step: step, chip: chip, btn: btn, idx: null, hex: '' });
-        gradPanel.appendChild(btn);
-      });
+      /* 칸은 한 번만 만들고 색만 다시 칠한다 (색이 바뀌어도 다시 만들지 않는다)
+         위 줄 = 밝기 그라데이션 · 아래 줄 = 색(색조) 그라데이션 */
+      function buildRow(kind, label) {
+        var row = el('div', { class: 'grad__row', role: 'group', 'aria-label': label });
+        stepList.forEach(function (step) {
+          var chip = el('span', { class: 'grad__c' });
+          var btn = el('button', {
+            class: 'grad__i', type: 'button',
+            onClick: function () { pickShade(kind, step); }
+          }, [
+            el('span', { class: 'grad__n', text: labelOf(step) }),
+            chip
+          ]);
+          gradChips.push({ kind: kind, step: step, chip: chip, btn: btn, idx: null, hex: '' });
+          row.appendChild(btn);
+        });
+        gradPanel.appendChild(row);
+      }
+
+      buildRow('v', '밝기 그라데이션');
+      buildRow('h', '색 그라데이션');
 
       chkDull.checked = opt.avoidDull;
       chkPastel.checked = opt.pastel;

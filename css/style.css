@@ -300,11 +300,12 @@ select:focus-visible { border-color: var(--brand); outline: none; box-shadow: 0 
 /* ── 그라데이션 패널 (그라데이션 버튼 아래 펼쳐진다) ──
  * 현재 색에서 이어지는 색 11개. 왼쪽 -5 → 가운데 0(현재 색) → 오른쪽 +5 */
 .grad {
-  display: grid; grid-template-columns: repeat(11, 1fr); gap: 3px;
+  display: grid; gap: var(--sp-2);                 /* 위 줄 = 밝기 그라데이션 · 아래 줄 = 색 그라데이션 */
   margin-top: var(--sp-2);
   animation: gradin var(--dur-fast) var(--ease);   /* 짧게 내려오며 나타난다 */
 }
 .grad[hidden] { display: none; }
+.grad__row { display: grid; grid-template-columns: repeat(11, 1fr); gap: 3px; }
 @keyframes gradin {
   from { opacity: 0; transform: translateY(-4px); }
   to   { opacity: 1; transform: none; }
