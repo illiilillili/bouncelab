@@ -149,14 +149,33 @@ window.BL = window.BL || {};
   var HUE_STEP = 2;
   var HUE_MAX = INDEX_MAX + 1;
 
+  function wrapHue(h) { return ((h % HUE_MAX) + HUE_MAX) % HUE_MAX; }
+
   function hueShadeOf(idx, step) {
     if (!step) return { h: idx.h, s: idx.s, v: idx.v };
-    return { h: ((idx.h + step * HUE_STEP) % HUE_MAX + HUE_MAX) % HUE_MAX, s: idx.s, v: idx.v };
+    return { h: wrapHue(idx.h + step * HUE_STEP), s: idx.s, v: idx.v };
   }
 
   function hues(idx) {
     var list = [];
     for (var step = -GLOW; step <= GLOW; step++) list.push(hueShadeOf(idx, step));
+    return list;
+  }
+
+  /* ── 비슷한 색 ──────────────────────────────────────────────
+   * 밝기·채도는 그대로 두고 색조만 한 칸에 1단계(9도)씩 옮긴 색 5개 (가운데가 지금 색).
+   * 그라데이션 색조줄(2단계씩 11개)보다 더 가까운 색만 골라 준다. */
+  var NEAR = 2;             /* 한쪽으로 몇 개 (앞뒤 2개씩 = 모두 5개) */
+  var NEAR_STEP = 1;
+
+  function nearShadeOf(idx, step) {
+    if (!step) return { h: idx.h, s: idx.s, v: idx.v };
+    return { h: wrapHue(idx.h + step * NEAR_STEP), s: idx.s, v: idx.v };
+  }
+
+  function similars(idx) {
+    var list = [];
+    for (var step = -NEAR; step <= NEAR; step++) list.push(nearShadeOf(idx, step));
     return list;
   }
 
@@ -171,6 +190,8 @@ window.BL = window.BL || {};
     glow: GLOW,
     hues: hues,
     hueStep: HUE_STEP,
+    similars: similars,
+    near: NEAR,
     isDull: isDull,
     isPastel: isPastel,
     isVivid: isVivid,

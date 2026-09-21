@@ -70,6 +70,13 @@ window.BL = window.BL || {};
       var gradChips = [];              /* 두 줄(밝기 · 색) 합쳐 22칸 */
       var selKind = 'v';               /* 지금 테두리가 있는 줄 : 'v' 밝기 / 'h' 색 */
       var selStep = 0;                 /* 그 줄에서 고른 칸 (-5 ~ +5) */
+      var nearBtn = el('button', {
+        class: 'btn', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'nearPanel',
+        onClick: toggleNear, text: '비슷한 색'
+      });
+      var nearPanel = el('div', { class: 'near', id: 'nearPanel', hidden: true });
+      var nearChips = [];              /* 가운데 5칸 (-2 ~ +2) */
+      var nearSel = 0;                 /* 지금 테두리가 있는 칸 */
 
       function apply(idx) {
         var hsv = color.hsvOf(idx.h, idx.s, idx.v);
@@ -93,6 +100,7 @@ window.BL = window.BL || {};
       function pick() {
         apply(color.randomIndices(opt));
         resetGrad();             /* 새로 뽑았으면 그라데이션도 그 색 기준으로 다시 (테두리는 0 으로) */
+        resetNear();             /* 비슷한 색 패널도 함께 */
       }
 
       function onToggle(src) {
@@ -160,7 +168,10 @@ window.BL = window.BL || {};
         var open = gradPanel.hidden;                 /* 지금 접혀 있으면 편다 */
         gradPanel.hidden = !open;
         gradBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-        if (open) resetGrad();
+        if (!open) return;
+        /* 두 패널은 한 번에 하나만 — 비슷한 색이 열려 있으면 닫는다 */
+        if (!nearPanel.hidden) { nearPanel.hidden = true; nearBtn.setAttribute('aria-expanded', 'false'); }
+        resetGrad();
       }
 
       function chipOf(kind, step) {
@@ -201,6 +212,67 @@ window.BL = window.BL || {};
       buildRow('v', '밝기 그라데이션');
       buildRow('h', '색 그라데이션');
 
+      /* ── 비슷한 색 패널 ─────────────────────────
+       * 그라데이션과 같은 방식(접었다 펴기 · 칸을 누르면 그 색이 현재 색 · 0 칸은 기준 색)이되,
+       * 양옆으로 2개씩(모두 5개)만 · 숫자 없이 한 줄로만 보여준다.
+       * 그라데이션과 같은 11칸 격자를 쓰고 가운데 5칸에만 칸을 두어, 두 패널의 색 자리가 나란히 맞는다. */
+      function markNear() {
+        nearChips.forEach(function (c) {
+          var now = c.step === nearSel;
+          c.btn.classList.toggle('is-now', now);
+          c.btn.title = (now ? '지금 색 ' : '비슷한 색 ') + c.hex;
+          c.btn.setAttribute('aria-label', (now ? '지금 색 ' : '비슷한 색 ') + c.hex);
+        });
+      }
+
+      function resetNear() {
+        if (nearPanel.hidden) return;
+        var list = color.similars(cur);
+        nearChips.forEach(function (c, i) {
+          var s = list[i];
+          c.idx = s;
+          c.hex = color.hexOf(s.h, s.s, s.v);
+          c.chip.style.background = c.hex;
+        });
+        nearSel = 0;
+        markNear();
+      }
+
+      function toggleNear() {
+        var open = nearPanel.hidden;                 /* 지금 접혀 있으면 편다 */
+        nearPanel.hidden = !open;
+        nearBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (!open) return;
+        /* 두 패널은 한 번에 하나만 — 그라데이션이 열려 있으면 닫는다 */
+        if (!gradPanel.hidden) { gradPanel.hidden = true; gradBtn.setAttribute('aria-expanded', 'false'); }
+        resetNear();
+      }
+
+      function pickNear(step) {
+        var c = null;
+        for (var i = 0; i < nearChips.length; i++) if (nearChips[i].step === step) c = nearChips[i];
+        if (!c || !c.idx) return;
+        nearSel = step;                              /* 테두리를 누른 칸으로 옮기고 */
+        markNear();
+        apply(c.idx);                                /* 그 색만 적용 — 기준 색은 그대로 */
+      }
+
+      function buildNearChip(step) {
+        var chip = el('span', { class: 'near__c' });
+        var btn = el('button', {
+          class: 'near__i', type: 'button',
+          onClick: function () { pickNear(step); }
+        }, chip);
+        nearChips.push({ step: step, chip: chip, btn: btn, idx: null, hex: '' });
+        nearPanel.appendChild(btn);
+      }
+
+      for (var n = 0; n <= 2 * color.glow; n++) {    /* 그라데이션과 같은 11칸 자리에 놓는다 */
+        var nStep = n - color.glow;
+        if (nStep < -color.near || nStep > color.near) nearPanel.appendChild(el('span', { 'aria-hidden': 'true' }));
+        else buildNearChip(nStep);
+      }
+
       chkDull.checked = opt.avoidDull;
       chkPastel.checked = opt.pastel;
       chkVivid.checked = opt.vivid;
@@ -219,9 +291,10 @@ window.BL = window.BL || {};
           /* 색 뽑기보다 중요도가 낮은 보조 기능 2개 — UI 만 (기능은 아직 없음) */
           el('div', { class: 'btnrow' }, [
             gradBtn,
-            el('button', { class: 'btn', type: 'button', text: '비슷한 색' })
+            nearBtn
           ]),
           gradPanel,
+          nearPanel,
           /* 조건 체크박스는 따로 모아 둔다 (버튼과 한 줄에 섞이면 줄이 지저분해진다) */
           el('div', { class: 'opts' }, [
             checkLabel(chkDull, '칙칙한 색 제외'),

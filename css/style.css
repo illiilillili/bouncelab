@@ -299,23 +299,25 @@ select:focus-visible { border-color: var(--brand); outline: none; box-shadow: 0 
 
 /* ── 그라데이션 패널 (그라데이션 버튼 아래 펼쳐진다) ──
  * 현재 색에서 이어지는 색 11개. 왼쪽 -5 → 가운데 0(현재 색) → 오른쪽 +5 */
-.grad {
-  display: grid; gap: var(--sp-2);                 /* 위 줄 = 밝기 그라데이션 · 아래 줄 = 색 그라데이션 */
+/* 색 패널 두 가지(그라데이션 · 비슷한 색) — 버튼 아래로 펼쳐지는 공통 틀 */
+.grad, .near {
+  display: grid;
   margin-top: var(--sp-2);
   animation: gradin var(--dur-fast) var(--ease);   /* 짧게 내려오며 나타난다 */
 }
-.grad[hidden] { display: none; }
-.grad__row { display: grid; grid-template-columns: repeat(11, 1fr); gap: 3px; }
+.grad { gap: var(--sp-2); }                        /* 위 줄 = 밝기 · 아래 줄 = 색 */
+.grad[hidden], .near[hidden] { display: none; }
+.grad__row, .near { display: grid; grid-template-columns: repeat(11, 1fr); gap: 3px; }
 @keyframes gradin {
   from { opacity: 0; transform: translateY(-4px); }
   to   { opacity: 1; transform: none; }
 }
-.grad__i { display: grid; gap: 3px; padding: 0; border: 0; background: none; cursor: pointer; }
+.grad__i, .near__i { display: grid; gap: 3px; padding: 0; border: 0; background: none; cursor: pointer; }
 .grad__n { font-family: var(--mono); font-size: 10px; line-height: 1; color: var(--text-dim); text-align: center; }
-.grad__c { height: 22px; border: 1px solid var(--line); border-radius: var(--r-xs); }
-.grad__i:hover .grad__c { border-color: var(--lav); }
+.grad__c, .near__c { height: 22px; border: 1px solid var(--line); border-radius: var(--r-xs); }
+.grad__i:hover .grad__c, .near__i:hover .near__c { border-color: var(--lav); }
 .grad__i:hover .grad__n { color: var(--ink); }
-.grad__i.is-now .grad__c { border: 2px solid var(--ink); }   /* 0 = 지금 색 — 테두리를 더 뚜렷하게 */
+.grad__i.is-now .grad__c, .near__i.is-now .near__c { border: 2px solid var(--ink); }   /* 지금 고른 색 — 테두리를 더 뚜렷하게 */
 .grad__i.is-now .grad__n { color: var(--ink); font-weight: 700; }
 .blkrow { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-top: var(--sp-3); }
 .blk { position: relative; flex: 0 0 auto; width: 100px; height: 70px; border: 3px solid var(--tile-line); border-radius: var(--r-sm); overflow: hidden; }
