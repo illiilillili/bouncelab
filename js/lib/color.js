@@ -163,18 +163,16 @@ window.BL = window.BL || {};
   }
 
   /* ── 비슷한 색 (유사 색상 + 톤온톤) ────────────────────────
-   * 기준 색은 색상 0~360(난수) · 채도 60~90% · 명도 70~90% 로 새로 뽑고, 거기서 4개를 만든다.
+   * 기준은 **지금 색**, 거기서 4개를 만든다 (색 뽑기로 색이 바뀌면 4개도 따라 바뀐다).
    *   1) 기준 색 그대로
-   *   2) 색상 +15도   ((H + 15) % 360)
-   *   3) 색상 -15도   ((H - 15 + 360) % 360)
-   *   4) 톤온톤       (채도 -20%p · 명도 +10%p — 차분한 톤)
+   *   2) 색상 +9도   ((H + 9) % 360)   — 이 사이트 색 단계(9도)만큼만 옮겨 가장 가깝게
+   *   3) 색상 -9도   ((H - 9 + 360) % 360)
+   *   4) 톤온톤      (채도 -10%p · 명도 +5%p — 살짝 차분하게)
    * 값은 0~100(색상은 0~360) 밖으로 나가지 않게 자르고(clamp),
    * 돌려주는 것은 HEX · RGB 로 바꾸기 쉬운 HSV 객체 배열이다. */
-  var NEAR_HUE = 15;         /* 좌우로 돌리는 각도(도) */
-  var NEAR_S = [60, 90];     /* 기준 색 채도 범위(%) */
-  var NEAR_V = [70, 90];     /* 기준 색 명도 범위(%) */
-  var TONE_S = -20;          /* 톤온톤 : 채도 %p */
-  var TONE_V = 10;           /* 톤온톤 : 명도 %p */
+  var NEAR_HUE = 9;          /* 좌우로 돌리는 각도(도) — 1단계 = 가장 가까운 다른 색상 */
+  var TONE_S = -10;          /* 톤온톤 : 채도 %p */
+  var TONE_V = 5;            /* 톤온톤 : 명도 %p */
 
   function clampRange(n, lo, hi) {
     var x = Number(n);
@@ -183,15 +181,6 @@ window.BL = window.BL || {};
   }
 
   function ring360(h) { return ((Number(h) % 360) + 360) % 360; }
-
-  /* 기준 색 하나 — 색상은 난수, 채도·명도는 위 범위 안 */
-  function randomSimilarBase() {
-    return {
-      h: Math.random() * 360,
-      s: NEAR_S[0] + Math.random() * (NEAR_S[1] - NEAR_S[0]),
-      v: NEAR_V[0] + Math.random() * (NEAR_V[1] - NEAR_V[0])
-    };
-  }
 
   /* 기준 색에서 비슷한 색 4개 (HSV 객체 배열 · h 0~360 · s·v 0~100) */
   function similarsOf(base) {
@@ -228,7 +217,6 @@ window.BL = window.BL || {};
     glow: GLOW,
     hues: hues,
     hueStep: HUE_STEP,
-    randomSimilarBase: randomSimilarBase,
     similarsOf: similarsOf,
     indicesOfHsv: indicesOfHsv,
     isDull: isDull,

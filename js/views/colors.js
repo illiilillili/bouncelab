@@ -75,10 +75,10 @@ window.BL = window.BL || {};
         onClick: toggleNear, text: '비슷한 색'
       });
       var nearPanel = el('div', { class: 'near', id: 'nearPanel', hidden: true });
-      var nearLabels = ['기준 색', '+15도', '-15도', '톤온톤'];
+      var nearLabels = ['기준 색', '+9°', '-9°', '톤온톤'];
       var nearChips = [];              /* 비슷한 색 4칸 */
       var nearList = [];               /* 지금 보이는 4색 (HSV) — 칸을 눌러도 그대로 */
-      var nearSel = -1;                /* 지금 테두리가 있는 칸 (아직 없으면 -1) */
+      var nearSel = 0;                 /* 지금 테두리가 있는 칸 (0 = 기준 색 = 지금 색) */
 
       function apply(idx) {
         var hsv = color.hsvOf(idx.h, idx.s, idx.v);
@@ -102,6 +102,7 @@ window.BL = window.BL || {};
       function pick() {
         apply(color.randomIndices(opt));
         resetGrad();             /* 새로 뽑았으면 그라데이션도 그 색 기준으로 다시 (테두리는 0 으로) */
+        resetNear();             /* 비슷한 색 4개도 새 색 기준으로 다시 */
       }
 
       function onToggle(src) {
@@ -233,8 +234,8 @@ window.BL = window.BL || {};
 
       function resetNear() {
         if (nearPanel.hidden) return;
-        nearList = color.similarsOf(color.randomSimilarBase());
-        nearSel = -1;
+        nearList = color.similarsOf(color.hsvOf(cur.h, cur.s, cur.v));   /* 기준 = 지금 색 */
+        nearSel = 0;
         paintNear();
       }
 
