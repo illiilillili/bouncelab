@@ -103,6 +103,7 @@ window.BL = window.BL || {};
 
   /* ── 재미도 : 평균 박스 + 점수 매기기 ────────
    * '도감에서 보기' 자리에 들어간다. 박스에는 모두가 매긴 점수의 **평균**이 보이고 (아무도 안 매겼으면 '-'),
+   * 오른쪽 아래에 **매긴 사람 수**(12명)가 작게 함께 보인다 (아무도 안 매겼으면 안 보인다).
    * 누르면 1~5 작은 목록이 떠서 하나를 고른다. 고르면 박스가 살짝 커졌다 돌아오는 효과로 알려준다.
    * 내가 고른 점수는 목록에서 표시되고, 서버(control_fun 표)에 쌓여 모두와 공유된다.
    * 서버를 못 쓰면 이 브라우저에만 저장되고, 아래 한 줄이 그 사실을 알려준다. */
@@ -110,12 +111,13 @@ window.BL = window.BL || {};
     var note = el('p', { class: 'fun__note' });
     var wrap = el('div', { class: 'funwrap' });
     var txt = el('span', { class: 'funpick__txt', text: '재미도 : -' });
+    var cnt = el('span', { class: 'funpick__n' });     /* 매긴 사람 수 — 박스 오른쪽 아래 (아무도 안 매겼으면 숨김) */
     var box = el('button', {
       class: 'funpick', type: 'button',
       'aria-haspopup': 'listbox', 'aria-expanded': 'false', 'aria-label': '재미도 점수',
       onClick: function () { open(list.hidden); },
       onKeydown: onKey
-    }, [txt]);
+    }, [txt, cnt]);
     var list = el('div', {
       class: 'funlist', role: 'listbox', 'aria-label': '재미도 고르기',
       hidden: true, onKeydown: onKey
@@ -153,6 +155,11 @@ window.BL = window.BL || {};
       var total = r.total || 0;
       mine = r.mine || BL.fun.mineLocal(c.name) || 0;
       txt.textContent = '재미도 : ' + (total ? avgText(r.avg) : '-');
+      /* 오른쪽 아래 사람 수 — 서버를 못 쓰면 0 이라 안 보인다 (남의 표를 모르니 추측해서 채우지 않는다) */
+      cnt.textContent = total ? total + '명' : '';
+      box.setAttribute('aria-label', total
+        ? '재미도 평균 ' + avgText(r.avg) + '점 · ' + total + '명이 매겼습니다'
+        : '재미도 점수 · 아직 아무도 안 매겼습니다');
       box.title = (total ? '평균 ' + avgText(r.avg) + '점 · ' + total + '명' : '아직 아무도 안 매겼습니다') +
         (mine ? ' · 내 점수 : ' + mine : '') + ' · 누르면 ' + (mine ? '바꿀 수 있습니다' : '매길 수 있습니다');
       items.forEach(function (it, i) {
@@ -174,7 +181,10 @@ window.BL = window.BL || {};
       if (!score) return;
       open(false);
       note.textContent = '';
-      paint({ total: last ? last.total : 0, avg: last ? last.avg : 0, mine: score });   /* 고른 즉시 표시 */
+      /* 고른 즉시 표시 — 내가 **처음** 매기는 표(서버 값을 아는 상태)면 사람 수도 하나 늘려 보여준다.
+         서버가 돌아오면 fun.get 이 진짜 값으로 덮어쓴다. */
+      var bump = (last && last.shared && !mine) ? 1 : 0;
+      paint({ total: (last ? last.total : 0) + bump, avg: last ? last.avg : 0, mine: score });
       pop();
       BL.fun.set(c.name, score, function (res) {
         if (!res.ok && res.error) note.textContent = res.error + ' 이 브라우저에만 저장했습니다.';

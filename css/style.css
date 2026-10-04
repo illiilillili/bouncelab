@@ -209,9 +209,11 @@ select:focus-visible { border-color: var(--brand); outline: none; box-shadow: 0 
 
 /* ── 재미도 : 평균 박스 + 점수 매기기 (도감에서 보기 자리) ─────
  * 다시 뽑기와 같은 크기. 박스에는 모두가 매긴 점수의 평균이 보이고(아무도 안 매겼으면 '-'),
+ * 오른쪽 아래에 매긴 사람 수(12명)가 작게 함께 보인다.
  * 누르면 1~5 작은 목록이 떠서 고른다. 고르면 살짝 커졌다 돌아오는 효과(.is-pop)로 알려준다. */
 .funwrap { position: relative; min-width: 0; }
 .funpick {
+  position: relative;                   /* 매긴 사람 수(.funpick__n)를 오른쪽 아래에 붙이기 위해 */
   width: 100%; height: 48px; padding: 0 var(--sp-3);
   border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--white); color: var(--ink);
   font: inherit; font-size: 14.5px; font-weight: 600; font-variant-numeric: tabular-nums; cursor: pointer;
@@ -225,6 +227,11 @@ select:focus-visible { border-color: var(--brand); outline: none; box-shadow: 0 
   35%  { transform: scale(1.05); box-shadow: 0 0 0 6px var(--brand-soft); }
   100% { transform: scale(1);    box-shadow: 0 0 0 0 var(--brand-soft); }
 }
+/* 매긴 사람 수 — 가운데 글자(재미도 : 3.4)와 겹치지 않게 아래쪽에만 작게 붙인다.
+   line-height:1 로 높이를 글자 크기만큼 줄여 가운데 글자 아래에 딱 붙게 한다.
+   아무도 안 매겼으면(:empty) 아예 안 보인다. */
+.funpick__n { position: absolute; right: var(--sp-2); bottom: 2px; font-size: 11px; line-height: 1; color: var(--text-dim); }
+.funpick__n:empty { display: none; }
 .funlist {
   position: absolute; left: 0; right: 0; top: calc(100% + 4px); z-index: 3;
   padding: 4px; display: grid; gap: 2px;
