@@ -81,9 +81,16 @@ async function main() {
   const names = {};
   const noImg = [];
   let blank = 0;
+  /* 게임에서 구현이 안 되거나 도감에서 내린 컨트롤 — 시트에 행이 남아 있어도 목록에서 뺀다.
+   * 하나 빼면 컨트롤 수·GIF 수가 줄어드니 scripts/check-deploy.js 의 기대값도 같이 고친다. */
+  const DROPPED = [
+    '텔레포트 6칸 멀리뛰기'   /* 2026-10-05 : 게임에서 구현이 안 되는 컨트롤 */
+  ];
+  let dropped = 0;
   rows.forEach(function (r) {
     const name = String(r[iName] || '').trim();
     if (!name) { blank++; return; }
+    if (DROPPED.indexOf(name) >= 0) { dropped++; return; }
     const diff = Number(String(r[iDiff] || '').trim());
     const tags = String(r[iTag] || '').split(/\s+/).filter(function (t) { return t.charAt(0) === '#'; });
     const ids = gifs.byName[nameKey(name)] || [];
@@ -135,7 +142,7 @@ async function main() {
     'window.BL = window.BL || {};\nwindow.BL.controlsCount = ' + controls.length + ';\n', 'utf8');
   console.log('저장: ' + OUT);
   console.log('저장: ' + COUNT_OUT + ' (개수 ' + controls.length + '개)');
-  console.log('컨트롤 ' + controls.length + '개 (빈 행 ' + blank + '개 건너뜀) / GIF ' + withImg + '개 / 팁 ' + withTip + '개 연결');
+  console.log('컨트롤 ' + controls.length + '개 (빈 행 ' + blank + '개 건너뜀 · 뺀 컨트롤 ' + dropped + '개) / GIF ' + withImg + '개 / 팁 ' + withTip + '개 연결');
   console.log('난이도 분포: ' + Object.keys(counts).sort(function (a, b) { return a - b; })
     .map(function (k) { return k + ':' + counts[k]; }).join(' '));
   console.log('중복 이름: ' + (dups.length ? dups.join(' / ') : '없음'));

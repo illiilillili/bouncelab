@@ -1,6 +1,6 @@
 /* 자동 생성 파일 - scripts/sync-controls.js 로 갱신합니다. 직접 수정하지 마세요.
  * 출처: docs.google.com/spreadsheets/d/1oigeOzho6fp_deBIHgRnf8b92_EAXepWERYRWimlW6A (탭: 컨트롤 검색, gid 1670459966)
- * 컨트롤 631개 (그림 630개) / 난이도 0~10 / 동기화 2026-10-05 */
+ * 컨트롤 630개 (그림 630개) / 난이도 0~10 / 동기화 2026-10-05 */
 window.BL = window.BL || {};
 window.BL.controls = [{"id":"c1","name":"(3,-1)+(2,1) 점프","diff":5,"tags":["#최댓값","#일방통행"],"mats":["아무 일회용 블럭"],"updated":"2025-08-24","cell":"A3086:Y3107","tip":"블럭 끄트머리에서 뛰어줍니다.","imgs":["https://lh3.googleusercontent.com/d/10in1RDxGuzeDSBvvfMbNvTu7npqS_gfM"],"views":["https://drive.google.com/file/d/10in1RDxGuzeDSBvvfMbNvTu7npqS_gfM/view"]},
 {"id":"c2","name":"0.5 무지개별 구름사다리","diff":5,"tags":["#위치조정"],"mats":["무지개별"],"updated":"2025-08-24","cell":"Z6210:AX6231","tip":"처음 진입할때만 무지개별의 하단에 닿도록 신경써주면 이후엔 오른쪽을 꾹 누르면 됩니다.","imgs":["https://lh3.googleusercontent.com/d/1-HKqnjK3O_dbZzgeU227AnJhUvHcfTml"],"views":["https://drive.google.com/file/d/1-HKqnjK3O_dbZzgeU227AnJhUvHcfTml/view"]},
@@ -631,14 +631,13 @@ window.BL.controls = [{"id":"c1","name":"(3,-1)+(2,1) 점프","diff":5,"tags":["
 {"id":"c627","name":"2겹표창 텔레포트","diff":4,"tags":["#위치조정"],"mats":["표창","텔레포트"],"updated":"2025-08-24","cell":"Z6892:AX6913","tip":"오목하게 들어간 가운데를 노려 텔레포트해줍니다.","imgs":["https://lh3.googleusercontent.com/d/1DzIunMQxqhMP-BQprF0PLmO8emnj6oM8"],"views":["https://drive.google.com/file/d/1DzIunMQxqhMP-BQprF0PLmO8emnj6oM8/view"]},
 {"id":"c628","name":"바닥 벽점프","diff":9,"tags":["#땅붙기","#위치조정"],"mats":["텔레포트","붉은 레이저","파란 레이저","가시","톱니"],"updated":"2025-08-24","cell":"A6914:Y6935","tip":"벽점프가 가능한 거리를 잘 재고 바닥에 딱 붙어서 텔레포트해줍니다.","imgs":["https://lh3.googleusercontent.com/d/1E4j7R-vrrUOiWY5H-pLtL3GqvBg32jou"],"views":["https://drive.google.com/file/d/1E4j7R-vrrUOiWY5H-pLtL3GqvBg32jou/view"]},
 {"id":"c629","name":"낙하방해 가속기 텔레포트로 통과","diff":8,"tags":["#위치조정"],"mats":["가속기","텔레포트"],"updated":"2025-08-24","cell":"Z6914:AX6935","tip":"바닥에 딱 붙어서, 가속기 최대한 오른쪽에 공이 가도록 텔레포트해줍니다. 오른쪽을 계속 누르며 잘 비벼 밑으로 떨어져줍니다.","imgs":["https://lh3.googleusercontent.com/d/1E9jonlnoLsrOAVDhbnGiUyBBD1eZWoFN"],"views":["https://drive.google.com/file/d/1E9jonlnoLsrOAVDhbnGiUyBBD1eZWoFN/view"]},
-{"id":"c630","name":"레이저 토막 벽점프","diff":7,"tags":["#위치조정"],"mats":["파란 레이저","포탈","텔레포트"],"updated":"2025-08-24","cell":"A6936:Y6957","tip":"레이저가 포탈에 막혀서 완전히 잘린 것처럼 보이나 사실은 살짝 튀어나와 있습니다. 텔레포트로 그 지점을 노려 밟아줍니다.","imgs":["https://lh3.googleusercontent.com/d/1ECI_BvDSz_6EFsFdhQg8aKixrZIO6sDH"],"views":["https://drive.google.com/file/d/1ECI_BvDSz_6EFsFdhQg8aKixrZIO6sDH/view"]},
-{"id":"c631","name":"텔레포트 6칸 멀리뛰기","diff":7,"tags":[],"mats":[],"updated":"","cell":"","tip":"","imgs":[],"views":[]}];
+{"id":"c630","name":"레이저 토막 벽점프","diff":7,"tags":["#위치조정"],"mats":["파란 레이저","포탈","텔레포트"],"updated":"2025-08-24","cell":"A6936:Y6957","tip":"레이저가 포탈에 막혀서 완전히 잘린 것처럼 보이나 사실은 살짝 튀어나와 있습니다. 텔레포트로 그 지점을 노려 밟아줍니다.","imgs":["https://lh3.googleusercontent.com/d/1ECI_BvDSz_6EFsFdhQg8aKixrZIO6sDH"],"views":["https://drive.google.com/file/d/1ECI_BvDSz_6EFsFdhQg8aKixrZIO6sDH/view"]}];
 
 window.BL.controlsMeta = {
   "sheetId": "1oigeOzho6fp_deBIHgRnf8b92_EAXepWERYRWimlW6A",
   "gid": "1670459966",
   "tab": "컨트롤 검색",
-  "count": 631,
+  "count": 630,
   "withImg": 630,
   "gifSource": "scripts/control-gifs.json",
   "withTip": 630,
@@ -651,15 +650,13 @@ window.BL.controlsMeta = {
     "4": 70,
     "5": 96,
     "6": 101,
-    "7": 90,
+    "7": 89,
     "8": 82,
     "9": 59,
     "10": 8
   },
   "blankRows": 0,
   "duplicateNames": [],
-  "noImgNames": [
-    "텔레포트 6칸 멀리뛰기"
-  ],
+  "noImgNames": [],
   "syncedAt": "2026-10-05"
 };

@@ -97,7 +97,7 @@ global.window = {};
 require(path.join(PROJ, 'data', 'controls.js'));
 const C = global.window.BL.controls || [];
 const M = global.window.BL.controlsMeta || {};
-t('컨트롤 개수', C.length, 631);
+t('컨트롤 개수', C.length, 630);
 t('GIF 연결', C.filter(function (c) { return c.imgs.length; }).length, 630);
 t('설명 연결', C.filter(function (c) { return c.tip; }).length, 630);
 t('난이도 범위 값', C.every(function (c) { return Number.isInteger(c.diff) && c.diff >= 0 && c.diff <= 10; }), true);

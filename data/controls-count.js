@@ -3,4 +3,4 @@
  * 목록 전체는 data/controls.js 에 있고, 컨트롤 룰렛 화면을 처음 열 때 받는다
  * (받아오는 코드는 js/views/controls.js). */
 window.BL = window.BL || {};
-window.BL.controlsCount = 631;
+window.BL.controlsCount = 630;
