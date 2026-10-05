@@ -81,10 +81,10 @@ window.BL = window.BL || {};
       var spinBtn = el('button', { class: 'btn btn--main', type: 'button', onClick: spin, text: '맵 뽑기' });
       var track = el('div', { class: 'reel__track', 'aria-hidden': 'true' });
 
-      /* 자기 맵을 룰렛에 넣고 싶은 사람에게 — 누르면 연락처(data/site.js 의 contact.copyText,
+      /* 맵 신청 — 자기 맵을 룰렛에 넣고 싶은 사람이 누르면 연락처(data/site.js 의 contact.copyText,
          지금은 메일 주소)를 복사한다 (js/lib/contact.js). */
       var inviteBtn = el('button', {
-        class: 'invite__btn', type: 'button', text: '자기의 맵을 룰렛에 넣고싶다면?',
+        class: 'invite__btn', type: 'button', text: '맵 신청',
         onClick: function () { BL.contact.copyLine(BL.contact.config().copyText, flash); }
       });
 
