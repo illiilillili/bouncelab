@@ -89,7 +89,7 @@ window.BL = window.BL || {};
     root.appendChild(el('div', { class: 'objs' }, objects.list.map(function (o) {
       metas[o.id] = el('span', { class: 'obj__meta', text: '리뷰를 불러오는 중…' });
       return el('a', { class: 'obj', href: '#/f/rating/' + o.id }, [
-        el('span', { class: 'obj__art' }, objects.art(o.id)),
+        el('span', { class: 'obj__art' + (o.wide ? ' obj__art--wide' : '') }, objects.art(o.id)),
         el('span', { class: 'obj__main' }, [
           el('span', { class: 'obj__name', text: o.name }),
           metas[o.id]
@@ -390,7 +390,7 @@ window.BL = window.BL || {};
 
     root.appendChild(el('div', { class: 'ratecard' }, [
       el('div', { class: 'rate' }, [
-        el('span', { class: 'rate__art' }, objects.art(o.id)),
+        el('span', { class: 'rate__art' + (o.wide ? ' rate__art--wide' : '') }, objects.art(o.id)),
         el('p', { class: 'rate__name', text: o.name }),
         statBox,
         el('div', { class: 'rate__btns' }, [

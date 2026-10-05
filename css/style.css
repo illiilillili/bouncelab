@@ -398,6 +398,11 @@ select:focus-visible { border-color: var(--brand); outline: none; box-shadow: 0 
 .ratecard--list { margin-top: var(--sp-4); }
 .rate { display: flex; flex-direction: column; align-items: center; text-align: center; }
 .rate__art { width: 72px; height: 72px; }   /* 원본 그림이 작아서 크게 늘리지 않는다 */
+
+/* 가로로 긴 그림(SERVER ERROR 버튼)은 정사각 칸에 넣으면 글씨가 뭉개진다 —
+   그 오브젝트만 그림 자리를 가로로 넓게 쓴다 (높이는 그대로라 세로 줄맞춤은 유지 · js/lib/objects.js 의 wide) */
+.obj__art--wide { width: 96px; }
+.rate__art--wide { width: 132px; }
 .rate__name { margin: var(--sp-3) 0 0; font-size: clamp(22px, 3vw, 26px); font-weight: 800; letter-spacing: -.03em; }
 
 /* 최종 평점 : 채운 별 · 큰 숫자 · 리뷰 수를 가로 한 줄로 */
