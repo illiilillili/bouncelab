@@ -130,6 +130,7 @@
 - **웹 폰트 CSS** — `media="print"` 로 받고 `onload` 에서 켭니다. CDN 이 느리거나 막혀도 화면이 먼저 뜨고 글꼴만 늦게 바뀝니다
   (대체 폰트 크기는 `css/tokens.css` 의 `size-adjust` 로 맞춰 두어 글자가 튀지 않습니다).
 - **그림은 WebP** — 같은 그림이 PNG 의 1/4 크기이고 눈으로는 구분되지 않습니다 (2026-09 에 PNG 에서 바꿨습니다).
+  작은 아이콘 둘(`object-star.png` · `object-server-error.png`)만 PNG 그대로 둡니다 — 몇 KB 라서 바꿀 이유가 없습니다.
   화면에 나오는 크기는 홈 카드 40px · 오브젝트 56~72px 이라 원본은 그 2~4배면 충분하고,
   `npm run check` 가 40KB 넘는 그림을 알려줍니다.
 
@@ -177,12 +178,14 @@ H·S·V 모두 0~39 인덱스(40단계), 조합은 40 x 40 x 40 = 64,000 가지�
     { id: 'spike', name: '가시', img: 'img/object-spike.webp' }
 
 - `id` 는 주소(`#/f/rating/spike`)와 서버의 `object_id` 에 그대로 남습니다 — 한 번 정하면 바꾸지 않습니다
-- `name` 은 화면에 나오는 이름입니다 (별 · 공 · 가시 · 표창 · 톱니 · 블록)
+- `name` 은 화면에 나오는 이름입니다 (별 · 공 · 가시 · 톱니 · SERVER ERROR — 표창 · 블록은 지금 임시로 뺐습니다)
 - `img` 는 `img/` 안의 파일 경로입니다. 화면에 나오는 크기는 목록 56px · 상세 72px 이라 그보다 훨씬 크게 잡을 필요가 없습니다.
   형식은 **WebP** 를 씁니다 — 같은 그림이 PNG 의 1/4 크기이고 눈으로는 구분되지 않습니다 (2026-09 에 있던 PNG 를 모두 바꿨습니다).
   PNG 밖에 없으면 그대로 넣어도 화면은 같고(무거울 뿐), 바꾸는 건 그림 도구(포토샵 · 김프 · 온라인 변환기) 아무거나 됩니다
   (품질 0.97 권장 — 안내: `npm run check` 가 40KB 넘는 그림을 알려줍니다)
 - `별`(`star`)만은 평점의 별 그림으로도 쓰입니다 (`BL.objects.star()`)
+- `HIDDEN`(`js/lib/objects.js`)에 적은 id 는 **화면에서만** 빠집니다 (2026-10-05 : `shuriken` 표창 · `block` 블록). `LIST` 자료와 서버 리뷰는 그대로 있어서 `HIDDEN` 에서 지우면 곧바로 다시 나옵니다
+- `server-error`(SERVER ERROR) 그림은 `img/object-server-error.png` 한 장입니다 (160×160 · 4KB · 파란 둥근 버튼). 목록 56px · 상세 72px 에 맞춰 정사각으로 두었습니다
 
 ## 저장되는 것
 
@@ -205,7 +208,7 @@ H·S·V 모두 0~39 인덱스(40단계), 조합은 40 x 40 x 40 = 64,000 가지�
 **먼저 켜야 하는 것 (한 번만)** : 대시보드 → Authentication → Sign In / Providers → `Anonymous sign-ins` 켜기.
 그러면 방문자마다 서버가 인정하는 고유 신분(`auth.uid()`)이 조용히 하나 생깁니다. 사용자는 아무것도 입력하지 않습니다.
 
-- 표 `reviews` : `object_id`(`star` 별 · `ball` 공 · `spike` 가시 · `shuriken` 표창 · `saw` 톱니 · `block` 블록) · `stars`(1~5) · `nickname`(1~12자) · `body`(1~50자) · `created_at` · `user_id`(익명 신분)
+- 표 `reviews` : `object_id`(`star` 별 · `ball` 공 · `spike` 가시 · `shuriken` 표창 · `saw` 톱니 · `block` 블록 · `server-error` SERVER ERROR) · `stars`(1~5) · `nickname`(1~12자) · `body`(1~50자) · `created_at` · `user_id`(익명 신분)
 - 내 리뷰 : 목록에 `내 리뷰` 로 표시되고 **직접 지울 수 있습니다**. 지우기는 서버가 `user_id` 를 보고 내 것일 때만 허용합니다(남의 리뷰는 0건 처리)
 - 한 사람(신분)은 **오브젝트마다 리뷰 2개까지** 남길 수 있습니다 (`js/lib/reviews.js` 의 `MAX_PER_OBJECT` 하나로 조절). 남긴 리뷰를 지우면 다시 남길 수 있고, 다른 오브젝트에는 따로 남길 수 있습니다
 - 한계 : 브라우저 저장소를 지우거나 다른 기기로 들어가면 신분이 새로 생겨 **내 리뷰를 못 지웁니다**(리뷰는 그대로 남고, 관리자가 대시보드에서 지울 수 있습니다)

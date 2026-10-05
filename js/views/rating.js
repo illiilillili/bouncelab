@@ -2,7 +2,7 @@ window.BL = window.BL || {};
 
 /* 오브젝트 리뷰 — 두 화면으로 나뉜다.
  *   #/f/rating          오브젝트 고르는 화면 (목록은 js/lib/objects.js) — 평균 별점과 리뷰 수
- *                       지금은 표창 · 블록을 임시로 뺐다 (objects.js 의 HIDDEN · 2026-10-05)
+ *                       지금은 표창 · 블록을 임시로 빼고, 대신 SERVER ERROR 를 넣었다 (objects.js · 2026-10-05)
  *   #/f/rating/<오브젝트>  쓰고 보는 창 — 최종 평점 · 작성 폼 · 리뷰 목록
  * 리뷰는 Supabase 의 익명 표에 쌓여서 누구나 본다 (js/lib/reviews.js).
  * 서버를 못 쓰면 마지막으로 받아 둔 목록만 보여주고 저장은 막는다. */
