@@ -7,7 +7,7 @@ window.BL = window.BL || {};
  *
  * 저장은 익명 리뷰와 같은 Supabase 저장소의 control_fun 표 (표 만드는 SQL 은 README 참고).
  * 표가 없거나 인터넷이 막혀도 이 브라우저(localStorage)에는 남고, 그때는 shared:false 로 알려준다.
- * 익명 신분은 리뷰와 같은 것을 쓴다 (BL.reviews.ensureUser). */
+ * 익명 신분은 리뷰와 같은 것을 쓴다 (BL.reviews.withUser — 토큰이 만료됐으면 새로 받아 한 번 더 보낸다). */
 (function (BL) {
   var cfg = (BL.site && BL.site.reviews) || {};
   var TABLE = cfg.funTable || 'control_fun';
@@ -51,23 +51,21 @@ window.BL = window.BL || {};
       BL.sb.ensure(function () { read(name, cb, false); });
       return;
     }
-    BL.reviews.ensureUser(function (uid, uerr) {
-      if (!uid) { local(uerr || ''); return; }
-      var q = BL.sb.client.from(TABLE).select('score,user_id').eq('control_key', key(name));
-      Promise.resolve(q).then(function (res) {
-        if (res && res.error) { local(fail(res.error)); return; }
-        var counts = zeros(), total = 0, found = 0, sum = 0;
-        ((res && res.data) || []).forEach(function (r) {
-          var s = Number(r.score);
-          if (s >= MIN && s <= MAX) { counts[s - MIN]++; total++; sum += s; }
-          if (r.user_id === uid) found = s;
-        });
-        if (found) { mine = found; BL.storage.set(K + key(name), found); }
-        cb({
-          ok: true, mine: mine, counts: counts, total: total,
-          avg: total ? sum / total : 0, shared: true, error: ''
-        });
-      }, function (e) { local(fail(e)); });
+    BL.reviews.withUser(function () {
+      return BL.sb.client.from(TABLE).select('score,user_id').eq('control_key', key(name));
+    }, function (res, uid) {
+      if (res && res.error) { local(fail(res.error)); return; }
+      var counts = zeros(), total = 0, found = 0, sum = 0;
+      ((res && res.data) || []).forEach(function (r) {
+        var s = Number(r.score);
+        if (s >= MIN && s <= MAX) { counts[s - MIN]++; total++; sum += s; }
+        if (r.user_id === uid) found = s;
+      });
+      if (found) { mine = found; BL.storage.set(K + key(name), found); }
+      cb({
+        ok: true, mine: mine, counts: counts, total: total,
+        avg: total ? sum / total : 0, shared: true, error: ''
+      });
     });
   }
 
@@ -84,18 +82,16 @@ window.BL = window.BL || {};
     if (!BL.sb || typeof BL.sb.ensure !== 'function') { local(''); return; }
     BL.sb.ensure(function () {
       if (!ready()) { local(''); return; }
-      BL.reviews.ensureUser(function (uid, uerr) {
-        if (!uid) { local(uerr || ''); return; }
-        var q = BL.sb.client.from(TABLE).upsert({
+      BL.reviews.withUser(function (uid) {
+        return BL.sb.client.from(TABLE).upsert({
           control_key: key(name),
           score: s,
           user_id: uid,
           updated_at: new Date().toISOString()
         }, { onConflict: 'user_id,control_key' });
-        Promise.resolve(q).then(function (res) {
-          if (res && res.error) { local(fail(res.error)); return; }
-          cb({ ok: true, mine: s, shared: true, error: '' });
-        }, function (e) { local(fail(e)); });
+      }, function (res) {
+        if (res && res.error) { local(fail(res.error)); return; }
+        cb({ ok: true, mine: s, shared: true, error: '' });
       });
     });
   }
