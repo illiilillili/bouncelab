@@ -5,6 +5,10 @@ window.BL = window.BL || {};
  * 새 오브젝트를 넣으려면 img/ 에 그림을 두고 LIST 에 한 줄만 추가하면 화면에 바로 나온다.
  * id 는 주소(#/f/rating/<id>)와 서버의 reviews.object_id 에 그대로 남으므로 한 번 정하면 바꾸지 않는다. */
 (function (BL) {
+  /* 임시로 목록에서 뺀 오브젝트 (2026-10-05) — 자료는 LIST 에 그대로 두고 화면에만 안 나오게 한다.
+   * 되살리려면 여기서 지우면 된다. 서버에 쌓인 리뷰는 그대로 남는다 (object_id 로 구분해 두었으니 다시 보인다). */
+  var HIDDEN = ['shuriken', 'block'];
+
   var LIST = [
     { id: 'star', name: '별', img: 'img/object-star.png' },
     { id: 'ball', name: '공', img: 'img/object-ball.webp' },
@@ -12,7 +16,7 @@ window.BL = window.BL || {};
     { id: 'shuriken', name: '표창', img: 'img/object-shuriken.webp' },
     { id: 'saw', name: '톱니', img: 'img/object-saw.webp' },
     { id: 'block', name: '블록', img: 'img/object-block.webp' }
-  ];
+  ].filter(function (o) { return HIDDEN.indexOf(o.id) < 0; });
 
   function find(id) {
     for (var i = 0; i < LIST.length; i++) if (LIST[i].id === id) return LIST[i];

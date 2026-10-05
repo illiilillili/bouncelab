@@ -139,7 +139,13 @@ const objSrc = fs.readFileSync(path.join(PROJ, 'js', 'lib', 'objects.js'), 'utf8
 const objIds = [...objSrc.matchAll(/\{ id: '([^']+)'/g)].map(function (m) { return m[1]; });
 const dupObj = objIds.filter(function (id, i) { return objIds.indexOf(id) !== i; });
 t('오브젝트 id 안 겹침', dupObj.join(', ') || '없음', '없음');
-out.push('  확인한 오브젝트 ' + objIds.length + '개');
+
+/* 임시로 감춘 오브젝트(js/lib/objects.js 의 HIDDEN)는 화면에 안 나오니 확인 개수에서 뺀다 */
+const objHidden = ((objSrc.match(/var HIDDEN = \[([^\]]*)\]/) || [])[1] || '')
+  .split(',').map(function (s) { return s.replace(/['"\s]/g, ''); }).filter(Boolean);
+const objShown = objIds.filter(function (id) { return objHidden.indexOf(id) < 0; });
+out.push('  확인한 오브젝트 ' + objShown.length + '개' +
+  (objHidden.length ? ' (임시 제외 ' + objHidden.join(' · ') + ')' : ''));
 
 /* 그림 크기 — 화면에는 28~72px 로만 나오므로 40KB 넘는 파일이 들어오면 알려준다 */
 const bigImg = fs.readdirSync(path.join(PROJ, 'img')).filter(function (f) {
