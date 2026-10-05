@@ -130,7 +130,7 @@
 - **웹 폰트 CSS** — `media="print"` 로 받고 `onload` 에서 켭니다. CDN 이 느리거나 막혀도 화면이 먼저 뜨고 글꼴만 늦게 바뀝니다
   (대체 폰트 크기는 `css/tokens.css` 의 `size-adjust` 로 맞춰 두어 글자가 튀지 않습니다).
 - **그림은 WebP** — 같은 그림이 PNG 의 1/4 크기이고 눈으로는 구분되지 않습니다 (2026-09 에 PNG 에서 바꿨습니다).
-  작은 아이콘 둘(`object-star.png` · `object-server-error.png`)만 PNG 그대로 둡니다 — 몇 KB 라서 바꿀 이유가 없습니다.
+  작은 아이콘 `object-star.png`(0.7KB) 는 아주 작아서, `object-server-error.png`(38KB) 는 보낸 사진을 그대로 쓰려고 PNG 로 둡니다 — 둘 다 40KB 안입니다.
   화면에 나오는 크기는 홈 카드 40px · 오브젝트 56~72px 이라 원본은 그 2~4배면 충분하고,
   `npm run check` 가 40KB 넘는 그림을 알려줍니다.
 
@@ -187,7 +187,7 @@ H·S·V 모두 0~39 인덱스(40단계), 조합은 40 x 40 x 40 = 64,000 가지�
   (품질 0.97 권장 — 안내: `npm run check` 가 40KB 넘는 그림을 알려줍니다)
 - `별`(`star`)만은 평점의 별 그림으로도 쓰입니다 (`BL.objects.star()`)
 - `HIDDEN`(`js/lib/objects.js`)에 적은 id 는 **화면에서만** 빠집니다 (2026-10-05 : `shuriken` 표창 · `block` 블록). `LIST` 자료와 서버 리뷰는 그대로 있어서 `HIDDEN` 에서 지우면 곧바로 다시 나옵니다
-- `server-error`(SERVER ERROR) 그림은 `img/object-server-error.png` 한 장입니다 (480×144 · 4KB · 파란 둥근 버튼 + 한 줄 흰 글씨). 준 사진을 그대로 그려서 `wide: true` 로 두었습니다 — 원본 사진을 쓰려면 이 파일만 같은 비율로 덮어쓰면 됩니다
+- `server-error`(SERVER ERROR) 그림은 `img/object-server-error.png` 한 장입니다 — 처음에는 코드로 그렸지만 글꼴이 사진과 달라서, 지금은 **보낸 사진(539×179)을 396×132 로 줄여 넣은 것**입니다 (38KB · 파란 둥근 버튼 + 흰 글씨 · 비율 3:1). 그래서 `wide: true` 로 둡니다 — 사진을 바꾸려면 이 파일만 같은 비율로 덮어쓰면 됩니다
 
 ## 저장되는 것
 
