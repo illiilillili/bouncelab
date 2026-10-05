@@ -1,7 +1,7 @@
 {
  "source": "bbDB(도감 DB) ctrl_DB 탭의 gif1·gif2 칸 하이퍼링크",
- "generated": "2026-09-15",
- "count": 624,
+ "generated": "2026-10-05",
+ "count": 630,
  "byName": {
   "(3,-1)+(2,1) 점프": [
    "10in1RDxGuzeDSBvvfMbNvTu7npqS_gfM"
@@ -1874,6 +1874,24 @@
   ],
   "레이저 토막 벽점프": [
    "1ECI_BvDSz_6EFsFdhQg8aKixrZIO6sDH"
+  ],
+  "가속기 바닥 바운스대시": [
+   "1MhfF2rOBB-zcp8sLv_GscDcjHZqW6ONz"
+  ],
+  "동타 : 중력반전 불완전 제동": [
+   "1l1FKMJlDOhaYNbS1w_0hQLVCcmYQsN87"
+  ],
+  "유리발사대(↗) 제동 이후 상승": [
+   "1374XFKp4pEm4LE5mkpGnvNHMR_9Idz3j"
+  ],
+  "수직 왕복 + 가시 피하기": [
+   "1v9hc-wXwHVGG-fii9SWpRo7Zh_RpiV-j"
+  ],
+  "전동블럭 소숫점 점프": [
+   "10tuX_NM_8cn0QbvTsCFhL8fw_kgJOejm"
+  ],
+  "가속기 60hz 불가능 최댓값": [
+   "1tgCWhPEa07MzCR2OewSE7i7GKQ_nQu54"
   ]
  }
 }

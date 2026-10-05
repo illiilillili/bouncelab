@@ -108,7 +108,7 @@
       data/controls.js      컨트롤 목록 (도감 시트에서 자동 생성 · 첫 화면에서는 안 받고 컨트롤 룰렛 화면에서 받는다)
       data/controls-count.js  컨트롤 개수만 (홈 화면 숫자용 · 위 파일과 같은 스크립트가 함께 만든다)
       scripts/sync-controls.js   도감 시트 → data/controls.js + data/controls-count.js
-      scripts/control-gifs.json  컨트롤 이름 → 드라이브 GIF 파일ID
+      scripts/control-gifs.json  컨트롤 이름 → 드라이브 GIF 파일ID (도감 DB 에 없던 6개는 드라이브 'gif 파일들' 폴더에서 직접 채움)
       scripts/control-tips.json  컨트롤 이름 → 설명(팁)
       scripts/check-deploy.js    배포 전 점검 (npm run check)
       scripts/save.js            커밋+푸시 한 번에 (npm run save)
