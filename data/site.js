@@ -5,7 +5,7 @@ window.BL.site = {
   nameKo: '바운스랩',
   nameEn: 'BounceLab',
   version: '0.1.0',
-  repo: 'https://github.com/illiilillili/bouncelab',
+  repo: 'https://github.com/illiilillili/bouncelab',   /* 헤더의 깃허브 링크를 빼서 지금 화면에는 안 나온다 (주소는 남겨 둔다) */
   storagePrefix: 'bl:',
 
   /* 문의하기 — 홈 화면 맨 아래 버튼 하나
