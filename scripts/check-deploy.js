@@ -147,7 +147,7 @@ const objShown = objIds.filter(function (id) { return objHidden.indexOf(id) < 0;
 out.push('  확인한 오브젝트 ' + objShown.length + '개' +
   (objHidden.length ? ' (임시 제외 ' + objHidden.join(' · ') + ')' : ''));
 
-/* 그림 크기 — 화면에는 28~72px 로만 나오므로 40KB 넘는 파일이 들어오면 알려준다 */
+/* 그림 크기 — 화면에는 28~132px(가로로 긴 그림) 로만 나오므로 40KB 넘는 파일이 들어오면 알려준다 */
 const bigImg = fs.readdirSync(path.join(PROJ, 'img')).filter(function (f) {
   return fs.statSync(path.join(PROJ, 'img', f)).size > 40 * 1024;
 }).map(function (f) {
