@@ -84,6 +84,8 @@ a { color: inherit; text-decoration: none; }
 .item__name { display: block; margin-bottom: 3px; font-size: 16.5px; font-weight: 800; letter-spacing: -.02em; }
 .item__desc {
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  /* 두 줄 자리를 늘 비워 둔다 — 설명 길이에 따라 카드 높이가 달라지지 않게 (폰 1열에서 특히) */
+  min-height: 3.1em;
   font-size: 13.5px; line-height: 1.55; color: var(--text-dim);
 }
 .item__tags { grid-column: 2; display: flex; flex-wrap: wrap; gap: 6px; }
@@ -195,11 +197,14 @@ select:focus-visible { border-color: var(--brand); outline: none; box-shadow: 0 
 .result__head { min-width: 0; }
 .result__name { margin: 0; font-size: clamp(21px, 3vw, 26px); font-weight: 800; letter-spacing: -.025em; }
 .result__meta { margin: var(--sp-2) 0 0; font-size: 13.5px; color: var(--text-dim); }
+/* 제목 끝 클리어 체크박스 — 큰 글씨 옆이라 세로 가운데로 맞춘다 */
+.result__check { margin-left: var(--sp-2); vertical-align: middle; }
 .result__btns { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-top: var(--sp-4); }
 .result--empty p { margin: 0; font-size: 14.5px; color: var(--text-dim); }
 
-/* ── 컨트롤 룰렛 : 두 버튼을 같은 크기로 ──
- * 다시 뽑기(주 버튼)와 도감에서 보기(보조 버튼)를 같은 폭·같은 높이로 나란히 둔다 */
+/* ── 두 버튼을 같은 크기로 ──
+ * 룰렛 결과의 다시 뽑기·복사 / 컨트롤 룰렛의 다시 뽑기·도감에서 보기를
+ * 같은 폭·같은 높이로 나란히 둔다 (높이는 주 버튼에 맞춘다) */
 .result__btns--pair { display: grid; grid-template-columns: 1fr 1fr; }
 .result__btns--pair .btn { height: 48px; padding: 0 var(--sp-3); }
 
@@ -248,13 +253,14 @@ select:focus-visible { border-color: var(--brand); outline: none; box-shadow: 0 
   flex: 0 0 auto; width: 72px; height: 72px; overflow: hidden;
   border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--surface);
 }
-.mtile svg { display: block; width: 100%; height: 100%; }
+/* 맵 그림 자리 — 아직 맵 그림이 없어서 회색 칸에 '썸네일' 만 적어 둔다 (js/views/roulette.js 의 thumb) */
+.mtile--ph { display: flex; align-items: center; justify-content: center; background: var(--surface-2); font-size: 12.5px; color: var(--text-dim); }
 .ph { display: flex; align-items: center; gap: var(--sp-2); margin: 0; font-size: 14.5px; color: var(--text-dim); }
 .ph svg { width: 18px; height: 18px; flex: none; opacity: .85; }
 .hint { margin: var(--sp-3) 0 0; font-size: 13.5px; color: var(--text-dim); }
 .hint:empty { display: none; }   /* 안내 문구가 없을 때 위아래 여백도 없앤다 */
 
-/* ── 맵 신청 : 룰렛 화면 아래 한 줄 ──
+/* ── 맵 신청하기 : 룰렛 화면 아래 한 줄 ──
  * 버튼이지만 생김새는 링크 — 밑줄을 옅게 두었다가 hover 에서 진해진다 */
 .invite { margin: var(--sp-4) 0 0; font-size: 14.5px; }
 .invite__btn {
@@ -279,6 +285,7 @@ select:focus-visible { border-color: var(--brand); outline: none; box-shadow: 0 
 .map-table tr:first-child th { border-top: 0; }
 .map-table th { background: var(--surface); font-size: 13.5px; font-weight: 700; color: var(--text-dim); }
 .map-table td:nth-child(3) { font-family: var(--mono); }
+.map-table__check { width: 88px; }   /* 클리어 체크 칸 — 좁게 고정 */
 
 /* ── 문의하기 : 카드가 아니라 조용한 한 줄 ── */
 .ask {

@@ -8,7 +8,11 @@ window.BL = window.BL || {};
   var rng = BL.rng;
   var storage = BL.storage;
 
-  var K = { filters: 'roulette.filters' };
+  var K = {
+    filters: 'roulette.filters',
+    cleared: 'roulette.cleared'    /* 이 브라우저가 클리어한 맵 — '제작자|맵이름' 목록 */
+  };
+
   var ITEM_H = 58;          /* style.css 의 --reel-h 와 같아야 함 */
   var ROLL_MS = 1900;
   var TRACK_ITEMS = 26;
@@ -17,27 +21,15 @@ window.BL = window.BL || {};
     return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   }
 
-  /* 맵 이름에서 뽑은 색으로 블럭 타일을 그린다 (맵 그림 데이터가 없어서 만든 도형) */
-  function hash(text) {
-    var s = String(text), h = 7;
-    for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 100003;
-    return h;
+  /* 맵 그림 자리 — 아직 맵 그림 데이터가 없다. 회색 칸에 '썸네일' 만 적어 둔다.
+     (맵 그림이 생기면 이 함수만 진짜 그림으로 바꾸면 된다) */
+  function thumb() {
+    return el('span', { class: 'mtile mtile--ph', 'aria-hidden': 'true', text: '썸네일' });
   }
 
-  function mapTile(m) {
-    var h = hash(m.by + '|' + m.name);
-    var ink = ['#1f7a8c', '#022b3a'][h % 2];
-    var cells = '';
-    for (var i = 0; i < 16; i++) {
-      var on = ((h >> ((i + h) % 12)) & 1) === 1;
-      cells += '<rect x="' + (i % 4) * 6 + '" y="' + Math.floor(i / 4) * 6 +
-        '" width="5" height="5" rx="1" fill="' + (on ? ink : '#e6ecf5') + '"/>';
-    }
-    var box = document.createElement('span');
-    box.className = 'mtile';
-    box.setAttribute('aria-hidden', 'true');
-    box.innerHTML = '<svg viewBox="0 0 23 23">' + cells + '</svg>';
-    return box;
+  /* 맵 하나를 가리키는 키 — 점검 스크립트(scripts/check-deploy.js)가 중복을 검사하는 조합과 같다 */
+  function mapKey(m) {
+    return m.by + '|' + m.name;
   }
 
   function optionList(placeholder, values, current) {
@@ -81,10 +73,45 @@ window.BL = window.BL || {};
       var spinBtn = el('button', { class: 'btn btn--main', type: 'button', onClick: spin, text: '맵 뽑기' });
       var track = el('div', { class: 'reel__track', 'aria-hidden': 'true' });
 
+      /* ── 클리어한 맵 (이 브라우저) ─────────────────────
+       * 결과 카드와 전체 맵 목록 양쪽에서 체크할 수 있고, 어느 쪽을 눌러도 여기 한 곳에 모여 저장된다.
+       * 맵 키는 점검 스크립트(scripts/check-deploy.js)가 중복을 검사하는 조합('제작자|맵이름')과 같다. */
+      var cleared = {};
+      (function () {
+        var savedCleared = storage.get(K.cleared, []);
+        if (savedCleared instanceof Array) savedCleared.forEach(function (k) { cleared[String(k)] = 1; });
+      })();
+
+      function isCleared(m) { return cleared[mapKey(m)] === 1; }
+
+      function setCleared(m, on) {
+        if (on) cleared[mapKey(m)] = 1; else delete cleared[mapKey(m)];
+        storage.set(K.cleared, Object.keys(cleared));
+        syncChecks();
+        flash(on ? '클리어한 맵으로 표시했습니다' : '클리어 표시를 지웠습니다');
+      }
+
+      /* 화면에 그려 둔 체크박스(결과 카드 · 목록 표)를 저장된 값에 맞춘다 */
+      function syncChecks() {
+        BL.dom.qsa('[data-clear]').forEach(function (n) {
+          n.checked = !!cleared[n.getAttribute('data-clear')];
+        });
+      }
+
+      /* 체크박스 하나 — data-clear 에 맵 키를 담아 두어 나중에 한 번에 맞출 수 있게 한다 */
+      function clearCheck(m, label, cls) {
+        var input = el('input', {
+          type: 'checkbox', 'data-clear': mapKey(m), 'aria-label': label, title: '클리어한 맵으로 표시',
+          onChange: function () { setCleared(m, input.checked); }
+        });
+        input.checked = isCleared(m);
+        return el('label', { class: cls || 'chk' }, [input]);
+      }
+
       /* 맵 신청 — 자기 맵을 룰렛에 넣고 싶은 사람이 누르면 연락처(data/site.js 의 contact.copyText,
          지금은 메일 주소)를 복사한다 (js/lib/contact.js). */
       var inviteBtn = el('button', {
-        class: 'invite__btn', type: 'button', text: '맵 신청',
+        class: 'invite__btn', type: 'button', text: '맵 신청하기',
         onClick: function () { BL.contact.copyLine(BL.contact.config().copyText, flash); }
       });
 
@@ -187,20 +214,26 @@ window.BL = window.BL || {};
         resultEl.className = 'result';
         clear(resultEl);
         resultEl.appendChild(el('div', { class: 'result__top' }, [
-          mapTile(m),
+          thumb(),
           el('div', { class: 'result__head' }, [
-            el('p', { class: 'result__name', text: m.name }),
+            /* 제목 끝에 클리어 체크박스 — 이 맵을 깼는지 스스로 표시해 둔다 */
+            el('p', { class: 'result__name' }, [
+              m.name,
+              clearCheck(m, '클리어한 맵', 'chk result__check')
+            ]),
             el('p', { class: 'result__meta', text: '제작자 ' + m.by + ' · 난이도 ' + m.diff })
           ])
         ]));
-        resultEl.appendChild(el('div', { class: 'result__btns' }, [
+        /* 다시 뽑기와 복사를 같은 폭·같은 높이로 (컨트롤 룰렛과 같은 틀) */
+        resultEl.appendChild(el('div', { class: 'result__btns result__btns--pair' }, [
           el('button', { class: 'btn btn--main', type: 'button', onClick: spin, text: '다시 뽑기' }),
           el('button', { class: 'btn', type: 'button', onClick: function () { copy(m); }, text: '복사' })
         ]));
       }
 
+      /* 복사 — 맵 이름만 (제작자·난이도는 붙이지 않는다) */
       function copy(m) {
-        BL.contact.copyLine(m.name + ' / ' + m.by + ' / ' + m.diff, flash);
+        BL.contact.copyLine(m.name, flash);
       }
 
       function renderTable() {
@@ -212,7 +245,8 @@ window.BL = window.BL || {};
           tableBody.appendChild(el('tr', {}, [
             el('td', { text: m.by }),
             el('td', { text: m.name }),
-            el('td', { text: m.diff })
+            el('td', { text: m.diff }),
+            el('td', { class: 'map-table__check' }, [clearCheck(m, m.name + ' 클리어')])
           ]));
         });
       }
@@ -230,7 +264,10 @@ window.BL = window.BL || {};
         el('summary', {}, ['전체 맵 목록 ', tableCount]),
         el('div', { class: 'details__body' }, [
           el('table', { class: 'map-table' }, [
-            el('thead', {}, [el('tr', {}, [el('th', { text: '제작자' }), el('th', { text: '맵 제목' }), el('th', { text: '난이도' })])]),
+            el('thead', {}, [el('tr', {}, [
+              el('th', { text: '제작자' }), el('th', { text: '맵 제목' }), el('th', { text: '난이도' }),
+              el('th', { class: 'map-table__check', text: '클리어' })
+            ])]),
             tableBody
           ])
         ])
