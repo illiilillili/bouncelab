@@ -84,13 +84,11 @@ window.BL = window.BL || {};
 
       function isCleared(m) { return cleared[mapKey(m)] === 1; }
 
+      /* 체크를 켜고 끌 때는 화면에 아무 안내도 띄우지 않는다 — 체크박스 모양만 바뀐다 */
       function setCleared(m, on) {
         if (on) cleared[mapKey(m)] = 1; else delete cleared[mapKey(m)];
         storage.set(K.cleared, Object.keys(cleared));
         syncChecks();
-        /* 안내는 켤 때만 띄운다 — 끌 때는 조용히 (방금 켠 안내가 떠 있으면 그것도 지운다) */
-        if (on) flash('클리어한 맵으로 표시했습니다');
-        else if (msgEl.textContent === '클리어한 맵으로 표시했습니다') msgEl.textContent = '';
       }
 
       /* 화면에 그려 둔 체크박스(결과 카드 · 목록 표)를 저장된 값에 맞춘다 */
