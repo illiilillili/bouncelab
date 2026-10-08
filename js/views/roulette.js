@@ -88,7 +88,9 @@ window.BL = window.BL || {};
         if (on) cleared[mapKey(m)] = 1; else delete cleared[mapKey(m)];
         storage.set(K.cleared, Object.keys(cleared));
         syncChecks();
-        flash(on ? '클리어한 맵으로 표시했습니다' : '클리어 표시를 지웠습니다');
+        /* 안내는 켤 때만 띄운다 — 끌 때는 조용히 (방금 켠 안내가 떠 있으면 그것도 지운다) */
+        if (on) flash('클리어한 맵으로 표시했습니다');
+        else if (msgEl.textContent === '클리어한 맵으로 표시했습니다') msgEl.textContent = '';
       }
 
       /* 화면에 그려 둔 체크박스(결과 카드 · 목록 표)를 저장된 값에 맞춘다 */
