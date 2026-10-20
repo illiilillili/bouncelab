@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>리듬 · 바운스랩</title>
+<!-- 웹 폰트 : 기존 index.html 과 같은 방식 (preconnect · preload) -->
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preload" as="font" type="font/woff2" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/web/variable/woff2-dynamic-subset/PretendardVariable.subset.91.woff2">
+<link rel="stylesheet" media="print" onload="this.media='all'" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../css/tokens.css?v=1791423830122">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="game">
+  <header class="game__top">
+    <a class="game__back" href="../">← 바운스랩</a>
+    <p class="game__score">점수 <strong id="score">0</strong></p>
+  </header>
+
+  <section class="board" id="board" aria-label="리듬 게임 보드">
+    <div class="board__cols" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    <div class="board__rows" id="rows"></div>
+  </section>
+
+  <div class="keys">
+    <button type="button" data-col="0" tabindex="-1">D</button>
+    <button type="button" data-col="1" tabindex="-1">F</button>
+    <button type="button" data-col="2" tabindex="-1">J</button>
+    <button type="button" data-col="3" tabindex="-1">K</button>
+  </div>
+
+  <p class="hint">가장 아래 노트의 칸을 누르거나 D F J K 를 누르세요</p>
+</main>
+<script src="chart.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

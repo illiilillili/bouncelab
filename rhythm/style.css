@@ -1,0 +1,125 @@
+/* 리듬 게임 화면 스타일.
+ *  · 흰 배경, 4열 세로 구분선(검은 건반 느낌), 노트는 --ink 블록
+ *  · 보드 높이 = 노트 5.5칸 (맨 아래 칸이 지금 칠 노트)
+ *  · 터치: 보드와 키 버튼은 touch-action: none 으로 스크롤·확대를 막는다
+ *  · 색 · 간격 · 라운드는 css/tokens.css 를 그대로 쓴다 */
+
+:root {
+  --row: 56px;
+  /* 틀린 입력 표시 전용 빨강. 팔레트 5색 밖의 유일한 예외 (요청에 따른 효과) */
+  --wrong: #d93a3a;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+/* 게임 화면은 스크롤하지 않는다. 터치 제스처(스크롤 · 핀치 · 더블탭 확대)를 모두 끈다. */
+html, body {
+  height: 100%;
+  overflow: hidden;
+  touch-action: none;
+  overscroll-behavior: none;
+  -webkit-user-select: none; user-select: none;
+  -webkit-touch-callout: none;         /* 길게 누를 때 뜨는 메뉴 · 링크 미리보기 끔 */
+  -webkit-tap-highlight-color: transparent;
+}
+body {
+  margin: 0;
+  color: var(--text); font-family: var(--font); font-size: 15.5px; line-height: 1.62;
+  font-variant-numeric: tabular-nums;
+  word-break: keep-all;
+  background: var(--page-bg) var(--white);
+  display: flex; justify-content: center;
+}
+a { color: inherit; text-decoration: none; }
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: var(--r-xs); }
+
+.game {
+  width: 100%; max-width: 360px;
+  padding: var(--sp-5) var(--sp-4) var(--sp-6);
+  display: flex; flex-direction: column; align-items: center;
+}
+
+/* ── 상단 : 뒤로 · 점수 ───────────────────── */
+.game__top {
+  width: 100%; display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: var(--sp-5);
+}
+.game__back { font-size: 13.5px; font-weight: 700; color: var(--text-dim); }
+.game__score { margin: 0; font-size: 13.5px; color: var(--text-dim); }
+.game__score strong { font-size: 16px; color: var(--text); }
+
+/* ── 보드 : 노트 5.5칸 ────────────────────── */
+.board {
+  position: relative; width: 100%;
+  height: calc(var(--row) * 5.5);
+  overflow: hidden;
+  background: var(--white);
+  border: 1px solid var(--line); border-radius: var(--r);
+  box-shadow: var(--sh-2);
+  user-select: none; -webkit-user-select: none;
+  touch-action: none;
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+}
+/* 틀린 입력 : 테두리를 빨갛게 (game.js 의 flashWrong 이 잠깐만 붙인다) */
+.board.is-wrong {
+  border-color: var(--wrong);
+  box-shadow: inset 0 0 0 2px var(--wrong), var(--sh-2);
+}
+/* 맨 아래 판정선 */
+.board::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
+  height: 2px; background: var(--ink);
+  pointer-events: none;
+}
+.board__cols {
+  position: absolute; inset: 0;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  pointer-events: none;
+}
+.board__cols span { border-left: 1px solid var(--line); }
+.board__cols span:first-child { border-left: 0; }
+
+.board__rows { position: absolute; inset: 0; pointer-events: none; }
+
+/* 줄 하나 = 노트 칸 하나. 맨 아래(bottom: 0)에 두고 translateY 로 올린다 */
+.row {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  height: var(--row);
+  transition: transform var(--dur-fast) var(--ease);
+}
+
+.note {
+  position: absolute; top: 5px; bottom: 5px;
+  left: calc(var(--col) * 25%); width: 25%;
+  padding: 0 6px;
+}
+.note::before {
+  content: ''; display: block; height: 100%;
+  border-radius: var(--r-xs);
+  background: var(--ink);
+}
+
+/* ── 키 버튼 (보드 아래) ──────────────────── */
+.keys {
+  width: 100%; margin-top: var(--sp-3);
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--sp-2);
+}
+.keys button {
+  height: 56px; padding: 0;
+  border: 1px solid var(--line); border-radius: var(--r-sm);
+  background: var(--white); color: var(--text-dim);
+  font: inherit; font-size: 15.5px; font-weight: 700;
+  box-shadow: var(--sh-2);
+  touch-action: none;
+  user-select: none; -webkit-user-select: none;
+  cursor: pointer;
+}
+.keys button:active { background: var(--surface-2); color: var(--text); }
+
+.hint { margin: var(--sp-4) 0 0; font-size: 13px; color: var(--text-dim); text-align: center; }
+
+@media (hover: hover) {
+  .game__back:hover { color: var(--brand); }
+  .keys button:hover { border-color: var(--lav); }
+}
