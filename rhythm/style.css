@@ -106,7 +106,7 @@ a { color: inherit; text-decoration: none; }
   display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--sp-2);
 }
 .keys button {
-  height: 56px; padding: 0;
+  height: 112px; padding: 0;
   border: 1px solid var(--line); border-radius: var(--r-sm);
   background: var(--white); color: var(--text-dim);
   font: inherit; font-size: 15.5px; font-weight: 700;
@@ -123,3 +123,4 @@ a { color: inherit; text-decoration: none; }
   .game__back:hover { color: var(--brand); }
   .keys button:hover { border-color: var(--lav); }
 }
+
